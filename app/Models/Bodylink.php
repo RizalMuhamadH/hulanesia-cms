@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Bodylink extends Model
 {
     use HasFactory;
+
+    public function bodylinkable()
+    {
+        return $this->morphTo();
+    }
 }

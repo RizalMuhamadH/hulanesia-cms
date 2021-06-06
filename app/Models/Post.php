@@ -20,13 +20,23 @@ class Post extends Model
         return $this->belongsTo(Feature::class);
     }
 
-    public function images()
+    public function image()
     {
-        return $this->morphMany(Image::class, 'imageable');
+        return $this->morphOne(Image::class, 'imageable');
     }
 
-    public function videos()
+    public function video()
     {
-        return $this->morphMany(Video::class, 'videoable');
+        return $this->morphOne(Video::class, 'videoable');
+    }
+
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
+
+    public function bodylinks()
+    {
+        return $this->morphMany(Bodylink::class, 'bodylinkable');
     }
 }
