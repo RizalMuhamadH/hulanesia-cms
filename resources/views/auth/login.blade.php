@@ -1,4 +1,7 @@
 @include('layouts.auth_app')
+@section('head')
+<title>Login</title>
+@show
 @section('auth')
     <div class="d-flex flex-wrap align-items-stretch">
         <div class="col-lg-4 col-md-6 col-12 order-lg-1 min-vh-100 order-2 bg-white">
@@ -8,7 +11,8 @@
                 <h4 class="text-dark font-weight-normal">Welcome to <span class="font-weight-bold">Stisla</span></h4>
                 <p class="text-muted">Before you get started, you must login or register if you don't already have an
                     account.</p>
-                <form method="POST" action="#" class="needs-validation" novalidate="">
+                <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate="">
+                    @csrf
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input id="email" type="email" class="form-control" name="email" tabindex="1" required autofocus>

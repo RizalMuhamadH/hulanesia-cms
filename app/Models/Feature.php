@@ -9,6 +9,9 @@ class Feature extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name'
+    ];
 
     public function posts()
     {
