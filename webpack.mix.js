@@ -54,6 +54,10 @@ mix.copy(
     "public/assets/css/sweetalert2/dist/sweetalert2.min.css"
 );
 
+mix.copy('node_modules/tinymce', 'public/assets/js/tinymce');
+
+
+
 mix.copyDirectory(
     "node_modules/summernote/dist/font/summernote.woff2",
     "public/assets/css/summernote/dist/font/summernote.woff2"
@@ -90,4 +94,9 @@ mix.babel(
 mix.babel(
     "node_modules/sweetalert2/dist/sweetalert2.min.js",
     "public/assets/js/sweetalert2/dist/sweetalert2.min.js"
+);
+
+mix.babel(
+    "resources/js/custom_tinymce.js",
+    "public/assets/js/custom_tinymce.js"
 );
