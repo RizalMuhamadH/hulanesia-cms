@@ -4,7 +4,6 @@ namespace App\Http\Controllers\ContentTypes;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
-use TCG\Voyager\Http\Controllers\ContentTypes\BaseType;
 use Illuminate\Support\Str;
 use Intervention\Image\Constraint;
 use Intervention\Image\Facades\Image as InterventionImage;
@@ -13,6 +12,7 @@ class ImageHandler extends BaseType
 {
     public function handle()
     {
+
         if ($this->request->hasFile($this->row)) {
             $file = $this->request->file($this->row);
 
@@ -25,9 +25,11 @@ class ImageHandler extends BaseType
 
             $filename = $this->generateFileName($file, $path);
 
+            $uniqId = Carbon::now()->timestamp . '_' . uniqid() . '_' ;
+
             $image = InterventionImage::make($file)->orientate();
 
-            $fullPath = $path . Carbon::now()->timestamp . '_' . uniqid() . '_' . $filename . '.' . $file->getClientOriginalExtension();
+            $fullPath = $path . $uniqId . $filename . '.' . $file->getClientOriginalExtension();
 
             $resize_width = null;
             $resize_height = null;
@@ -57,11 +59,11 @@ class ImageHandler extends BaseType
             )->encode($file->getClientOriginalExtension(), $resize_quality);
 
             if ($this->is_animated_gif($file)) {
-                Storage::disk(config('voyager.storage.disk'))->put($fullPath, file_get_contents($file), 'public');
+                Storage::disk('local')->put($fullPath, file_get_contents($file), 'public');
                 $fullPathStatic = $path . $filename . '-static.' . $file->getClientOriginalExtension();
-                Storage::disk(config('voyager.storage.disk'))->put($fullPathStatic, (string) $image, 'public');
+                Storage::disk('local')->put($fullPathStatic, (string) $image, 'public');
             } else {
-                Storage::disk(config('voyager.storage.disk'))->put($fullPath, (string) $image, 'public');
+                Storage::disk('local')->put($fullPath, (string) $image, 'public');
             }
 
             if (isset($this->options->thumbnails)) {
@@ -100,8 +102,8 @@ class ImageHandler extends BaseType
                             ->encode($file->getClientOriginalExtension(), $resize_quality);
                     }
 
-                    Storage::disk(config('voyager.storage.disk'))->put(
-                        $path . $filename . '-' . $thumbnails->name . '.' . $file->getClientOriginalExtension(),
+                    Storage::disk('local')->put(
+                        $path . $uniqId . $filename . '-' . $thumbnails->name . '.' . $file->getClientOriginalExtension(),
                         (string) $image,
                         'public'
                     );
@@ -125,14 +127,14 @@ class ImageHandler extends BaseType
             $filename_counter = 1;
 
             // Make sure the filename does not exist, if it does make sure to add a number to the end 1, 2, 3, etc...
-            while (Storage::disk(config('voyager.storage.disk'))->exists($path . $filename . '.' . $file->getClientOriginalExtension())) {
+            while (Storage::disk('local')->exists($path . $filename . '.' . $file->getClientOriginalExtension())) {
                 $filename = basename($file->getClientOriginalName(), '.' . $file->getClientOriginalExtension()) . (string) ($filename_counter++);
             }
         } else {
             $filename = Str::random(20);
 
             // Make sure the filename does not exist, if it does, just regenerate
-            while (Storage::disk(config('voyager.storage.disk'))->exists($path . $filename . '.' . $file->getClientOriginalExtension())) {
+            while (Storage::disk('local')->exists($path . $filename . '.' . $file->getClientOriginalExtension())) {
                 $filename = Str::random(20);
             }
         }

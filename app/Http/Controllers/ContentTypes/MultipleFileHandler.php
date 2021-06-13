@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use TCG\Voyager\Http\Controllers\ContentTypes\BaseType;
 
 class MultipleFileHandler extends BaseType
 {
@@ -30,7 +29,7 @@ class MultipleFileHandler extends BaseType
             $file->storeAs(
                 $path,
                 $filename,
-                config('voyager.storage.disk', 'public')
+                config('local', 'public')
             );
 
             array_push($filesPath, [
@@ -65,14 +64,14 @@ class MultipleFileHandler extends BaseType
             $filename_counter = 1;
 
             // Make sure the filename does not exist, if it does make sure to add a number to the end 1, 2, 3, etc...
-            while (Storage::disk(config('voyager.storage.disk'))->exists($path . $filename)) {
+            while (Storage::disk('local')->exists($path . $filename)) {
                 $filename = basename($file->getClientOriginalName(), '.' . $file->getClientOriginalExtension()) . (string) ($filename_counter++);
             }
         } else {
             $filename = Carbon::now()->timestamp . '_' . uniqid() . '_' . Str::random(20) . '.' . $file->getClientOriginalExtension();
 
             // Make sure the filename does not exist, if it does, just regenerate
-            while (Storage::disk(config('voyager.storage.disk'))->exists($path . $filename)) {
+            while (Storage::disk('local')->exists($path . $filename)) {
                 $filename = Carbon::now()->timestamp . '_' . uniqid() . '_' . Str::random(20) . '.' . $file->getClientOriginalExtension();
             }
         }
