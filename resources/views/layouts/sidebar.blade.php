@@ -13,6 +13,7 @@
           <li class=""><a class="nav-link" href="{{ route('category.index') }}"><i class="fas fa-layer-group"></i> <span>Categories</span></a></li>
           <li class=""><a class="nav-link" href="{{ route('tag.index') }}"><i class="fas fa-tag"></i> <span>Tags</span></a></li>
           <li class=""><a class="nav-link" href="{{ route('feature.index') }}"><i class="fas fa-asterisk"></i> <span>Features</span></a></li>
+          <li class=""><a class="nav-link" href="{{ route('user.index') }}"><i class="fas fa-user-circle"></i> <span>Users</span></a></li>
           {{-- <li class="nav-item dropdown">
             <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             <ul class="dropdown-menu">

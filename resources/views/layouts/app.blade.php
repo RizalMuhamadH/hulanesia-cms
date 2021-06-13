@@ -22,6 +22,9 @@
     <link rel="stylesheet" href="{{ asset('assets/css/izitoast/iziToast.min.css') }}">
     @stack('style')
     @livewireStyles
+
+
+    <script src="{{ mix("assets/js/tinymce/tinymce.min.js") }}"></script>
 </head>
 
 <body>
