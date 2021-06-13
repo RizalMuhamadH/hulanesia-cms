@@ -48,7 +48,7 @@
                         <div class="form-group row mb-4">
                             <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2">Content</label>
                             <div class="col-sm-12 col-md-7 col-lg-9">
-                                <textarea class="summernote"></textarea>
+                                <textarea id="tinymce" rows="10" class="form-control"></textarea>
                             </div>
                         </div>
 
@@ -111,6 +111,7 @@
     <script src="{{ asset('assets/js/preview/jquery.uploadPreview.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap-timepicker.min.js') }}"></script>
     <script src="{{ asset('assets/js/daterangepicker.js') }}"></script>
+    <script src="{{ asset('assets/js/custom_tinymce.js') }}"></script>
     <script>
         "use strict";
 
