@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
+use App\Traits\Resizable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use TCG\Voyager\Traits\Resizable;
 
 class Image extends Model
 {
     use HasFactory;
     use Resizable;
+
+    protected $fillable = [
+        'path',
+        'caption'
+    ];
 
     protected $guarded = [];
 
