@@ -25,6 +25,7 @@
 
 
     <script src="{{ mix("assets/js/tinymce/tinymce.min.js") }}"></script>
+    <script src="{{ asset("js/app.js") }}"></script>
 </head>
 
 <body>

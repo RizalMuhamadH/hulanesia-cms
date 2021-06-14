@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UploadController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -59,6 +60,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
 });
 
+
+Route::post('upload/image', [UploadController::class, 'image'])->name('upload.image');
 
 Route::group(['prefix' => 'admin'], function () {
     // Voyager::routes();
