@@ -12,6 +12,7 @@ var editor_config = {
     toolbar:
         "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
         file_picker_types: 'image',
+        image_dimensions: false,
         file_picker_callback: function (cb, value, meta) {
     
     
@@ -31,7 +32,7 @@ var editor_config = {
                   }
                 })
                     .then(function (res) {
-                        cb(res.data.location, file.name);
+                        cb(res.data.location);
                     })
                     .catch(function (err) {
                         failure('HTTP Error: ' + err.message);
