@@ -13,7 +13,7 @@ const mix = require("laravel-mix");
 
 mix.js('resources/js/app.js', 'public/js');
 mix.styles(
-    ["resources/css/style.css", "resources/css/components.css"],
+    ["resources/css/style.css", "resources/css/components.css" , "resources/css/app.css"],
     "public/assets/css/all.css"
 ).version();
 
@@ -49,6 +49,11 @@ mix.copy(
 mix.copy(
     "node_modules/sweetalert2/dist/sweetalert2.min.css",
     "public/assets/css/sweetalert2/dist/sweetalert2.min.css"
+);
+
+mix.copy(
+    "node_modules/select2/dist/css/select2.min.css",
+    "public/assets/css/select2/select2.min.css"
 );
 
 mix.copy('node_modules/tinymce', 'public/assets/js/tinymce');
@@ -91,6 +96,11 @@ mix.babel(
 mix.babel(
     "node_modules/sweetalert2/dist/sweetalert2.min.js",
     "public/assets/js/sweetalert2/dist/sweetalert2.min.js"
+);
+
+mix.babel(
+    "node_modules/select2/dist/js/select2.full.min.js",
+    "public/assets/js/select2/select2.full.min.js"
 );
 
 mix.babel(
