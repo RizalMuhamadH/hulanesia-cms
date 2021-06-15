@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\ContentTypes\ImageHandler;
 use Illuminate\Http\Request;
 
 class UploadController extends Controller

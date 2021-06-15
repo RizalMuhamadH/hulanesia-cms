@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\ContentTypes\ImageHandler;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Tag;
