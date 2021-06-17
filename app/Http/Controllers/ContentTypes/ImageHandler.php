@@ -21,7 +21,7 @@ class ImageHandler extends BaseType
                 $id = $this->request->id . "/";
             }
 
-            $path = $this->slug . "/" . $id . date('Y') . "/" . date('m') . "/";
+            $path = $this->slug . "/" . $id . date('Y') . "/" . date('m') . "/". date('d') . "/";
 
             $filename = $this->generateFileName($file, $path);
 

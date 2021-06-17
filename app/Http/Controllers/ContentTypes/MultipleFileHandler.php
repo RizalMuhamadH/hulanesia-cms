@@ -51,7 +51,7 @@ class MultipleFileHandler extends BaseType
             $id = $this->request->id . "/";
         }
 
-        return $this->slug . "/" . $id . date('Y') . "/" . date('m') . "/";
+        return $this->slug . "/" . $id . date('Y') . "/" . date('m') . "/". date('d') . "/";
     }
 
     /**
