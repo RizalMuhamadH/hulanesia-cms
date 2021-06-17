@@ -15,101 +15,125 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-body row">
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label class="col-form-label">Title</label>
-                                <input type="text" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label class="col-form-label">Slug</label>
-                                <input type="text" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label class="col-form-label">Summary</label>
-                                <textarea rows="10" class="form-control"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-form-label">Category</label>
-                                <select id="category" class="form-control selectric">
-                                    <option>Tech</option>
-                                    <option>News</option>
-                                    <option>Political</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-form-label">Content</label>
-                                <textarea id="tinymce" rows="10" class="form-control"></textarea>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6 col-12">
-                                    <label>Source</label>
-                                    <input type="text" class="form-control" value="" name="source">
+                    <form action="{{ $action == 'Add' ? route('post.store') : route('post.update', $content->id ?? '') }}"
+                        method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="card-body row">
+
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label class="col-form-label">Title</label>
+                                    <input type="text" class="form-control" name="title"
+                                        value="{{ $content->title ?? '' }}" required>
                                 </div>
-                                <div class="form-group col-md-6 col-12">
-                                    <label>Source Link</label>
-                                    <input type="text" class="form-control" value="" name="source_link">
+                                <!-- <div class="form-group">
+                                                <label class="col-form-label">Slug</label>
+                                                <input type="text" class="form-control">
+                                            </div> -->
+                                <div class="form-group">
+                                    <label class="col-form-label">Summary</label>
+                                    <textarea rows="10" class="form-control"
+                                        name="description">{{ $content->description ?? '' }}</textarea>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="col-form-label">Status</label>
-                                <select id="status" class="form-control selectric" name="status">
-                                    <option value="DRAFT">DRAFT</option>
-                                    <option value="PUBLISH">PUBLISH</option>
-                                    <option value="SCHEDULE">SCHEDULE</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group" id="publish">
-                                <label class="col-form-label">Publish</label>
-                                <input type="text" class="form-control datetimepicker">
-
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-form-label">Image</label>
-                                <div id="image-preview" class="image-preview">
-                                    <label for="image-upload" id="image-label">Choose File</label>
-                                    <input type="file" name="image" id="image-upload" />
+                                <div class="form-group">
+                                    <label class="col-form-label">Category</label>
+                                    <select id="category" class="form-control selectric" name="category_id"
+                                        value="{{ $content->category_id ?? '' }}" required>
+                                        @foreach ($categories as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Feature</label>
+                                    <select id="feature" class="form-control selectric" name="feature_id"
+                                        value="{{ $content->feature_id ?? '' }}" required>
+                                        @foreach ($features as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Content</label>
+                                    <textarea id="tinymce" rows="10" class="form-control"
+                                        name="body">{{ $content->body ?? '' }}</textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6 col-12">
+                                        <label>Source</label>
+                                        <input type="text" class="form-control" value="" name="source"
+                                            value="{{ $content->source ?? '' }}">
+                                    </div>
+                                    <div class="form-group col-md-6 col-12">
+                                        <label>Source Link</label>
+                                        <input type="text" class="form-control" value="" name="source_link"
+                                            value="{{ $content->source_link ?? '' }}">
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="col-form-label">Tags</label>
-                                <select class="form-control select2" multiple="">
-                                    <option>Option 1</option>
-                                    <option>Option 2</option>
-                                    <option>Option 3</option>
-                                    <option>Option 4</option>
-                                    <option>Option 5</option>
-                                    <option>Option 6</option>
-                                </select>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="col-form-label">Status</label>
+                                    <select id="status" class="form-control selectric" name="status"
+                                        value="{{ $content->status ?? '' }}" required>
+                                        <option value="DRAFT">DRAFT</option>
+                                        <option value="PUBLISH">PUBLISH</option>
+                                        <option value="SCHEDULE">SCHEDULE</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" id="publish">
+                                    <label class="col-form-label">Publish</label>
+                                    <input type="text" class="form-control datetimepicker" name="published_at"
+                                        value="{{ $content->published_at ?? '' }}">
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-form-label">Image</label>
+                                    <div id="image-preview" class="image-preview">
+                                        <label for="image-upload" id="image-label">Choose File</label>
+                                        <input type="file" name="image" id="image-upload"
+                                            value="{{ $content->image ?? '' }}" required />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-form-label">Tags</label>
+                                    <select class="form-control select2" multiple="" name="tags[]"
+                                        value="{{ $content->tags ?? '' }}" required>
+                                        @foreach ($tags as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-form-label">Meta
+                                        Description</label>
+                                    <input type="text" class="form-control" name="meta_description"
+                                        value="{{ $content->meta_description ?? '' }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-form-label">Meta Keywords</label>
+                                    <input type="text" class="form-control" name="meta_keywords"
+                                        value="{{ $content->meta_keywords ?? '' }}">
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="col-form-label">Meta
-                                    Description</label>
-                                <input type="text" class="form-control">
+
+
+                            <div class="form-group row">
+                                <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2"></label>
+                                <div class="col-sm-12 col-md-7">
+                                    <button class="btn btn-primary">Publish</button>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="col-form-label">Meta Keywords</label>
-                                <input type="text" class="form-control">
-                            </div>
                         </div>
-
-
-
-                        <div class="form-group row">
-                            <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2"></label>
-                            <div class="col-sm-12 col-md-7">
-                                <button class="btn btn-primary">Publish</button>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
