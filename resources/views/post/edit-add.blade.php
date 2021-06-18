@@ -27,9 +27,9 @@
                                         value="{{ $content->title ?? '' }}" required>
                                 </div>
                                 <!-- <div class="form-group">
-                                                <label class="col-form-label">Slug</label>
-                                                <input type="text" class="form-control">
-                                            </div> -->
+                                                    <label class="col-form-label">Slug</label>
+                                                    <input type="text" class="form-control">
+                                                </div> -->
                                 <div class="form-group">
                                     <label class="col-form-label">Summary</label>
                                     <textarea rows="10" class="form-control"
@@ -37,19 +37,19 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Category</label>
-                                    <select id="category" class="form-control selectric" name="category_id"
-                                        value="{{ $content->category_id ?? '' }}" required>
+                                    <select id="category" class="form-control selectric" name="category_id" required>
                                         @foreach ($categories as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            <option value="{{ $item->id }}" @isset($content)
+                                                {{ $content->category_id == $item->id ? 'selected' : '' }} @endisset>{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Feature</label>
-                                    <select id="feature" class="form-control selectric" name="feature_id"
-                                        value="{{ $content->feature_id ?? '' }}" required>
+                                    <select id="feature" class="form-control selectric" name="feature_id" required>
                                         @foreach ($features as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            <option value="{{ $item->id }}" @isset($content)
+                                                {{ $content->feature_id_id == $item->id ? 'selected' : '' }} @endisset>{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -77,9 +77,14 @@
                                     <label class="col-form-label">Status</label>
                                     <select id="status" class="form-control selectric" name="status"
                                         value="{{ $content->status ?? '' }}" required>
-                                        <option value="DRAFT">DRAFT</option>
-                                        <option value="PUBLISH">PUBLISH</option>
-                                        <option value="SCHEDULE">SCHEDULE</option>
+                                        <option value="DRAFT" @isset($content)
+                                            {{ $content->status == 'DRAFT' ? 'selected' : '' }} @endisset>DRAFT</option>
+                                        <option value="PUBLISH" @isset($content)
+                                            {{ $content->status == 'PUBLISH' ? 'selected' : '' }} @endisset>PUBLISH
+                                        </option>
+                                        <option value="SCHEDULE" @isset($content)
+                                            {{ $content->status == 'SCHEDULE' ? 'selected' : '' }} @endisset>SCHEDULE
+                                        </option>
                                     </select>
                                 </div>
 
@@ -94,17 +99,33 @@
                                     <label class="col-form-label">Image</label>
                                     <div id="image-preview" class="image-preview">
                                         <label for="image-upload" id="image-label">Choose File</label>
-                                        <input type="file" name="image" id="image-upload"
-                                            value="{{ $content->image ?? '' }}" required />
+                                        <input type="file" name="image" id="image-upload" />
                                     </div>
                                 </div>
 
+                                @isset($content)
+                                    <div class="form-group">
+                                        <label class="col-form-label">Preview</label>
+                                        <img src="/storage/{{ $content->image->path }}" class="img-fluid" alt="" srcset="">
+                                    </div>
+                                @endisset
+
                                 <div class="form-group">
+                                    @isset($content)
+                                        @php
+                                            $value = [];
+                                            for ($i = 0; $i < count($content->tags); $i++) {
+                                                $value[$i] = $content->tags[$i]->id;
+                                            }
+                                            // $value = json_encode($value);
+                                            // dd($value);
+                                        @endphp
+                                    @endisset
                                     <label class="col-form-label">Tags</label>
-                                    <select class="form-control select2" multiple="" name="tags[]"
-                                        value="{{ $content->tags ?? '' }}" required>
+                                    <select class="form-control select2" multiple="" name="tags[]" required>
                                         @foreach ($tags as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            <option value="{{ $item->id }}" @isset($content)
+                                                {{ Arr::has($value, $item->id ) ? 'selected' : '' }} @endisset>{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

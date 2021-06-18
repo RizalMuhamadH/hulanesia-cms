@@ -93,14 +93,25 @@ class PostController extends Controller
     public function edit($id)
     {
         $post = Post::findOrFail($id);
+        
+        $categories = Category::get();
+        $tags = Tag::get(); 
+        $features = Feature::get();
 
         $action = 'Edit';
-        return view('feature.edit-add', ['content' => $feature, 'action' => $action]);
+        return view('post.edit-add', [
+            'content' => $post, 
+            'action' => $action,
+            'categories' => $categories,
+            'tags' => $tags,
+            'features' => $features
+    ]);
     }
 
     public function update(Request $request, $id)
     {
         $post = Post::where('id', $id)->update([
+
             'title' => $request->title,
             'slug' => Str::slug($request->name, "-"),
             'description' => $request->description,
@@ -118,7 +129,7 @@ class PostController extends Controller
         ]);
 
         
-        $post->tags()->detach();
+        $post->tags()->delete();
         $post->tags()->attach($request->tags);
 
         if($request->hasFile('image')){
