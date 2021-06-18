@@ -28,17 +28,34 @@
                         <th>Status</th>
                         <th>Author</th>
                         <th>Published</th>
+                        <th>Create At</th>
                         <th>Action</th>
                     </tr>
                     @foreach ($data as $item)
                         <tr>
-                            <td>{{ $loop->index+1 }}</td>
+                            <td>{{ $loop->index + 1 }}</td>
                             <td>{{ $item->title }}</td>
                             <td>{{ $item->category->name }}</td>
+                            <td>{{ $item->feature->name }}</td>
                             <td>
-                                <div class="badge badge-success">Active</div>
+                                @foreach ($item->tags as $tag)
+                                    <div class="badge badge-primary">{{ $tag->name }}</div>
+                                @endforeach
                             </td>
-                            <td><a href="#" class="btn btn-secondary">Detail</a></td>
+                            <td>
+                                @if ($item->status == 'DRAFT')
+                                    <div class="badge badge-danger">{{ $item->status }}</div>
+                                @elseif ($item->status == 'PUBLISH')
+
+                                    <div class="badge badge-success">{{ $item->status }}</div>
+                                @else
+                                    <div class="badge badge-warning">{{ $item->status }}</div>
+                                @endif
+                            </td>
+                            <td>{{ $item->user->name }}</td>
+                            <td>{{ $item->published_at->format('d, M Y H:m') }}</td>
+                            <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
+                            <td><a href="{{ route('post.edit', $item->id) }}" class="btn btn-info">Edit</a> <button wire:click="destroy({{ $item->id }})" class="btn btn-danger">Delete</button></td>
                         </tr>
                     @endforeach
                     {{-- <tr>
@@ -53,22 +70,26 @@
             </div>
         </div>
         <div class="card-footer text-right">
-            <nav class="d-inline-block">
-                <ul class="pagination mb-0">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1"><i class="fas fa-chevron-left"></i></a>
-                    </li>
-                    <li class="page-item active"><a class="page-link" href="#">1 <span
-                                class="sr-only">(current)</span></a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">2</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
-                    </li>
-                </ul>
-            </nav>
+            {{ $data->links('layouts.custom-pagination') }}
         </div>
     </div>
+
+    <script>
+
+        window.addEventListener('swal:confirm', e => {
+            Swal.fire({
+                title: e.detail.title,
+                text: e.detail.text,
+                icon: e.detail.type,
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.Livewire.emit('delete', e.detail.id);
+                }
+            });
+        });
+    </script>
 </div>

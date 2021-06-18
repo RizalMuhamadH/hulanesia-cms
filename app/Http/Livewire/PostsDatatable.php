@@ -25,9 +25,9 @@ class PostsDatatable extends Component
     public function render()
     {
         if ($this->search != null) {
-            $this->data = Post::with(['category', 'feature', 'image', 'tags'])->where('title', 'like', '%' . $this->search . '%')->latest()->paginate(10);
+            $this->data = Post::with(['category', 'feature', 'image', 'tags', 'user'])->where('title', 'like', '%' . $this->search . '%')->latest()->paginate(10);
         } else {
-            $this->data = Post::with(['category', 'feature', 'image', 'tags'])->latest()->paginate(10);
+            $this->data = Post::with(['category', 'feature', 'image', 'tags', 'user'])->latest()->paginate(10);
         }
 
         return view('livewire.posts-datatable', [
