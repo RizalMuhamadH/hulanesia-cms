@@ -63,7 +63,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('posts/add', [PostController::class, 'add'])->name('post.add');
     Route::get('posts/edit/{id}', [PostController::class, 'edit'])->name('post.edit');
     Route::post('posts/add', [PostController::class, 'store'])->name('post.store');
-    Route::post('posts/update/{id}', [PostController::class, 'update'])->name('post.update');
+    Route::post('posts/update/{post}', [PostController::class, 'update'])->name('post.update');
 });
 
 

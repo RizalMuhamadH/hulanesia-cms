@@ -49,7 +49,7 @@
                                     <select id="feature" class="form-control selectric" name="feature_id" required>
                                         @foreach ($features as $item)
                                             <option value="{{ $item->id }}" @isset($content)
-                                                {{ $content->feature_id_id == $item->id ? 'selected' : '' }} @endisset>{{ $item->name }}</option>
+                                                {{ $content->feature_id == $item->id ? 'selected' : '' }} @endisset>{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -61,12 +61,12 @@
                                 <div class="row">
                                     <div class="form-group col-md-6 col-12">
                                         <label>Source</label>
-                                        <input type="text" class="form-control" value="" name="source"
+                                        <input type="text" class="form-control" name="source"
                                             value="{{ $content->source ?? '' }}">
                                     </div>
                                     <div class="form-group col-md-6 col-12">
                                         <label>Source Link</label>
-                                        <input type="text" class="form-control" value="" name="source_link"
+                                        <input type="text" class="form-control" name="source_link"
                                             value="{{ $content->source_link ?? '' }}">
                                     </div>
                                 </div>
@@ -117,15 +117,16 @@
                                             for ($i = 0; $i < count($content->tags); $i++) {
                                                 $value[$i] = $content->tags[$i]->id;
                                             }
+                                            $collection = collect($value);
                                             // $value = json_encode($value);
-                                            // dd($value);
+                                            // dd($collection);
                                         @endphp
                                     @endisset
                                     <label class="col-form-label">Tags</label>
                                     <select class="form-control select2" multiple="" name="tags[]" required>
                                         @foreach ($tags as $item)
                                             <option value="{{ $item->id }}" @isset($content)
-                                                {{ Arr::has($value, $item->id ) ? 'selected' : '' }} @endisset>{{ $item->name }}</option>
+                                                {{ $collection->contains($item->id ) ? 'selected' : '' }} @endisset>{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

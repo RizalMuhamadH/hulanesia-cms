@@ -108,9 +108,9 @@ class PostController extends Controller
     ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        $post = Post::where('id', $id)->update([
+        $post->update([
 
             'title' => $request->title,
             'slug' => Str::slug($request->name, "-"),
@@ -120,16 +120,14 @@ class PostController extends Controller
             'source_link' => $request->source_link,
             'feature_id' => $request->feature_id,
             'category_id' => $request->category_id,
-            'user_id' => $request->user_id,
             'status' => $request->status,
             'meta_description' => $request->meta_description,
             'meta_keywords' => $request->meta_keywords,
             'seo_title' => $request->seo_title,
-            'published_at' => $request->published_at
         ]);
 
-        
-        $post->tags()->delete();
+        // dd($post->tags());
+        $post->tags()->detach();
         $post->tags()->attach($request->tags);
 
         if($request->hasFile('image')){
@@ -162,7 +160,7 @@ class PostController extends Controller
             $options = json_decode(json_encode($options));
             
             $path = (new ImageHandler($request, 'posts', 'image', $options))->handle();
-            $post->image()->delete();
+            $post->image()->detach();
             $post->image()->create(['path' => $path]);
         }
 
