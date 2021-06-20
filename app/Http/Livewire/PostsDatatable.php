@@ -48,6 +48,6 @@ class PostsDatatable extends Component
 
     public function delete($id)
     {
-        User::where('id', $id)->delete();
+        Post::where('id', $id)->delete();
     }
 }
