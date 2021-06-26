@@ -3,13 +3,13 @@
 @endpush
 @section('body')
     <div class="section-header">
-        <h1>Tags</h1>
+        <h1>Roles</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item active"><a href="#">Tags</a></div>
+            <div class="breadcrumb-item active"><a href="#">Roles</a></div>
         </div>
     </div>
     <div class="section-body">
-        <livewire:tag-datatable />
+        <livewire:role-datatable />
     </div>
 @endsection
 @push('script')

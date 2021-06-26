@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -21,8 +22,8 @@ class UserController extends Controller
     public function add()
     {
         $action = 'Add';
-
-        return view('user.edit-add', ['action' => $action]);
+        $roles = Role::pluck('name','name')->all();
+        return view('user.edit-add', ['action' => $action, 'roles' => $roles]);
     }
 
     public function store(Request $request)
@@ -39,11 +40,12 @@ class UserController extends Controller
             'password' => $this->passwordRules(),
         ])->validate();
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+        $user->assignRole($request->input('roles'));
         return redirect()->route('user.index')->with('message', 'Add Successfully');
     }
 
@@ -52,7 +54,10 @@ class UserController extends Controller
         $user = user::findOrFail($id);
 
         $action = 'Edit';
-        return view('user.edit-add', ['content' => $user, 'action' => $action]);
+
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name','name')->all();
+        return view('user.edit-add', ['content' => $user, 'action' => $action, 'roles' => $roles, 'userRole' => collect($userRole)]);
     }
 
     public function update(Request $request, $id)

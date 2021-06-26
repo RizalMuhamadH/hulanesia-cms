@@ -2,7 +2,10 @@
     <div class="card">
       <div class="card-header d-flex justify-content-between">
         {{-- <h4>Full Width</h4> --}}
+        @can('add_tags')
         <a href="{{ route('tag.add') }}" class="btn btn-icon icon-left btn-primary"><i class="fas fa-plus"></i> Add</a>
+          
+        @endcan
         <div class="card-header-form">
             <form>
               <div class="input-group">
@@ -30,7 +33,16 @@
                 <td>{{ $item->name }}</td>
                 <td>{{ $item->slug }}</td>
                 <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
-                <td><a href="{{ route('tag.edit', $item->id) }}" class="btn btn-info">Edit</a> <button wire:click="destroy({{ $item->id }})" class="btn btn-danger">Delete</button></td>
+                <td>
+                  @can('edit_tags')
+                  <a href="{{ route('tag.edit', $item->id) }}" class="btn btn-info">Edit</a>
+                    
+                  @endcan
+                  @can('delete_tags')
+                  <button wire:click="destroy({{ $item->id }})" class="btn btn-danger">Delete</button>
+                    
+                  @endcan
+                  </td>
               </tr>
             @endforeach
             

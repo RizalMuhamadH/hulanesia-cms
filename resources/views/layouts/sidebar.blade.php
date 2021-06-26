@@ -9,11 +9,24 @@
       <ul class="sidebar-menu">
           <li class="menu-header">Dashboard</li>
           <li class="active"><a class="nav-link" href="/dashboard"><i class="fas fa-fire"></i> <span>Dashboard</span></a></li>
+          @can('browse_posts')
           <li class=""><a class="nav-link" href="/posts"><i class="fas fa-stream"></i> <span>Posts</span></a></li>
+          @endcan
+          @can('browse_categories')
           <li class=""><a class="nav-link" href="{{ route('category.index') }}"><i class="fas fa-layer-group"></i> <span>Categories</span></a></li>
+          @endcan
+          @can('browse_tags')
           <li class=""><a class="nav-link" href="{{ route('tag.index') }}"><i class="fas fa-tag"></i> <span>Tags</span></a></li>
+          @endcan
+          @can('browse_features')
           <li class=""><a class="nav-link" href="{{ route('feature.index') }}"><i class="fas fa-asterisk"></i> <span>Features</span></a></li>
+          @endcan
+          @can('browse_users')
           <li class=""><a class="nav-link" href="{{ route('user.index') }}"><i class="fas fa-user-circle"></i> <span>Users</span></a></li>
+          @endcan
+          @can('browse_roles', Model::class)
+          <li class=""><a class="nav-link" href="{{ route('role.index') }}"><i class="fas fa-key"></i> <span>Roles</span></a></li>
+          @endcan
           {{-- <li class="nav-item dropdown">
             <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             <ul class="dropdown-menu">

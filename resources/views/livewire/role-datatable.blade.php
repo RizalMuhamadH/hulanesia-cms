@@ -2,10 +2,10 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             {{-- <h4>Full Width</h4> --}}
-            @can('add_posts', Model::class)
-                <a href="{{ route('user.add') }}" class="btn btn-icon icon-left btn-primary"><i class="fas fa-plus"></i>
-                    Add</a>
-
+            @can('add_roles')
+            <a href="{{ route('role.add') }}" class="btn btn-icon icon-left btn-primary"><i class="fas fa-plus"></i>
+                Add</a>
+                
             @endcan
             <div class="card-header-form">
                 <form>
@@ -24,9 +24,6 @@
                     <tr>
                         <th>#</th>
                         <th>Name</th>
-                        <th>Email</th>
-                        <th>Image</th>
-                        <th>Roles</th>
                         <th>Create At</th>
                         <th>Action</th>
                     </tr>
@@ -34,33 +31,16 @@
                         <tr>
                             <td>{{ $loop->index + 1 }}</td>
                             <td>{{ $item->name }}</td>
-                            <td>{{ $item->email }}</td>
-                            <td>
-                                @if ($item->image)
-                                    <figure>
-                                        <img src="/storage/{{ $item->image->thumbnail('small', 'path') }}"
-                                            class="avatar mr-2 avatar-sm">
-                                    </figure>
-                                @else
-                                    <figure>
-                                        <img src="/storage/user/default.png" class="avatar mr-2 avatar-sm">
-                                    </figure>
-                                @endif
-                            </td>
-                            <td>
-                                @foreach ($item->roles as $role)
-                                    <div class="badge badge-info">{{ $role->name }}</div>
-                                @endforeach
-                            </td>
                             <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
                             <td>
-                                @can('edit_users')
-                                    <a href="{{ route('user.edit', $item->id) }}" class="btn btn-info">Edit</a>
-
+                                @can('edit_roles')
+                                <a href="{{ route('role.edit', $item->id) }}" class="btn btn-info">Edit</a>
+                                    
                                 @endcan
-                                @can('delete_users')
-                                    <button wire:click="destroy({{ $item->id }})" class="btn btn-danger">Delete</button>
-
+                                @can('delete_roles')
+                                <button
+                                   wire:click="destroy({{ $item->id }})" class="btn btn-danger">Delete</button>
+                                    
                                 @endcan
                             </td>
                         </tr>
