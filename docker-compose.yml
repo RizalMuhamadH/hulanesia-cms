@@ -6,7 +6,7 @@ services:
         restart: always
         command: redis-server --port 6379
         ports:
-            - "6379:6379"
+            - 6379:6379
 
     redis-slave:
         container_name: redis-slave
@@ -15,6 +15,22 @@ services:
         command: redis-server --slaveof redis-master 6379
         depends_on:
             - redis-master
+    
+    rabbitMQ:
+        image: rabbitmq:3.8-rc-management
+        container_name: rabbitMQ
+        hostname: rabbitMQ
+        restart: always
+        environment: 
+            - TZ=Asia/Jakarta
+            - RABBITMQ_DEFAULT_USER=rabbit
+            - RABBITMQ_DEFAULT_PASS=rabbit
+        ports: 
+            - 5672:5672
+            - 8082:15672
+        networks:
+            - web-app-net
+
 
     mariadb-default:
         # build: ./mysql-default
@@ -30,23 +46,11 @@ services:
             # - MYSQL_USER=root
             # - MYSQL_PASSWORD=db_ayo_media_trial
             - TZ=Asia/Jakarta
-        command: mysqld --sql_mode=""
+        # command: mysqld --sql_mode=""
         # command: mysqld --sql_mode="NO_ENGINE_SUBSTITUTION, STRICT_TRANS_TABLES, NO_ZERO_IN_DATE, NO_ZERO_DATE, ERROR_FOR_DIVISION_BY_ZERO, NO_AUTO_CREATE_USER"
         restart: always
-    
-    gobetween:
-        image: yyyar/gobetween:latest
-        container_name: gobetween
-        hostname: gobetween
-        ports: 
-            - 80:80
-            - 443:443
-        volumes:
-            - /home/rizal/Data/gobetween/conf:/etc/gobetween/conf/:rw
-        # networks:
-        #     web-app-net:
-        #         ipv4_address: 172.20.0.2
-        restart: always
+        networks:
+            - web-app-net
     
     phpmyadmin-mariadb:
         image: phpmyadmin/phpmyadmin
@@ -67,15 +71,11 @@ services:
             - MYSQL_PASSWORD=db_api
             - TZ=Asia/Jakarta
         restart: always
-        # networks:
-        #     web-app-net:
-        #         ipv4_address: 172.20.0.3
+        networks:
+            - web-app-net
         restart: always
 
-# networks:
-#     web-app-net:
-#         name: web-app-net
-#         driver: bridge
-#         ipam:
-#           config:
-#             - subnet: 172.20.0.0/24
+networks:
+    web-app-net:
+        name: web-app-net
+        driver: bridge
