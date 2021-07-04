@@ -45,6 +45,11 @@ class CategoryDatatable extends Component
 
     public function delete($id)
     {
-        Category::where('id', $id)->delete();
+        $category = Category::where('id', $id)->delete();
+        activity()
+            ->performedOn($category)
+            ->event('delete')
+            ->withProperties(['data' => $category])
+            ->log('delete category');
     }
 }

@@ -84,6 +84,12 @@ class ProfileController extends Controller
         //     'name' => $request->name,
         // ]);
 
+        activity()
+            ->performedOn($user)
+            ->event('udate')
+            ->withProperties(['data' => $user])
+            ->log('udate profile');
+
         return redirect()->route('profile.index')->with('message', 'Update Successfully');;
     }
 }

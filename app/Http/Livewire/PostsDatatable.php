@@ -48,6 +48,12 @@ class PostsDatatable extends Component
 
     public function delete($id)
     {
-        Post::where('id', $id)->delete();
+        $post = Post::where('id', $id)->delete();
+
+        activity()
+            ->performedOn($post)
+            ->event('delete')
+            ->withProperties(['data' => $post->with(['tags', 'image'])])
+            ->log('delete post');
     }
 }

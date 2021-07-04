@@ -46,6 +46,11 @@ class TagDatatable extends Component
 
     public function delete($id)
     {
-        Tag::where('id', $id)->delete();
+        $tag = Tag::where('id', $id)->delete();
+        activity()
+            ->performedOn($tag)
+            ->event('delete')
+            ->withProperties(['data' => $tag])
+            ->log('delete tag');
     }
 }

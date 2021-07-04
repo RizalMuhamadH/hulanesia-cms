@@ -46,6 +46,13 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
         $user->assignRole($request->input('roles'));
+
+        activity()
+            ->performedOn($user)
+            ->event('store')
+            ->withProperties(['data' => $user])
+            ->log('store user');
+
         return redirect()->route('user.index')->with('message', 'Add Successfully');
     }
 
@@ -73,6 +80,12 @@ class UserController extends Controller
         // $update = user::where('id', $id)->update([
         //     'name' => $request->name,
         // ]);
+
+        activity()
+            ->performedOn($user)
+            ->event('update')
+            ->withProperties(['data' => $user])
+            ->log('update user');
 
         return redirect()->route('user.index')->with('message', 'Update Successfully');;
     }

@@ -45,6 +45,11 @@ class UserDatatable extends Component
 
     public function delete($id)
     {
-        User::where('id', $id)->delete();
+        $user = User::where('id', $id)->delete();
+        activity()
+            ->performedOn($user)
+            ->event('delete')
+            ->withProperties(['data' => $user])
+            ->log('delete user');
     }
 }

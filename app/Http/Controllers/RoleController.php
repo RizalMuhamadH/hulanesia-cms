@@ -42,6 +42,12 @@ class RoleController extends Controller
         $role = Role::create(['name' => $request->input('name')]);
         $role->syncPermissions($request->input('permission'));
     
+        activity()
+            ->performedOn($role)
+            ->event('store')
+            ->withProperties(['data' => $role])
+            ->log('store role');
+
         return redirect()->route('role.index')
                         ->with('message','Role created successfully');
     }
@@ -75,6 +81,12 @@ class RoleController extends Controller
         $role->save();
     
         $role->syncPermissions($request->input('permission'));
+
+        activity()
+            ->performedOn($role)
+            ->event('update')
+            ->withProperties(['data' => $role])
+            ->log('update role');
     
         return redirect()->route('role.index')
                         ->with('message','Role updated successfully');

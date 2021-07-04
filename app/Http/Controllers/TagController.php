@@ -22,10 +22,17 @@ class TagController extends Controller
 
     public function store(Request $request)
     {
-        Tag::create([
+        $tag = Tag::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name, "-")
         ]);
+
+        activity()
+            ->performedOn($tag)
+            ->event('store')
+            ->withProperties(['data' => $tag])
+            ->log('store tag');
+
         return redirect()->route('tag.index')->with('message', 'Add Successfully');
     }
 
@@ -43,6 +50,12 @@ class TagController extends Controller
             'name' => $request->name,
             'slug' => Str::slug($request->name, "-")
         ]);
+
+        activity()
+            ->performedOn($update)
+            ->event('store')
+            ->withProperties(['data' => $update])
+            ->log('store tag');
 
         return redirect()->route('tag.index')->with('message', 'Update Successfully');;
     }

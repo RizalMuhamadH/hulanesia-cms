@@ -46,6 +46,11 @@ class FeatureDatatable extends Component
 
     public function delete($id)
     {
-        Feature::where('id', $id)->delete();
+        $feature = Feature::where('id', $id)->delete();
+        activity()
+            ->performedOn($feature)
+            ->event('delete')
+            ->withProperties(['data' => $feature])
+            ->log('delete feature');
     }
 }

@@ -22,9 +22,16 @@ class FeatureController extends Controller
 
     public function store(Request $request)
     {
-        Feature::create([
+        $feature = Feature::create([
             'name' => $request->name
         ]);
+
+        activity()
+            ->performedOn($feature)
+            ->event('store')
+            ->withProperties(['data' => $feature])
+            ->log('store feature');
+
         return redirect()->route('feature.index')->with('message', 'Add Successfully');
     }
 
@@ -41,6 +48,12 @@ class FeatureController extends Controller
         $update = Feature::where('id', $id)->update([
             'name' => $request->name
         ]);
+
+        activity()
+            ->performedOn($update)
+            ->event('update')
+            ->withProperties(['data' => $update])
+            ->log('update feature');
 
         return redirect()->route('feature.index')->with('message', 'Update Successfully');;
     }

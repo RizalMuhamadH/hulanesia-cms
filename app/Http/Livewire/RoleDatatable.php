@@ -45,6 +45,11 @@ class RoleDatatable extends Component
 
     public function delete($id)
     {
-        Role::where('id', $id)->delete();
+        $role = Role::where('id', $id)->delete();
+        activity()
+            ->performedOn($role)
+            ->event('delete')
+            ->withProperties(['data' => $role])
+            ->log('delete role');
     }
 }

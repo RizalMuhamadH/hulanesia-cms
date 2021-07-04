@@ -10,6 +10,8 @@ use App\Models\Post;
 use App\Models\Feature;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Facades\LogBatch;
+use Spatie\Activitylog\Models\Activity;
 
 class PostController extends Controller
 {
@@ -20,11 +22,14 @@ class PostController extends Controller
 
     public function add()
     {
+
+
         $action = 'Add';
         $categories = Category::get();
-        $tags = Tag::get(); 
+        $tags = Tag::get();
         $features = Feature::get();
-        return view('post.edit-add',[
+
+        return view('post.edit-add', [
             'action' => $action,
             'categories' => $categories,
             'tags' => $tags,
@@ -52,40 +57,48 @@ class PostController extends Controller
             'user_id' => Auth::user()->id
         ]);
 
+
         $post->tags()->attach($request->tags);
 
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
 
             $options = [
                 "resize" => [
-                    "width"=> "1024",
-                    "height"=> "null"
+                    "width" => "1024",
+                    "height" => "null"
                 ],
-                "quality"=> "70%",
-                "upsize"=> true,
-                "thumbnails"=> [
+                "quality" => "70%",
+                "upsize" => true,
+                "thumbnails" => [
                     [
-                        "name"=> "medium",
-                        "scale"=> "50%"
+                        "name" => "medium",
+                        "scale" => "50%"
                     ],
                     [
-                        "name"=> "small",
-                        "scale"=> "25%"
+                        "name" => "small",
+                        "scale" => "25%"
                     ],
                     [
-                        "name"=> "cropped",
-                        "crop"=> [
-                            "width"=> "300",
-                            "height"=> "250"
+                        "name" => "cropped",
+                        "crop" => [
+                            "width" => "300",
+                            "height" => "250"
                         ]
                     ]
                 ]
             ];
             $options = json_decode(json_encode($options));
-            
+
             $path = (new ImageHandler($request, 'posts', 'image', $options))->handle();
             $post->image()->create(['path' => $path]);
         }
+
+
+        activity()
+            ->performedOn($post)
+            ->event('store')
+            ->withProperties(['data' => $post->with(['tags', 'image'])])
+            ->log('store post');
 
         return redirect()->route('post.index')->with('message', 'Add Successfully');
     }
@@ -93,19 +106,19 @@ class PostController extends Controller
     public function edit($id)
     {
         $post = Post::findOrFail($id);
-        
+
         $categories = Category::get();
-        $tags = Tag::get(); 
+        $tags = Tag::get();
         $features = Feature::get();
 
         $action = 'Edit';
         return view('post.edit-add', [
-            'content' => $post, 
+            'content' => $post,
             'action' => $action,
             'categories' => $categories,
             'tags' => $tags,
             'features' => $features
-    ]);
+        ]);
     }
 
     public function update(Request $request, Post $post)
@@ -130,39 +143,45 @@ class PostController extends Controller
         $post->tags()->detach();
         $post->tags()->attach($request->tags);
 
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
 
             $options = [
                 "resize" => [
-                    "width"=> "1024",
-                    "height"=> "null"
+                    "width" => "1024",
+                    "height" => "null"
                 ],
-                "quality"=> "70%",
-                "upsize"=> true,
-                "thumbnails"=> [
+                "quality" => "70%",
+                "upsize" => true,
+                "thumbnails" => [
                     [
-                        "name"=> "medium",
-                        "scale"=> "50%"
+                        "name" => "medium",
+                        "scale" => "50%"
                     ],
                     [
-                        "name"=> "small",
-                        "scale"=> "25%"
+                        "name" => "small",
+                        "scale" => "25%"
                     ],
                     [
-                        "name"=> "cropped",
-                        "crop"=> [
-                            "width"=> "300",
-                            "height"=> "250"
+                        "name" => "cropped",
+                        "crop" => [
+                            "width" => "300",
+                            "height" => "250"
                         ]
                     ]
                 ]
             ];
             $options = json_decode(json_encode($options));
-            
+
             $path = (new ImageHandler($request, 'posts', 'image', $options))->handle();
             $post->image()->detach();
             $post->image()->create(['path' => $path]);
         }
+
+        activity()
+            ->performedOn($post)
+            ->event('update')
+            ->withProperties(['data' => $post->with(['tags', 'image'])])
+            ->log('update post');
 
         return redirect()->route('post.index')->with('message', 'Add Successfully');
     }

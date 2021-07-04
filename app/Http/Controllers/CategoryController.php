@@ -22,10 +22,17 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        Category::create([
+        $category = Category::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name, "-")
         ]);
+
+        activity()
+            ->performedOn($category)
+            ->event('store')
+            ->withProperties(['data' => $category])
+            ->log('store category');
+
         return redirect()->route('category.index')->with('message', 'Add Successfully');
     }
 
@@ -43,6 +50,12 @@ class CategoryController extends Controller
             'name' => $request->name,
             'slug' => Str::slug($request->name, "-")
         ]);
+
+        activity()
+            ->performedOn($update)
+            ->event('update')
+            ->withProperties(['data' => $update])
+            ->log('update category');
 
         return redirect()->route('category.index')->with('message', 'Update Successfully');;
     }
