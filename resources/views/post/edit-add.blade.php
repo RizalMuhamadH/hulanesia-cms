@@ -111,6 +111,12 @@
                                 @endisset
 
                                 <div class="form-group">
+                                    <label class="col-form-label">Caption</label>
+                                    <textarea rows="10" class="form-control"
+                                        name="caption">{{ $content->image->caption ?? '' }}</textarea>
+                                </div>
+
+                                <div class="form-group">
                                     @isset($content)
                                         @php
                                             $value = [];

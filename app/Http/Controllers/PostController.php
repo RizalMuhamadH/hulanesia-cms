@@ -41,7 +41,7 @@ class PostController extends Controller
     {
         $post = Post::create([
             'title' => $request->title,
-            'slug' => Str::slug($request->name, "-"),
+            'slug' => Str::slug($request->title, "-"),
             'description' => $request->description,
             'body' => $request->body,
             'source' => $request->source,
@@ -90,7 +90,7 @@ class PostController extends Controller
             $options = json_decode(json_encode($options));
 
             $path = (new ImageHandler($request, 'posts', 'image', $options))->handle();
-            $post->image()->create(['path' => $path]);
+            $post->image()->create(['path' => $path, 'caption' => $request->caption]);
         }
 
 
@@ -126,7 +126,7 @@ class PostController extends Controller
         $post->update([
 
             'title' => $request->title,
-            'slug' => Str::slug($request->name, "-"),
+            'slug' => Str::slug($request->title, "-"),
             'description' => $request->description,
             'body' => $request->body,
             'source' => $request->source,
@@ -139,7 +139,8 @@ class PostController extends Controller
             'seo_title' => $request->seo_title,
         ]);
 
-        // dd($post->tags());
+        // dd($post->tags->pluck('id'));
+        // $post->tags()->sync($post->tags->pluck('id'));
         $post->tags()->detach();
         $post->tags()->attach($request->tags);
 
@@ -173,8 +174,10 @@ class PostController extends Controller
             $options = json_decode(json_encode($options));
 
             $path = (new ImageHandler($request, 'posts', 'image', $options))->handle();
-            $post->image()->detach();
-            $post->image()->create(['path' => $path]);
+            $post->image->delete();
+            $post->image()->create(['path' => $path, 'caption' => $request->caption]);
+        } else {
+            $post->image()->update(['caption' => $request->caption]);
         }
 
         activity()
