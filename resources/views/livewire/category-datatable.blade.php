@@ -23,7 +23,8 @@
             <tr>
               <th>#</th>
               <th>Name</th>
-              <th>Slug</th>
+              <th>Parent</th>
+              <th>order</th>
               <th>Create At</th>
               <th>Action</th>
             </tr>
@@ -31,7 +32,8 @@
             <tr>
                 <td>{{ $loop->index+1 }}</td>
                 <td>{{ $item->name }}</td>
-                <td>{{ $item->slug }}</td>
+                <td>{{ $item->parent->name ?? '' }}</td>
+                <td>{{ $item->order }}</td>
                 <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
                 <td>
                   @can('edit_categories')

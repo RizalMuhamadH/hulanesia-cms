@@ -27,7 +27,7 @@ class FeatureController extends Controller
         ]);
 
         activity()
-            ->performedOn($feature)
+            ->performedOn(new Feature())
             ->event('store')
             ->withProperties(['data' => $feature])
             ->log('store feature');
@@ -50,7 +50,7 @@ class FeatureController extends Controller
         ]);
 
         activity()
-            ->performedOn($update)
+            ->performedOn(new Feature())
             ->event('update')
             ->withProperties(['data' => $update])
             ->log('update feature');

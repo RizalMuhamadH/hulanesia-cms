@@ -9,6 +9,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,6 +50,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('features/edit/{id}', [FeatureController::class, 'edit'])->middleware(['can:edit_features'])->name('feature.edit');
     Route::post('features/add', [FeatureController::class, 'store'])->middleware(['can:add_features'])->name('feature.store');
     Route::post('features/update/{id}', [FeatureController::class, 'update'])->middleware(['can:edit_features'])->name('feature.update');
+
+    Route::get('settings', [SettingController::class, 'index'])->middleware(['can:browse_settings'])->name('setting.index');
+    Route::get('settings/add', [SettingController::class, 'add'])->middleware(['can:add_settings'])->name('setting.add');
+    Route::get('settings/edit/{id}', [SettingController::class, 'edit'])->middleware(['can:edit_settings'])->name('setting.edit');
+    Route::post('settings/add', [SettingController::class, 'store'])->middleware(['can:add_settings'])->name('setting.store');
+    Route::post('settings/update/{id}', [SettingController::class, 'update'])->middleware(['can:edit_settings'])->name('setting.update');
 
     Route::get('users', [UserController::class, 'index'])->middleware(['can:browse_users'])->name('user.index');
     Route::get('users/add', [UserController::class, 'add'])->middleware(['can:add_users'])->name('user.add');

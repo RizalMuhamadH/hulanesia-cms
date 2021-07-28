@@ -11,11 +11,28 @@ class Category extends Model
 
     protected $fillable = [
         'name',
-        'slug'
+        'slug',
+        'parent_id',
+        'order'
     ];
 
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    public function parentId()
+    {
+        return $this->belongsTo(self::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
     }
 }

@@ -87,6 +87,6 @@ class UserController extends Controller
             ->withProperties(['data' => $user])
             ->log('update user');
 
-        return redirect()->route('user.index')->with('message', 'Update Successfully');;
+        return redirect()->route('user.index')->with('message', 'Update Successfully');
     }
 }

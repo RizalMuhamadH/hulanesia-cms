@@ -52,7 +52,7 @@ class TagController extends Controller
         ]);
 
         activity()
-            ->performedOn($update)
+            ->performedOn(new Tag())
             ->event('store')
             ->withProperties(['data' => $update])
             ->log('store tag');

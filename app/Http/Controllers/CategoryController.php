@@ -17,18 +17,22 @@ class CategoryController extends Controller
     {
         $action = 'Add';
 
-        return view('category.edit-add',['action' => $action]);
+        $parents = Category::where('parent_id', 0)->get();
+
+        return view('category.edit-add',['action' => $action, 'parents' => $parents]);
     }
 
     public function store(Request $request)
     {
         $category = Category::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name, "-")
+            'slug' => Str::slug($request->name, "-"),
+            'parent_id' => $request->parent_id,
+            'order' => $request->order
         ]);
 
         activity()
-            ->performedOn($category)
+            ->performedOn(new Category())
             ->event('store')
             ->withProperties(['data' => $category])
             ->log('store category');
@@ -39,20 +43,24 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = Category::findOrFail($id);
+        
+        $parents = Category::where('parent_id', 0)->get();
 
         $action = 'Edit';
-        return view('category.edit-add', ['content' => $category, 'action' => $action]);
+        return view('category.edit-add', ['content' => $category, 'action' => $action, 'parents' => $parents]);
     }
 
     public function update(Request $request, $id)
     {
         $update = Category::where('id', $id)->update([
             'name' => $request->name,
-            'slug' => Str::slug($request->name, "-")
+            'slug' => Str::slug($request->name, "-"),
+            'parent_id' => $request->parent_id,
+            'order' => $request->order
         ]);
 
         activity()
-            ->performedOn($update)
+            ->performedOn(new Category())
             ->event('update')
             ->withProperties(['data' => $update])
             ->log('update category');

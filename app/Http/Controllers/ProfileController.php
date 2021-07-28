@@ -85,7 +85,7 @@ class ProfileController extends Controller
         // ]);
 
         activity()
-            ->performedOn($user)
+            ->performedOn(new User())
             ->event('udate')
             ->withProperties(['data' => $user])
             ->log('udate profile');

@@ -20,6 +20,27 @@
                                     <input type="text" class="form-control" name="name" value="{{ $content->name ?? '' }}">
                                 </div>
                             </div>
+
+                            <div class="form-group row mb-4">
+                                <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2">Order</label>
+                                <div class="col-sm-12 col-md-7 col-lg-9">
+                                    <input type="number" class="form-control" name="order" value="{{ $content->order ?? '' }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group row mb-4">
+                                <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2">Parent</label>
+                                <div class="col-sm-12 col-md-7 col-lg-9">
+                                    <select id="parent" class="form-control selectric" name="parent_id">
+                                        <option value="0">Null</option>
+                                        @foreach ($parents as $item)
+                                            <option value="{{ $item->id }}" @isset($content)
+                                                {{ $content->parent_id == $item->id ? 'selected' : '' }} @endisset>{{ $item->name }}</option>
+                                        @endforeach
+
+                                    </select>
+                                </div>
+                            </div>
     
                             <div class="form-group row mb-4">
                                 <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2"></label>

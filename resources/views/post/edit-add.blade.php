@@ -27,9 +27,9 @@
                                         value="{{ $content->title ?? '' }}" required>
                                 </div>
                                 <!-- <div class="form-group">
-                                                    <label class="col-form-label">Slug</label>
-                                                    <input type="text" class="form-control">
-                                                </div> -->
+                                                            <label class="col-form-label">Slug</label>
+                                                            <input type="text" class="form-control">
+                                                        </div> -->
                                 <div class="form-group">
                                     <label class="col-form-label">Summary</label>
                                     <textarea rows="10" class="form-control"
@@ -39,8 +39,22 @@
                                     <label class="col-form-label">Category</label>
                                     <select id="category" class="form-control selectric" name="category_id" required>
                                         @foreach ($categories as $item)
-                                            <option value="{{ $item->id }}" @isset($content)
-                                                {{ $content->category_id == $item->id ? 'selected' : '' }} @endisset>{{ $item->name }}</option>
+                                            @if (count($item->children) != 0)
+
+                                                <optgroup label="{{ $item->name }}">
+                                                    @foreach ($item->children as $sub)
+                                                        <option value="{{ $sub->id }}" @isset($content)
+                                                                {{ $content->category_id == $sub->id ? 'selected' : '' }}
+                                                            @endisset>
+                                                            {{ $sub->name }}</option>
+                                                    @endforeach
+                                                </optgroup>
+                                            @else
+                                                <option value="{{ $item->id }}" @isset($content)
+                                                    {{ $content->category_id == $item->id ? 'selected' : '' }} @endisset>
+                                                    {{ $item->name }}</option>
+                                            @endif
+
                                         @endforeach
                                     </select>
                                 </div>
@@ -49,7 +63,8 @@
                                     <select id="feature" class="form-control selectric" name="feature_id" required>
                                         @foreach ($features as $item)
                                             <option value="{{ $item->id }}" @isset($content)
-                                                {{ $content->feature_id == $item->id ? 'selected' : '' }} @endisset>{{ $item->name }}</option>
+                                                {{ $content->feature_id == $item->id ? 'selected' : '' }} @endisset>
+                                                {{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -132,7 +147,8 @@
                                     <select class="form-control select2" multiple="" name="tags[]" required>
                                         @foreach ($tags as $item)
                                             <option value="{{ $item->id }}" @isset($content)
-                                                {{ $collection->contains($item->id ) ? 'selected' : '' }} @endisset>{{ $item->name }}</option>
+                                                {{ $collection->contains($item->id) ? 'selected' : '' }} @endisset>
+                                                {{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -195,6 +211,5 @@
             no_label: false, // Default: false
             success_callback: null // Default: null
         });
-
     </script>
 @endpush

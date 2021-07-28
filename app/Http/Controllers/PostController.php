@@ -25,7 +25,7 @@ class PostController extends Controller
 
 
         $action = 'Add';
-        $categories = Category::get();
+        $categories = Category::with('children')->where('parent_id', 0)->get();
         $tags = Tag::get();
         $features = Feature::get();
 
@@ -95,7 +95,7 @@ class PostController extends Controller
 
 
         activity()
-            ->performedOn($post)
+            ->performedOn(new Post())
             ->event('store')
             ->withProperties(['data' => $post->with(['tags', 'image'])])
             ->log('store post');
@@ -107,7 +107,7 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        $categories = Category::get();
+        $categories = Category::with('children')->where('parent_id', 0)->get();
         $tags = Tag::get();
         $features = Feature::get();
 

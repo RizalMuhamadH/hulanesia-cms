@@ -2,11 +2,11 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Category;
+use App\Models\Setting;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class CategoryDatatable extends Component
+class SettingsDatatable extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -23,15 +23,16 @@ class CategoryDatatable extends Component
     public function render()
     {
         if ($this->search != null) {
-            $this->data = Category::with('parent')->where('name', 'like', '%' . $this->search . '%')->latest()->paginate(10);
+            $this->data = Setting::where('name', 'like', '%' . $this->search . '%')->latest()->paginate(10);
         } else {
-            $this->data = Category::with('parent')->latest()->paginate(10);
+            $this->data = Setting::latest()->paginate(10);
         }
-        return view('livewire.category-datatable', [
+
+        return view('livewire.settings-datatable', [
             'data' => $this->data
         ]);
     }
-
+    
     public function destroy($id)
     {
         $this->dispatchBrowserEvent('swal:confirm', [
@@ -45,11 +46,11 @@ class CategoryDatatable extends Component
 
     public function delete($id)
     {
-        $category = Category::where('id', $id)->delete();
+        $feature = Feature::where('id', $id)->delete();
         activity()
-            ->performedOn($category)
+            ->performedOn($feature)
             ->event('delete')
-            ->withProperties(['data' => $category])
-            ->log('delete category');
+            ->withProperties(['data' => $feature])
+            ->log('delete setting');
     }
 }

@@ -24,8 +24,11 @@
           @can('browse_users')
           <li class="{{ Request::segment(1) == 'users' ? 'active' : '' }}"><a class="nav-link" href="{{ route('user.index') }}"><i class="fas fa-user-circle"></i> <span>Users</span></a></li>
           @endcan
-          @can('browse_roles', Model::class)
+          @can('browse_roles')
           <li class="{{ Request::segment(1) == 'roles' ? 'active' : '' }}"><a class="nav-link" href="{{ route('role.index') }}"><i class="fas fa-key"></i> <span>Roles</span></a></li>
+          @endcan
+          @can('browse_settings')
+          <li class="{{ Request::segment(1) == 'settings' ? 'active' : '' }}"><a class="nav-link" href="{{ route('setting.index') }}"><i class="fas fa-cogs"></i> <span>Settings</span></a></li>
           @endcan
           {{-- <li class="nav-item dropdown">
             <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
