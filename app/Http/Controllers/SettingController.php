@@ -24,7 +24,7 @@ class SettingController extends Controller
     {
         $setting = Setting::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->title, "-"),
+            'slug' => Str::slug($request->name, "-"),
             'content' => $request->content,
             'meta_description' => $request->meta_description,
             'meta_keywords' => $request->meta_keywords,
@@ -53,7 +53,7 @@ class SettingController extends Controller
     {
         $update = Setting::where('id', $id)->update([
             'name' => $request->name,
-            'slug' => Str::slug($request->title, "-"),
+            'slug' => Str::slug($request->name, "-"),
             'content' => $request->content,
             'meta_description' => $request->meta_description,
             'meta_keywords' => $request->meta_keywords,
@@ -66,6 +66,6 @@ class SettingController extends Controller
             ->withProperties(['data' => $update])
             ->log('update setting');
 
-        return redirect()->route('setting.index')->with('message', 'Update Successfully');;
+        return redirect()->route('setting.index')->with('message', 'Update Successfully');
     }
 }
