@@ -8,6 +8,7 @@ services:
         hostname:  hulanesia-panel
         volumes:
             - /docker-projects/hulanesia/panel:/var/www/html/
+            - /docker-projects/hulanesia/media:/var/www/html/storage/app/public/
         environment:
             - DEBIAN_FRONTEND=noninteractive
             - TZ=Asia/Jakarta
@@ -32,64 +33,7 @@ services:
         command: redis-server --slaveof redis-master 6379
         depends_on:
             - redis-master
-    
-    rabbitMQ:
-        image: rabbitmq:3.8-rc-management
-        container_name: rabbitMQ
-        hostname: rabbitMQ
-        restart: always
-        environment: 
-            - TZ=Asia/Jakarta
-            - RABBITMQ_DEFAULT_USER=rabbit
-            - RABBITMQ_DEFAULT_PASS=rabbit
-        ports: 
-            - 5672:5672
-            - 8082:15672
-        networks:
-            - web-app-net
-
-
-    mariadb-default:
-        # build: ./mysql-default
-        # image: mysql-default
-        image: mariadb:latest
-        container_name: mariadb-default
-        hostname: mariadb-default
-        volumes:
-            - /docker-projects/mariadb-default/mysql:/var/lib/mysql/
-            - /docker-projects/mariadb-default/dumpstore:/dumpstore/
-        environment:
-            - MYSQL_DATABASE=db_hulanesia
-            - MYSQL_ROOT_PASSWORD=hulanesia-db
-            # - MYSQL_USER=root
-            # - MYSQL_PASSWORD=db_ayo_media_trial
-            - TZ=Asia/Jakarta
-        # command: mysqld --sql_mode=""
-        # command: mysqld --sql_mode="NO_ENGINE_SUBSTITUTION, STRICT_TRANS_TABLES, NO_ZERO_IN_DATE, NO_ZERO_DATE, ERROR_FOR_DIVISION_BY_ZERO, NO_AUTO_CREATE_USER"
-        restart: always
-        networks:
-            - web-app-net
-    
-    phpmyadmin-mariadb:
-        image: phpmyadmin/phpmyadmin
-        container_name: phpmyadmin-mariadb
-        hostname: phpmyadmin-mariadb
-        environment:
-            - PMA_ARBITRARY=1
-            - PMA_HOST=mariadb-default
-        depends_on:
-            - mariadb-default
-        environment:
-            - UPLOAD_LIMIT=500M
-            - PMA_HOST=mariadb-default
-            - MYSQL_USERNAME=root
-            - MYSQL_ROOT_PASSWORD=db_hulanesia
-            - MYSQL_PASSWORD=hulanesia-db
-            - TZ=Asia/Jakarta
-        restart: always
-        networks:
-            - web-app-net
-        restart: always
+            
     nginx-proxy-ssl:
         # image: nginx:latest
         build: ./nginx-proxy-ssl
