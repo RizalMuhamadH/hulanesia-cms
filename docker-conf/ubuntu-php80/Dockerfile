@@ -5,7 +5,7 @@ RUN apt-get update \
 	&& apt-add-repository ppa:ondrej/php
 RUN	apt-get update \
 	&& apt-get install tzdata -y 
-RUN	apt-get install php8.0 libapache2-mod-php8.0 php8.0-bcmath php8.0-bz2 php8.0-cli php8.0-common php8.0-curl php8.0-gd php8.0-imagick php8.0-intl php8.0-mbstring php8.0-mcrypt php8.0-mysql php8.0-soap php8.0-redis php8.0-xml -y \
+RUN	apt-get install php8.0 libapache2-mod-php8.0 php8.0-swoole php8.0-bcmath php8.0-bz2 php8.0-cli php8.0-common php8.0-curl php8.0-gd php8.0-imagick php8.0-intl php8.0-mbstring php8.0-mcrypt php8.0-mysql php8.0-soap php8.0-redis php8.0-xml -y \
 	&& apt-get install nano -y
 
 
