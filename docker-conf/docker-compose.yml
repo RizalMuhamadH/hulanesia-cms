@@ -1,14 +1,32 @@
 version: "3.8"
 services:
-    hulanesia-panel:
+    wehealth-panel:
         # image: centos:centos7
         build: ./ubuntu-php80
         image: ubuntu-php80
-        container_name:  hulanesia-panel
-        hostname:  hulanesia-panel
+        container_name:  wehealth-panel
+        hostname:  wehealth-panel
         volumes:
-            - /docker-projects/hulanesia/panel:/var/www/html/
-            - /docker-projects/hulanesia/media:/var/www/html/storage/app/public/
+            - /docker-projects/wehealth.id/panel:/var/www/html/
+            - /docker-projects/wehealth.id/media:/var/www/html/storage/app/public/
+        environment:
+            - DEBIAN_FRONTEND=noninteractive
+            - TZ=Asia/Jakarta
+        command: bash
+        tty: true
+        networks:
+            - web-app-net
+        restart: always
+
+    wehealth-app:
+        # image: centos:centos7
+        build: ./ubuntu-php80
+        image: ubuntu-php80
+        container_name:  wehealth-app
+        hostname:  wehealth-app
+        volumes:
+            - /docker-projects/wehealth.id/app:/var/www/html/
+            - /docker-projects/wehealth.id/media:/var/www/html/storage/app/public/
         environment:
             - DEBIAN_FRONTEND=noninteractive
             - TZ=Asia/Jakarta

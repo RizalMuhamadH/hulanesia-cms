@@ -1,6 +1,6 @@
-FROM ubuntu:20.10
+FROM ubuntu:20.04
 
-RUN apt-get update \
+RUN apt-get update && apt-get upgrade -y \
 	&& apt-get install software-properties-common -y \
 	&& apt-add-repository ppa:ondrej/php
 RUN	apt-get update \

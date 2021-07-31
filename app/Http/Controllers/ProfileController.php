@@ -74,6 +74,7 @@ class ProfileController extends Controller
             $options = json_decode(json_encode($options));
             
             $path = (new ImageHandler($request, 'users', 'image', $options))->handle();
+	    $user->image->delete();
             $user->image()->create(['path' => $path]);
         }
         if ($request->password) {
