@@ -89,6 +89,19 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
+                                    <label class="col-form-label">Author</label>
+                                    <select id="author_id" class="form-control select2" name="author_id"
+                                        value="{{ $content->author_id ?? '' }}" required>
+                                        <option value="">Null</option>
+                                        @foreach ($users as $item)
+                                        <option value="{{ $item->id }}" @isset($content)
+                                            {{ $content->author_id == $item->id ? 'selected' : '' }} @endisset>
+                                            {{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
                                     <label class="col-form-label">Status</label>
                                     <select id="status" class="form-control selectric" name="status"
                                         value="{{ $content->status ?? '' }}" required>

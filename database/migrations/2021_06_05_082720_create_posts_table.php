@@ -24,6 +24,7 @@ class CreatePostsTable extends Migration
             $table->unsignedBigInteger('feature_id');
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('author_id')->nullable();
             $table->string('status')->default('DRAFT');
             // $table->string('slug');
             $table->string('meta_description')->nullable();
@@ -34,6 +35,7 @@ class CreatePostsTable extends Migration
 
             $table->foreign('category_id')->references('id')->on('categories');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('author_id')->references('id')->on('users');
             $table->foreign('feature_id')->references('id')->on('features');
         });
     }

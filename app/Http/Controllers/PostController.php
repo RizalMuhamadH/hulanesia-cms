@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Tag;
 use App\Models\Post;
 use App\Models\Feature;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Facades\LogBatch;
@@ -28,12 +29,14 @@ class PostController extends Controller
         $categories = Category::with('children')->where('parent_id', 0)->get();
         $tags = Tag::get();
         $features = Feature::get();
+        $users = User::get();
 
         return view('post.edit-add', [
             'action' => $action,
             'categories' => $categories,
             'tags' => $tags,
-            'features' => $features
+            'features' => $features,
+            'users' => $users
         ]);
     }
 
@@ -54,7 +57,8 @@ class PostController extends Controller
             'meta_keywords' => $request->meta_keywords,
             'seo_title' => $request->seo_title,
             'published_at' => $request->published_at,
-            'user_id' => Auth::user()->id
+            'user_id' => Auth::user()->id,
+            'author_id' => $request->author_id
         ]);
 
 
@@ -110,6 +114,7 @@ class PostController extends Controller
         $categories = Category::with('children')->where('parent_id', 0)->get();
         $tags = Tag::get();
         $features = Feature::get();
+        $users = User::get();
 
         $action = 'Edit';
         return view('post.edit-add', [
@@ -117,7 +122,8 @@ class PostController extends Controller
             'action' => $action,
             'categories' => $categories,
             'tags' => $tags,
-            'features' => $features
+            'features' => $features,
+            'users' => $users
         ]);
     }
 
@@ -137,6 +143,7 @@ class PostController extends Controller
             'meta_description' => $request->meta_description,
             'meta_keywords' => $request->meta_keywords,
             'seo_title' => $request->seo_title,
+            'author_id' => $request->author_id
         ]);
 
         // dd($post->tags->pluck('id'));

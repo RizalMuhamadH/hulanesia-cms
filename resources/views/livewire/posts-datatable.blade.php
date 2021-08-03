@@ -55,7 +55,7 @@
                                     <div class="badge badge-warning">{{ $item->status }}</div>
                                 @endif
                             </td>
-                            <td>{{ $item->user->name }}</td>
+                            <td>{{ $item->author->name ?? '' }}</td>
                             <td>{{ $item->published_at->format('d, M Y H:m') }}</td>
                             <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
                             <td>
