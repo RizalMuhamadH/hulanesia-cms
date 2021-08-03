@@ -157,7 +157,7 @@
                                         @endphp
                                     @endisset
                                     <label class="col-form-label">Tags</label>
-                                    <select class="form-control select2" multiple="" name="tags[]" required>
+                                    <select id="tags" class="form-control select2" multiple="" name="tags[]" required>
                                         @foreach ($tags as $item)
                                             <option value="{{ $item->id }}" @isset($content)
                                                 {{ $collection->contains($item->id) ? 'selected' : '' }} @endisset>
