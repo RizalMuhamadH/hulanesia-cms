@@ -10,6 +10,7 @@ use App\Http\Controllers\UploadController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\PhotoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -72,6 +73,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('posts/edit/{id}', [PostController::class, 'edit'])->middleware(['can:edit_posts'])->name('post.edit');
     Route::post('posts/add', [PostController::class, 'store'])->middleware(['can:add_posts'])->name('post.store');
     Route::post('posts/update/{post}', [PostController::class, 'update'])->middleware(['can:edit_posts'])->name('post.update');
+
+    
+    Route::get('photos', [PhotoController::class, 'index'])->middleware(['can:browse_photos'])->name('photo.index');
+    Route::get('photos/add', [PhotoController::class, 'add'])->middleware(['can:add_photos'])->name('photo.add');
+    Route::get('photos/edit/{id}', [PhotoController::class, 'edit'])->middleware(['can:edit_photos'])->name('photo.edit');
+    Route::post('photos/add', [PhotoController::class, 'store'])->middleware(['can:add_photos'])->name('photo.store');
+    Route::post('photos/update/{photo}', [PhotoController::class, 'update'])->middleware(['can:edit_photos'])->name('photo.update');
 
     Route::get('roles', [RoleController::class, 'index'])->middleware(['can:browse_roles'])->name('role.index');
     Route::get('roles/add', [RoleController::class, 'add'])->middleware(['can:add_roles'])->name('role.add');
