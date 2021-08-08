@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\ContentTypes\MultipleImageHandler;
 use Illuminate\Http\Request;
 use App\Models\Photo;
 use App\Models\User;
@@ -39,10 +40,7 @@ class PhotoController extends Controller
             'user_id' => Auth::user()->id
         ]);
 
-
-        $photo->tags()->attach($request->tags);
-
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('images')) {
 
             $options = [
                 "resize" => [
@@ -71,13 +69,13 @@ class PhotoController extends Controller
             ];
             $options = json_decode(json_encode($options));
 
-            $path = (new ImageHandler($request, 'photos', 'image', $options))->handle();
+            $path = (new MultipleImageHandler($request, 'photos', 'images', $options))->handle();
             $photo->image()->create(['path' => $path, 'caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source]);
         }
 
 
         activity()
-            ->performedOn(new Post())
+            ->performedOn(new Photo())
             ->event('store')
             ->withProperties(['data' => $photo->with(['tags', 'image'])])
             ->log('store photo');
@@ -137,7 +135,7 @@ class PhotoController extends Controller
             ];
             $options = json_decode(json_encode($options));
 
-            $path = (new ImageHandler($request, 'photos', 'image', $options))->handle();
+            $path = (new MultipleImageHandler($request, 'photos', 'images', $options))->handle();
             $photo->image()->create(['path' => $path, 'caption' => $request->caption]);
         } else {
             $photo->image()->update(['caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source]);

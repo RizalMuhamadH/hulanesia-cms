@@ -28,24 +28,16 @@
                                 </div>                                
                                 <div class="form-group">
                                     <label class="col-form-label">Description</label>
-                                    <textarea id="tinymce" rows="10" class="form-control"
+                                    <textarea id="tinymce" rows="5" class="form-control"
                                         name="description">{{ $content->description ?? '' }}</textarea>
-                                </div>                                
+                                </div>
+                                
+                                
+                                <livewire:form.photos-field>
+
                             </div>
 
-                            <div class="col-md-4">                                
-                                
-
-                                
-
-                                <div class="form-group">
-                                    <label class="col-form-label">Image</label>
-                                    <div id="image-preview" class="image-preview">
-                                        <label for="image-upload" id="image-label">Choose File</label>
-                                        <input type="file" name="image" id="image-upload" />
-                                    </div>
-                                </div>
-
+                            <div class="col-md-4">                            
                                 @isset($content)
                                     <div class="form-group">
                                         <label class="col-form-label">Preview</label>

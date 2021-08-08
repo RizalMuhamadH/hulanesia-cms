@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Datatable;
 
-use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Spatie\Permission\Models\Role;
 
-class UserDatatable extends Component
+class RoleDatatable extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -23,11 +23,11 @@ class UserDatatable extends Component
     public function render()
     {
         if ($this->search != null) {
-            $this->data = User::with(['roles'])->where('name', 'like', '%' . $this->search . '%')->latest()->paginate(10);
+            $this->data = Role::where('name', 'like', '%' . $this->search . '%')->latest()->paginate(10);
         } else {
-            $this->data = User::with(['roles'])->latest()->paginate(10);
+            $this->data = Role::latest()->paginate(10);
         }
-        return view('livewire.user-datatable', [
+        return view('livewire.datatable.role-datatable', [
             'data' => $this->data
         ]);
     }
@@ -45,11 +45,11 @@ class UserDatatable extends Component
 
     public function delete($id)
     {
-        $user = User::where('id', $id)->delete();
+        $role = Role::where('id', $id)->delete();
         activity()
-            ->performedOn($user)
+            ->performedOn($role)
             ->event('delete')
-            ->withProperties(['data' => $user])
-            ->log('delete user');
+            ->withProperties(['data' => $role])
+            ->log('delete role');
     }
 }

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Constraint;
 use Intervention\Image\Facades\Image as InterventionImage;
-use TCG\Voyager\Http\Controllers\ContentTypes\BaseType;
 
 class MultipleImageHandler extends BaseType
 {

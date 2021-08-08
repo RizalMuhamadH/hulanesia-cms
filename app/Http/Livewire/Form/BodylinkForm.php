@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Form;
 
 use Livewire\Component;
 
@@ -12,6 +12,6 @@ class BodylinkForm extends Component
         if($this->count != 0){
             dd($this->count);
         }
-        return view('livewire.bodylink-form');
+        return view('livewire.form.bodylink-form');
     }
 }

@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Datatable;
 
-use App\Models\Photo;
+use App\Models\Setting;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class PhotoDatatable extends Component
+class SettingsDatatable extends Component
 {
-    
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
@@ -24,12 +23,12 @@ class PhotoDatatable extends Component
     public function render()
     {
         if ($this->search != null) {
-            $this->data = Photo::with(['image', 'user'])->where('title', 'like', '%' . $this->search . '%')->latest()->paginate(10);
+            $this->data = Setting::where('name', 'like', '%' . $this->search . '%')->latest()->paginate(10);
         } else {
-            $this->data = Photo::with(['image', 'user'])->latest()->paginate(10);
+            $this->data = Setting::latest()->paginate(10);
         }
 
-        return view('livewire.photo-datatable', [
+        return view('livewire.datatable.settings-datatable', [
             'data' => $this->data
         ]);
     }
@@ -47,12 +46,11 @@ class PhotoDatatable extends Component
 
     public function delete($id)
     {
-        $photo = Photo::where('id', $id)->delete();
-
+        $feature = Setting::where('id', $id)->delete();
         activity()
-            ->performedOn($photo)
+            ->performedOn($feature)
             ->event('delete')
-            ->withProperties(['data' => $photo->with(['images'])])
-            ->log('delete photo');
+            ->withProperties(['data' => $feature])
+            ->log('delete setting');
     }
 }

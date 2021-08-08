@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="section-body">
-        <livewire:tag-datatable />
+        <livewire:datatable.tag-datatable />
     </div>
 @endsection
 @push('script')

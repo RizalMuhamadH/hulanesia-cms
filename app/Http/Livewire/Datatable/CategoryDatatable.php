@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Datatable;
 
 use App\Models\Category;
 use Livewire\Component;
@@ -27,7 +27,7 @@ class CategoryDatatable extends Component
         } else {
             $this->data = Category::with('parent')->latest()->paginate(10);
         }
-        return view('livewire.category-datatable', [
+        return view('livewire.datatable.category-datatable', [
             'data' => $this->data
         ]);
     }

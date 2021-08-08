@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Datatable;
 
-use App\Models\Tag;
+use App\Models\Feature;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class TagDatatable extends Component
+class FeatureDatatable extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -23,12 +23,12 @@ class TagDatatable extends Component
     public function render()
     {
         if ($this->search != null) {
-            $this->data = Tag::where('name', 'like', '%' . $this->search . '%')->latest()->paginate(10);
+            $this->data = Feature::where('name', 'like', '%' . $this->search . '%')->latest()->paginate(10);
         } else {
-            $this->data = Tag::latest()->paginate(10);
+            $this->data = Feature::latest()->paginate(10);
         }
 
-        return view('livewire.tag-datatable', [
+        return view('livewire.datatable.feature-datatable', [
             'data' => $this->data
         ]);
     }
@@ -46,11 +46,11 @@ class TagDatatable extends Component
 
     public function delete($id)
     {
-        $tag = Tag::where('id', $id)->delete();
+        $feature = Feature::where('id', $id)->delete();
         activity()
-            ->performedOn($tag)
+            ->performedOn($feature)
             ->event('delete')
-            ->withProperties(['data' => $tag])
-            ->log('delete tag');
+            ->withProperties(['data' => $feature])
+            ->log('delete feature');
     }
 }

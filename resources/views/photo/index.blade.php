@@ -7,6 +7,6 @@
         </div>
     </div>
     <div class="section-body">
-        <livewire:photo-datatable />
+        <livewire:datatable.photo-datatable />
     </div>
 @endsection

@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Datatable;
 
-use App\Models\Feature;
+use App\Models\Photo;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class FeatureDatatable extends Component
+class PhotoDatatable extends Component
 {
+    
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
@@ -19,20 +20,20 @@ class FeatureDatatable extends Component
     ];
 
     protected $listeners = ['delete' => 'delete'];
-    
+
     public function render()
     {
         if ($this->search != null) {
-            $this->data = Feature::where('name', 'like', '%' . $this->search . '%')->latest()->paginate(10);
+            $this->data = Photo::with(['image', 'user'])->where('title', 'like', '%' . $this->search . '%')->latest()->paginate(10);
         } else {
-            $this->data = Feature::latest()->paginate(10);
+            $this->data = Photo::with(['image', 'user'])->latest()->paginate(10);
         }
 
-        return view('livewire.feature-datatable', [
+        return view('livewire.datatable.photo-datatable', [
             'data' => $this->data
         ]);
     }
-
+    
     public function destroy($id)
     {
         $this->dispatchBrowserEvent('swal:confirm', [
@@ -46,11 +47,12 @@ class FeatureDatatable extends Component
 
     public function delete($id)
     {
-        $feature = Feature::where('id', $id)->delete();
+        $photo = Photo::where('id', $id)->delete();
+
         activity()
-            ->performedOn($feature)
+            ->performedOn($photo)
             ->event('delete')
-            ->withProperties(['data' => $feature])
-            ->log('delete feature');
+            ->withProperties(['data' => $photo->with(['images'])])
+            ->log('delete photo');
     }
 }

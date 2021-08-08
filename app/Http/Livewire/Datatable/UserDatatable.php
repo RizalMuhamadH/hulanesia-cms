@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Datatable;
 
-use App\Models\Setting;
+use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class SettingsDatatable extends Component
+class UserDatatable extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -19,20 +19,19 @@ class SettingsDatatable extends Component
     ];
 
     protected $listeners = ['delete' => 'delete'];
-
+    
     public function render()
     {
         if ($this->search != null) {
-            $this->data = Setting::where('name', 'like', '%' . $this->search . '%')->latest()->paginate(10);
+            $this->data = User::with(['roles'])->where('name', 'like', '%' . $this->search . '%')->latest()->paginate(10);
         } else {
-            $this->data = Setting::latest()->paginate(10);
+            $this->data = User::with(['roles'])->latest()->paginate(10);
         }
-
-        return view('livewire.settings-datatable', [
+        return view('livewire.datatable.user-datatable', [
             'data' => $this->data
         ]);
     }
-    
+
     public function destroy($id)
     {
         $this->dispatchBrowserEvent('swal:confirm', [
@@ -46,11 +45,11 @@ class SettingsDatatable extends Component
 
     public function delete($id)
     {
-        $feature = Feature::where('id', $id)->delete();
+        $user = User::where('id', $id)->delete();
         activity()
-            ->performedOn($feature)
+            ->performedOn($user)
             ->event('delete')
-            ->withProperties(['data' => $feature])
-            ->log('delete setting');
+            ->withProperties(['data' => $user])
+            ->log('delete user');
     }
 }

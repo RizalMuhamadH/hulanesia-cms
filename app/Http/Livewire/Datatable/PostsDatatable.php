@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Datatable;
 
 
 use App\Models\Post;
@@ -30,7 +30,7 @@ class PostsDatatable extends Component
             $this->data = Post::with(['category', 'feature', 'image', 'tags', 'user', 'author'])->latest()->paginate(10);
         }
 
-        return view('livewire.posts-datatable', [
+        return view('livewire.datatable.posts-datatable', [
             'data' => $this->data
         ]);
     }
