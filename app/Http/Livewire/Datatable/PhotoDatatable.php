@@ -24,9 +24,9 @@ class PhotoDatatable extends Component
     public function render()
     {
         if ($this->search != null) {
-            $this->data = Photo::with(['image', 'user'])->where('title', 'like', '%' . $this->search . '%')->latest()->paginate(10);
+            $this->data = Photo::with(['user'])->where('title', 'like', '%' . $this->search . '%')->latest()->paginate(10);
         } else {
-            $this->data = Photo::with(['image', 'user'])->latest()->paginate(10);
+            $this->data = Photo::with(['user'])->latest()->paginate(10);
         }
 
         return view('livewire.datatable.photo-datatable', [

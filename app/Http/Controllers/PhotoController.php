@@ -69,8 +69,11 @@ class PhotoController extends Controller
             ];
             $options = json_decode(json_encode($options));
 
-            $path = (new MultipleImageHandler($request, 'photos', 'images', $options))->handle();
-            $photo->image()->create(['path' => $path, 'caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source]);
+            $paths = (new MultipleImageHandler($request, 'photos', 'images', $options))->handle();
+            foreach ($paths as $key => $path) {
+                $images[$key] = ['path' => $path, 'caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source];
+            }
+            $photo->images()->createMany([...$images]);
         }
 
 
@@ -85,7 +88,7 @@ class PhotoController extends Controller
 
     public function edit($id)
     {
-        $photo = Photo::findOrFail($id);
+        $photo = Photo::with(['images'])->findOrFail($id);
 
         $users = User::get();
 
@@ -106,7 +109,7 @@ class PhotoController extends Controller
             'description' => $request->description
         ]);
 
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('images')) {
 
             $options = [
                 "resize" => [
@@ -135,10 +138,14 @@ class PhotoController extends Controller
             ];
             $options = json_decode(json_encode($options));
 
-            $path = (new MultipleImageHandler($request, 'photos', 'images', $options))->handle();
-            $photo->image()->create(['path' => $path, 'caption' => $request->caption]);
+            $paths = (new MultipleImageHandler($request, 'photos', 'images', $options))->handle();
+            for ($i=0; $i < count($paths); $i++) { 
+                $images[$i] = ['path' => $paths[$i], 'caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source];
+            }
+            
+            $photo->images()->createMany([...$images]);
         } else {
-            $photo->image()->update(['caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source]);
+            $photo->images()->update(['caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source]);
         }
 
         activity()

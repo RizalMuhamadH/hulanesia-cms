@@ -15,7 +15,8 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <form action="{{ $action == 'Add' ? route('photo.store') : route('photo.update', $content->id ?? '') }}"
+                    <form
+                        action="{{ $action == 'Add' ? route('photo.store') : route('photo.update', $content->id ?? '') }}"
                         method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body row">
@@ -25,36 +26,42 @@
                                     <label class="col-form-label">Title</label>
                                     <input type="text" class="form-control" name="title"
                                         value="{{ $content->title ?? '' }}" required>
-                                </div>                                
+                                </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Description</label>
                                     <textarea id="tinymce" rows="5" class="form-control"
                                         name="description">{{ $content->description ?? '' }}</textarea>
                                 </div>
-                                
-                                
-                                <livewire:form.photos-field>
+
+
+                                <livewire:form.photos-field wire:current="{{ $content->images ?? [] }}">
 
                             </div>
 
-                            <div class="col-md-4">                            
+                            <div class="col-md-4">
                                 @isset($content)
-                                    <div class="form-group">
-                                        <label class="col-form-label">Preview</label>
-                                        <img src="/storage/{{ $content->image->path }}" class="img-fluid" alt="" srcset="">
-                                    </div>
+                                    @if (count($content->images) != 0)
+                                        <div class="form-group">
+                                            <label class="col-form-label">Current</label>
+                                            @foreach ($$content->images as $image)
+                                                
+                                            @endforeach
+                                            <img src="/storage/{{ $image->path ?? '' }}" class="img-fluid" alt=""
+                                                srcset="">
+                                        </div>
+                                    @endif
                                 @endisset
 
                                 <div class="form-group">
                                     <label class="col-form-label">Caption</label>
                                     <textarea rows="10" class="form-control"
-                                        name="caption">{{ $content->image->caption ?? '' }}</textarea>
+                                        name="caption">{{ $content->images[0]->caption ?? '' }}</textarea>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-form-label">Photographer</label>
                                     <input type="text" class="form-control" name="photographer"
-                                        value="{{ $content->photographer ?? '' }}">
+                                        value="{{ $content->images[0]->photographer ?? '' }}">
                                 </div>
                             </div>
 

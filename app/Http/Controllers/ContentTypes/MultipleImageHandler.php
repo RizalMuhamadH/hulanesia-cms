@@ -115,6 +115,6 @@ class MultipleImageHandler extends BaseType
             }
         }
 
-        return json_encode($filesPath);
+        return $filesPath;
     }
 }
