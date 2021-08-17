@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Facades\LogBatch;
 use Spatie\Activitylog\Models\Activity;
+use App\Http\Resources\PostResource;
+use App\Helpers\Meilisearch;
 
 class PostController extends Controller
 {
@@ -97,6 +99,9 @@ class PostController extends Controller
             $post->image()->create(['path' => $path, 'caption' => $request->caption]);
         }
 
+        Meilisearch::get()->index('post')->updateDocuments([
+            json_decode((new PostResource($post))->toJson(), true)
+        ]);
 
         activity()
             ->performedOn(new Post())
@@ -186,6 +191,9 @@ class PostController extends Controller
         } else {
             $post->image()->update(['caption' => $request->caption]);
         }
+        Meilisearch::get()->index('post')->updateDocuments([
+            json_decode((new PostResource($post))->toJson(), true)
+        ]);
 
         activity()
             ->performedOn($post)

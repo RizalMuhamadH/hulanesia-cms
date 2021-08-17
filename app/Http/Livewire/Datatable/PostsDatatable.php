@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Datatable;
 
 
 use App\Models\Post;
+use App\Helpers\Meilisearch;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -48,6 +49,8 @@ class PostsDatatable extends Component
 
     public function delete($id)
     {
+        Meilisearch::get()->deleteDocument($id);
+
         $post = Post::where('id', $id)->delete();
 
         activity()
