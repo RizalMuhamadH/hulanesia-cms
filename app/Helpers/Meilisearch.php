@@ -24,6 +24,14 @@ class Meilisearch {
         return $client->getAllIndexes();
     }
 
+    public static function setIndexs()
+    {
+        $client = new Client(env('MEILISEARCH_HOST',''), env('MEILISEARCH_KEY', null));
+        $client->createIndex('post', ['primaryKey' => 'id']);
+        $client->createIndex('category', ['primaryKey' => 'id']);
+
+    }
+
     public function setFacetFilter()
     {
         $client = new Client(env('MEILISEARCH_HOST',''), env('MEILISEARCH_KEY', null));
@@ -43,5 +51,18 @@ class Meilisearch {
         $client->index('photo')->updateRankingRules([
             'desc(created_at)'
           ]);
+    }
+
+    public static function deleteAll()
+    {
+        $client = new Client(env('MEILISEARCH_HOST',''), env('MEILISEARCH_KEY', null));
+
+        $client->index('post')->deleteAllDocuments();
+        $client->index('category')->deleteAllDocuments();
+
+        $client->deleteIndex('post');
+        $client->deleteIndex('category');
+
+
     }
 }
