@@ -4,7 +4,7 @@
         <input type="file" name="images[]" wire:model="photos" class="custom-file-input" id="customFile" multiple>
         <label class="custom-file-label" for="customFile">Choose file</label>
     </div>
-    
+
     @if ($photos)
 
         <div class="row gutters-sm m-2">
@@ -22,5 +22,27 @@
         </div>
 
     @endif
+
+    @isset($current)
+        @if (count($current) != 0)
+            <div class="form-group">
+                <label class="col-form-label">Current</label>
+
+                <div class="row gutters-sm m-2">
+                    @foreach ($current as $image)
+                        <div class="col-6 col-sm-4">
+                            <a href="#" wire:click.prevent="removeImg({{$loop->index}}, {{$image->id}})" class="fas fa-times"></a>
+                            <label class="mb-4">
+                                <figure class="imagecheck-figure">
+                                    <img src="/storage/{{ $image->path ?? '' }}" class="img-fluid" alt="" srcset="">
+                                </figure>
+                            </label>
+                        </div>
+
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    @endisset
 
 </div>

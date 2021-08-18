@@ -34,23 +34,11 @@
                                 </div>
 
 
-                                <livewire:form.photos-field wire:current="{{ $content->images ?? [] }}">
+                                <livewire:form.photos-field :current="$content->images ?? []">
 
                             </div>
 
                             <div class="col-md-4">
-                                @isset($content)
-                                    @if (count($content->images) != 0)
-                                        <div class="form-group">
-                                            <label class="col-form-label">Current</label>
-                                            @foreach ($$content->images as $image)
-                                                
-                                            @endforeach
-                                            <img src="/storage/{{ $image->path ?? '' }}" class="img-fluid" alt=""
-                                                srcset="">
-                                        </div>
-                                    @endif
-                                @endisset
 
                                 <div class="form-group">
                                     <label class="col-form-label">Caption</label>
