@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Meilisearch;
 use App\Http\Controllers\ContentTypes\MultipleImageHandler;
+use App\Http\Resources\PhotoResource;
 use Illuminate\Http\Request;
 use App\Models\Photo;
 use App\Models\User;
@@ -76,6 +78,9 @@ class PhotoController extends Controller
             $photo->images()->createMany([...$images]);
         }
 
+        Meilisearch::get()->index('photo')->addDocuments([
+            json_decode((new PhotoResource($photo))->toJson(), true)
+        ]);
 
         activity()
             ->performedOn(new Photo())
@@ -147,6 +152,10 @@ class PhotoController extends Controller
         } else {
             $photo->images()->update(['caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source]);
         }
+
+        Meilisearch::get()->index('photo')->updateDocuments([
+            json_decode((new PhotoResource($photo))->toJson(), true)
+        ]);
 
         activity()
             ->performedOn($photo)

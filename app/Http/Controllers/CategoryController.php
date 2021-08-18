@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Meilisearch;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -31,6 +33,10 @@ class CategoryController extends Controller
             'order' => $request->order
         ]);
 
+        Meilisearch::get()->index('category')->addDocuments([
+            json_decode((new CategoryResource($category))->toJson(), true)
+        ]);
+
         activity()
             ->performedOn(new Category())
             ->event('store')
@@ -50,19 +56,23 @@ class CategoryController extends Controller
         return view('category.edit-add', ['content' => $category, 'action' => $action, 'parents' => $parents]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $category)
     {
-        $update = Category::where('id', $id)->update([
+        $category->update([
             'name' => $request->name,
             'slug' => Str::slug($request->name, "-"),
             'parent_id' => $request->parent_id,
             'order' => $request->order
         ]);
 
+        Meilisearch::get()->index('category')->addDocuments([
+            json_decode((new CategoryResource($category))->toJson(), true)
+        ]);
+
         activity()
             ->performedOn(new Category())
             ->event('update')
-            ->withProperties(['data' => $update])
+            ->withProperties(['data' => $category])
             ->log('update category');
 
         return redirect()->route('category.index')->with('message', 'Update Successfully');;

@@ -38,7 +38,8 @@ class PostResource extends JsonResource
             'meta_description'  => $this->meta_description,
             'meta_keywords'     => $this->meta_keywords,
             'seo_title'         => $this->seo_title,
-            'created_at'        => $this->created_at
+            'created_at'        => $this->created_at,
+            'timestamp'         => $this->created_at->timestamp
         ];
     }
 }

@@ -99,7 +99,7 @@ class PostController extends Controller
             $post->image()->create(['path' => $path, 'caption' => $request->caption]);
         }
 
-        Meilisearch::get()->index('post')->updateDocuments([
+        Meilisearch::get()->index('post')->addDocuments([
             json_decode((new PostResource($post))->toJson(), true)
         ]);
 
