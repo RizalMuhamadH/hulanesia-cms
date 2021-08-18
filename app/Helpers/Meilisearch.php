@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\Category;
 use MeiliSearch\Client;
 
 class Meilisearch
@@ -48,7 +49,7 @@ class Meilisearch
             'desc(created_at)'
         ]);
         $client->index('category')->updateRankingRules([
-            'asc(ordder)',
+            'asc(order)',
             'desc(created_at)',
             'desc(timestamp)'
         ]);
@@ -69,5 +70,12 @@ class Meilisearch
         $client->deleteIndex('post');
         $client->deleteIndex('category');
         $client->deleteIndex('photo');
+    }
+
+    public static function storeCategory()
+    {
+        $client = new Client(env('MEILISEARCH_HOST', ''), env('MEILISEARCH_KEY', null));
+        $categories = Category::get();
+        $client->index('category')->addDocuments([...$categories]);
     }
 }
