@@ -22,6 +22,7 @@ class PhotoResource extends JsonResource
             'user_name'             => $this->user->name,
             'images'                => ImageResource::collection($this->images),
             'created_at'            => $this->created_at,
+            'deleted_at'            => $this->deleted_at,
             'timestamp'             => $this->created_at->timestamp
         ];
     }
