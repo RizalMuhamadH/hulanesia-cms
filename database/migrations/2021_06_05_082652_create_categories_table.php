@@ -19,7 +19,7 @@ class CreateCategoriesTable extends Migration
             $table->string('slug');
             $table->string('title')->nullable();
             $table->seting('description')->nullable();
-            $table->boolean('show')->default(true);
+            $table->boolean('present')->default(true);
             $table->integer('parent_id')->nullable();
             $table->integer('order')->default(0);
             $table->timestamps();
