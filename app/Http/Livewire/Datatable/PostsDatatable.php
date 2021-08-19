@@ -49,7 +49,7 @@ class PostsDatatable extends Component
 
     public function delete($id)
     {
-        Meilisearch::get()->deleteDocument($id);
+        Meilisearch::get()->index('post')->deleteDocument($id);
 
         $post = Post::where('id', $id)->delete();
 

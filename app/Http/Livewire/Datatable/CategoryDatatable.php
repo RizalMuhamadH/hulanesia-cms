@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Datatable;
 
+use App\Helpers\Meilisearch;
 use App\Models\Category;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -45,6 +46,9 @@ class CategoryDatatable extends Component
 
     public function delete($id)
     {
+        
+        Meilisearch::get()->index('category')->deleteDocument($id);
+        
         $category = Category::where('id', $id)->delete();
         activity()
             ->performedOn($category)

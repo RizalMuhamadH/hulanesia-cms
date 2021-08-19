@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Datatable;
 
+use App\Helpers\Meilisearch;
 use App\Models\Photo;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -47,6 +48,9 @@ class PhotoDatatable extends Component
 
     public function delete($id)
     {
+        
+        Meilisearch::get()->index('photo')->deleteDocument($id);
+        
         $photo = Photo::where('id', $id)->delete();
 
         activity()
