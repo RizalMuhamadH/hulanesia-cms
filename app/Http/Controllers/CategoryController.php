@@ -29,6 +29,9 @@ class CategoryController extends Controller
         $category = Category::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name, "-"),
+            'title' => $request->title,
+            'description' => $request->description,
+            'present' => $request->present,
             'parent_id' => $request->parent_id,
             'order' => $request->order
         ]);
@@ -61,6 +64,9 @@ class CategoryController extends Controller
         $category->update([
             'name' => $request->name,
             'slug' => Str::slug($request->name, "-"),
+            'title' => $request->title,
+            'description' => $request->description,
+            'present' => $request->present,
             'parent_id' => $request->parent_id,
             'order' => $request->order
         ]);

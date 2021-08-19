@@ -15,9 +15,23 @@
                         <form action="{{ $action == 'Add' ? route('category.store') : route('category.update', $content->id ?? '') }}" method="POST">
                             @csrf
                             <div class="form-group row mb-4">
-                                <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2">Name</label>
+                                <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2">Name*</label>
                                 <div class="col-sm-12 col-md-7 col-lg-9">
                                     <input type="text" class="form-control" name="name" value="{{ $content->name ?? '' }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group row mb-4">
+                                <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2">Title</label>
+                                <div class="col-sm-12 col-md-7 col-lg-9">
+                                    <input type="text" class="form-control" name="title" value="{{ $content->title ?? '' }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group row mb-4">
+                                <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2">Description</label>
+                                <div class="col-sm-12 col-md-7 col-lg-9">
+                                    <input type="text" class="form-control" name="description" value="{{ $content->description ?? '' }}">
                                 </div>
                             </div>
 
@@ -25,6 +39,19 @@
                                 <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2">Order</label>
                                 <div class="col-sm-12 col-md-7 col-lg-9">
                                     <input type="number" class="form-control" name="order" value="{{ $content->order ?? '' }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group row mb-4">
+                                <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2">Show</label>
+                                <div class="col-sm-12 col-md-7 col-lg-9">
+                                    <select id="present" class="form-control selectric" name="present">
+                                        <option value="1" @isset($content)
+                                        {{ $content->present == 1 ? 'selected' : '' }} @endisset>True</option>
+                                        <option value="0" @isset($content)
+                                        {{ $content->present == 0 ? 'selected' : '' }} @endisset>False</option>
+
+                                    </select>
                                 </div>
                             </div>
 
