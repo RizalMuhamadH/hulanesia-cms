@@ -5,9 +5,11 @@ namespace App\Helpers;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\PhotoResource;
 use App\Http\Resources\PostResource;
+use App\Http\Resources\TagResource;
 use App\Models\Category;
 use App\Models\Photo;
 use App\Models\Post;
+use App\Models\Tag;
 use MeiliSearch\Client;
 
 class Meilisearch
@@ -38,6 +40,7 @@ class Meilisearch
         $client->createIndex('post', ['primaryKey' => 'id']);
         $client->createIndex('category', ['primaryKey' => 'id']);
         $client->createIndex('photo', ['primaryKey' => 'id']);
+        $client->createIndex('tag', ['primaryKey' => 'id']);
     }
 
     public function setFacetFilter()
@@ -62,6 +65,10 @@ class Meilisearch
             'desc(timestamp)',
             'desc(created_at)'
         ]);
+        $client->index('tag')->updateRankingRules([
+            'desc(timestamp)',
+            'desc(created_at)'
+        ]);
     }
 
     public static function deleteAll()
@@ -71,10 +78,12 @@ class Meilisearch
         $client->index('post')->deleteAllDocuments();
         $client->index('category')->deleteAllDocuments();
         $client->index('photo')->deleteAllDocuments();
+        $client->index('tag')->deleteAllDocuments();
 
         $client->deleteIndex('post');
         $client->deleteIndex('category');
         $client->deleteIndex('photo');
+        $client->deleteIndex('tag');
     }
 
     public static function storeCategory()
@@ -82,6 +91,13 @@ class Meilisearch
         $client = new Client(env('MEILISEARCH_HOST', ''), env('MEILISEARCH_KEY', null));
         $categories = Category::get();
         $client->index('category')->addDocuments([...json_decode(CategoryResource::collection($categories)->toJson(), true)]);
+    }
+
+    public static function storeTag()
+    {
+        $client = new Client(env('MEILISEARCH_HOST', ''), env('MEILISEARCH_KEY', null));
+        $tags = Tag::get();
+        $client->index('tag')->addDocuments([...json_decode(TagResource::collection($tags)->toJson(), true)]);
     }
 
     public static function storePost()
