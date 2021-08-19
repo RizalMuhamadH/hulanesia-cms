@@ -30,7 +30,7 @@ class PostResource extends JsonResource
             'user_id'           => $this->user_id,
             'user'              => $this->user->name,
             'author_id'         => $this->author_id,
-            'author'            => $this->author->name,
+            'author'            => $this->author->name ?? '',
             'status'            => $this->status,
             'tags_name'         => $this->tags->map(fn($item, $key) => $item->name),
             'tags_slug'         => $this->tags->map(fn($item, $key) => $item->slug),

@@ -2,7 +2,12 @@
 
 namespace App\Helpers;
 
+use App\Http\Resources\CategoryResource;
+use App\Http\Resources\PhotoResource;
+use App\Http\Resources\PostResource;
 use App\Models\Category;
+use App\Models\Photo;
+use App\Models\Post;
 use MeiliSearch\Client;
 
 class Meilisearch
@@ -76,6 +81,20 @@ class Meilisearch
     {
         $client = new Client(env('MEILISEARCH_HOST', ''), env('MEILISEARCH_KEY', null));
         $categories = Category::get();
-        $client->index('category')->addDocuments([...$categories]);
+        $client->index('category')->addDocuments([...json_decode(CategoryResource::collection($categories)->toJson(), true)]);
+    }
+
+    public static function storePost()
+    {
+        $client = new Client(env('MEILISEARCH_HOST', ''), env('MEILISEARCH_KEY', null));
+        $posts = Post::get();
+        $client->index('post')->addDocuments([...json_decode(PostResource::collection($posts)->toJson(), true)]);
+    }
+
+    public static function storePhoto()
+    {
+        $client = new Client(env('MEILISEARCH_HOST', ''), env('MEILISEARCH_KEY', null));
+        $photos = Photo::get();
+        $client->index('photo')->addDocuments([...json_decode(PhotoResource::collection($photos)->toJson(), true)]);
     }
 }
