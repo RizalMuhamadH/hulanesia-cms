@@ -31,6 +31,7 @@ class CreatePostsTable extends Migration
             $table->string('meta_keywords')->nullable();
             $table->string('seo_title')->nullable();
             $table->dateTime('published_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories');

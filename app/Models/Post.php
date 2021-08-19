@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+// use Laravel\Scout\Searchable;
 
 class Post extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     // use Searchable;
 
     protected $fillable = [
