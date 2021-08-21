@@ -41,6 +41,8 @@ class Meilisearch
         $client->createIndex('category', ['primaryKey' => 'id']);
         $client->createIndex('photo', ['primaryKey' => 'id']);
         $client->createIndex('tag', ['primaryKey' => 'id']);
+        $client->createIndex('post-popular', ['primaryKey' => 'id']);
+        $client->createIndex('tag-popular', ['primaryKey' => 'id']);
     }
 
     public function setFacetFilter()
@@ -69,6 +71,13 @@ class Meilisearch
             'desc(timestamp)',
             'desc(created_at)'
         ]);
+        
+        $client->index('tag-popular')->updateRankingRules([
+            'asc(hit)'
+        ]);
+        $client->index('post-popular')->updateRankingRules([
+            'desc(hit)'
+        ]);
     }
 
     public static function deleteAll()
@@ -79,11 +88,15 @@ class Meilisearch
         $client->index('category')->deleteAllDocuments();
         $client->index('photo')->deleteAllDocuments();
         $client->index('tag')->deleteAllDocuments();
+        $client->index('post-popular')->deleteAllDocuments();
+        $client->index('tag-popular')->deleteAllDocuments();
 
         $client->deleteIndex('post');
         $client->deleteIndex('category');
         $client->deleteIndex('photo');
         $client->deleteIndex('tag');
+        $client->deleteIndex('post-popular');
+        $client->deleteIndex('tag-popular');
     }
 
     public static function storeCategory()
