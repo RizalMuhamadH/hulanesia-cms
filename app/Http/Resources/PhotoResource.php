@@ -19,6 +19,7 @@ class PhotoResource extends JsonResource
             'title'                 => $this->title,
             'slug'                  => $this->slug,
             'user_id'               => $this->user_id,
+            'description'           => $this->description,
             'user_name'             => $this->user->name,
             'images'                => ImageResource::collection($this->images),
             'created_at'            => $this->created_at,

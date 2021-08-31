@@ -9,6 +9,7 @@ use App\Http\Resources\TagResource;
 use App\Models\Category;
 use App\Models\Photo;
 use App\Models\Post;
+use App\Models\Setting;
 use App\Models\Tag;
 use MeiliSearch\Client;
 
@@ -43,6 +44,7 @@ class Meilisearch
         $client->createIndex('tag', ['primaryKey' => 'id']);
         $client->createIndex('post-popular', ['primaryKey' => 'id']);
         $client->createIndex('tag-popular', ['primaryKey' => 'id']);
+        $client->createIndex('setting', ['primaryKey' => 'id']);
     }
 
     public function setFacetFilter()
@@ -125,5 +127,12 @@ class Meilisearch
         $client = new Client(env('MEILISEARCH_HOST', ''), env('MEILISEARCH_KEY', null));
         $photos = Photo::get();
         $client->index('photo')->addDocuments([...json_decode(PhotoResource::collection($photos)->toJson(), true)]);
+    }
+
+    public static function storeSetting()
+    {
+        $client = new Client(env('MEILISEARCH_HOST', ''), env('MEILISEARCH_KEY', null));
+        $settings = Setting::get();
+        $client->index('setting')->addDocuments([...$settings]);
     }
 }
