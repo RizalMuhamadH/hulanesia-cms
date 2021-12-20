@@ -4,15 +4,16 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class Netizen extends Model
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory;
 
-    protected $table = 'admins';
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -22,7 +23,6 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
     ];
 
     /**

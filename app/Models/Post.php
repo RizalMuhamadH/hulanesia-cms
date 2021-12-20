@@ -22,7 +22,7 @@ class Post extends Model
         'source_link',
         'feature_id',
         'category_id',
-        'user_id',
+        'admin_id',
         'author_id',
         'status',
         'meta_description',
@@ -47,12 +47,12 @@ class Post extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'admin_id');
     }
 
     public function author()
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsTo(Netizen::class, 'author_id');
     }
 
     public function category()
