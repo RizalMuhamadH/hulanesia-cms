@@ -56,7 +56,7 @@
                                 @endif
                             </td>
                             <td>{{ $item->author->name ?? '' }}</td>
-                            <td>{{ $item->published_at->format('d, M Y H:m') }}</td>
+                            <td>{{ $item->published_at != null ? $item->published_at->format('d, M Y H:m') : '' }}</td>
                             <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
                             <td>
                                 @can('edit_posts')

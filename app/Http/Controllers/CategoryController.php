@@ -5,11 +5,19 @@ namespace App\Http\Controllers;
 use App\Helpers\Meilisearch;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Repository\Elasticsearch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+    private $repository;
+
+    public function __construct(Elasticsearch $repository)
+    {
+        $this->repository = $repository;
+    }
+    
     public function index()
     {
         return view('category.index');
@@ -36,9 +44,12 @@ class CategoryController extends Controller
             'order' => $request->order
         ]);
 
-        Meilisearch::get()->index('category')->addDocuments([
-            json_decode((new CategoryResource($category))->toJson(), true)
-        ]);
+        $params = [
+            'index' => 'category',
+            'id'    => $category->id,
+            'body'  => json_decode((new CategoryResource($category))->toJson(), true)
+        ];
+        $es = $this->repository->create($params);
 
         activity()
             ->performedOn(new Category())
@@ -75,6 +86,15 @@ class CategoryController extends Controller
             json_decode((new CategoryResource($category))->toJson(), true)
         ]);
 
+        $params = [
+            'index' => 'category',
+            'id'    => $category->id,
+            'body'  => [
+                'doc' => json_decode((new CategoryResource($category))->toJson(), true)
+                ]
+        ];
+        $es = $this->repository->create($params);
+
         activity()
             ->performedOn(new Category())
             ->event('update')
@@ -82,5 +102,27 @@ class CategoryController extends Controller
             ->log('update category');
 
         return redirect()->route('category.index')->with('message', 'Update Successfully');;
+    }
+
+    public function bulk()
+    {
+        $categories = Category::query()->get();
+
+        $params = ['body' => []];
+
+        foreach ($categories as $category) {
+            $params['body'][] = [
+                'index' => [
+                    '_index' => 'category',
+                    '_id' => $category->id
+                ]
+            ];
+
+            $params['body'][] = json_decode((new CategoryResource($category))->toJson(), true);
+        }
+
+        $this->repository->bulk($params);
+
+        return redirect()->route('category.index')->with('message', 'Bulk Successfully');
     }
 }

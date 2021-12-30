@@ -29,7 +29,7 @@ class MultipleFileHandler extends BaseType
             $file->storeAs(
                 $path,
                 $filename,
-                config('local', 'public')
+                config('minio', 'public')
             );
 
             array_push($filesPath, [
@@ -64,14 +64,14 @@ class MultipleFileHandler extends BaseType
             $filename_counter = 1;
 
             // Make sure the filename does not exist, if it does make sure to add a number to the end 1, 2, 3, etc...
-            while (Storage::disk('local')->exists($path . $filename)) {
+            while (Storage::disk('minio')->exists($path . $filename)) {
                 $filename = basename($file->getClientOriginalName(), '.' . $file->getClientOriginalExtension()) . (string) ($filename_counter++);
             }
         } else {
             $filename = Carbon::now()->timestamp . '_' . uniqid() . '_' . Str::random(20) . '.' . $file->getClientOriginalExtension();
 
             // Make sure the filename does not exist, if it does, just regenerate
-            while (Storage::disk('local')->exists($path . $filename)) {
+            while (Storage::disk('minio')->exists($path . $filename)) {
                 $filename = Carbon::now()->timestamp . '_' . uniqid() . '_' . Str::random(20) . '.' . $file->getClientOriginalExtension();
             }
         }

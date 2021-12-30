@@ -89,6 +89,7 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Category</th>
+                                    <th>Status</th>
                                     <th>Author</th>
                                 </tr>
                             </thead>
@@ -106,18 +107,24 @@
                                         <td>
                                             {{ $item->category->name }}
                                         </td>
+                                        <td>
+                                            {{ $item->status }}
+                                        </td>
                                         <td class="d-flex">
-                                            @if ($item->image)
-                                                <figure>
-                                                    <img src="/storage/{{ $item->image->thumbnail('small', 'path') }}"
-                                                        class="avatar mr-2 avatar-sm">
-                                                </figure>
-                                            @else
-                                                <figure>
-                                                    <img src="/storage/user/default.png" class="avatar mr-2 avatar-sm">
-                                                </figure>
+                                            @if ($item->author)
+                                                @if ($item->author->image)
+                                                    <figure>
+                                                        <img src="/storage/{{ $item->author->image->thumbnail('small', 'path') }}"
+                                                            class="avatar mr-2 avatar-sm">
+                                                    </figure>
+                                                @else
+                                                    <figure>
+                                                        <img src="https://ui-avatars.com/api/?name={{ $item->author->name }}&color=7F9CF5&background=EBF4FF"
+                                                            class="avatar mr-2 avatar-sm">
+                                                    </figure>
+                                                @endif
+                                                {{-- {{ $item->author->name }} --}}
                                             @endif
-                                             {{ $item->user->name }}
                                         </td>
                                     </tr>
                                 @endforeach

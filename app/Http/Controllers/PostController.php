@@ -15,9 +15,18 @@ use Spatie\Activitylog\Facades\LogBatch;
 use Spatie\Activitylog\Models\Activity;
 use App\Http\Resources\PostResource;
 use App\Helpers\Meilisearch;
+use App\Models\Netizen;
+use App\Repository\Elasticsearch;
 
 class PostController extends Controller
 {
+    private $repository;
+
+    public function __construct(Elasticsearch $repository)
+    {
+        $this->repository = $repository;
+    }
+    
     public function index()
     {
         return view('post.index');
@@ -31,7 +40,7 @@ class PostController extends Controller
         $categories = Category::with('children')->where('parent_id', 0)->get();
         $tags = Tag::get();
         $features = Feature::get();
-        $users = User::get();
+        $users = Netizen::get();
 
         return view('post.edit-add', [
             'action' => $action,
@@ -53,13 +62,12 @@ class PostController extends Controller
             'source_link' => $request->source_link,
             'feature_id' => $request->feature_id,
             'category_id' => $request->category_id,
-            'user_id' => $request->user_id,
             'status' => $request->status,
             'meta_description' => $request->meta_description,
             'meta_keywords' => $request->meta_keywords,
             'seo_title' => $request->seo_title,
             'published_at' => $request->published_at,
-            'user_id' => Auth::user()->id,
+            'admin_id' => Auth::user()->id,
             'author_id' => $request->author_id
         ]);
 
@@ -99,9 +107,16 @@ class PostController extends Controller
             $post->image()->create(['path' => $path, 'caption' => $request->caption]);
         }
 
-        Meilisearch::get()->index('post')->addDocuments([
-            json_decode((new PostResource($post))->toJson(), true)
-        ]);
+        // Meilisearch::get()->index('post')->addDocuments([
+        //     json_decode((new PostResource($post))->toJson(), true)
+        // ]);
+
+        $params = [
+            'index' => 'article',
+            'id'    => $post->id,
+            'body'  => json_decode((new PostResource($post))->toJson(), true)
+        ];
+        $es = $this->repository->create($params);
 
         activity()
             ->performedOn(new Post())
@@ -119,7 +134,7 @@ class PostController extends Controller
         $categories = Category::with('children')->where('parent_id', 0)->get();
         $tags = Tag::get();
         $features = Feature::get();
-        $users = User::get();
+        $users = Netizen::get();
 
         $action = 'Edit';
         return view('post.edit-add', [
@@ -191,9 +206,18 @@ class PostController extends Controller
         } else {
             $post->image()->update(['caption' => $request->caption]);
         }
-        Meilisearch::get()->index('post')->updateDocuments([
-            json_decode((new PostResource($post))->toJson(), true)
-        ]);
+        // Meilisearch::get()->index('post')->updateDocuments([
+        //     json_decode((new PostResource($post))->toJson(), true)
+        // ]);
+
+        $params = [
+            'index' => 'article',
+            'id'    => $post->id,
+            'body'  => [
+            'doc'   => json_decode((new PostResource($post))->toJson(), true)
+            ]
+        ];
+        $es = $this->repository->update($params);
 
         activity()
             ->performedOn($post)
@@ -202,5 +226,35 @@ class PostController extends Controller
             ->log('update post');
 
         return redirect()->route('post.index')->with('message', 'Add Successfully');
+    }
+
+    public function bulk()
+    {
+        $posts = Post::query()->get();
+
+        $params = ['body' => []];
+        foreach ($posts as $post) {
+            $params['body'][] = [
+                'index' => [
+                    '_index' => 'article',
+                    '_id'    => $post->id
+                ]
+            ];
+
+            $params['body'][] = json_decode((new PostResource($post))->toJson(), true);
+
+            if (count($params['body']) === 1000) {
+                $responses = $this->repository->bulk($params);
+                $params = ['body' => []];
+
+                unset($responses);
+            }
+        }
+
+        if(!empty($params['body'])) {
+            $responses = $this->repository->bulk($params);
+        }
+
+        return redirect()->route('post.index')->with('message', 'Bulk Successfully');
     }
 }

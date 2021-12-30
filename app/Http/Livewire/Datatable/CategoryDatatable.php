@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Datatable;
 
 use App\Helpers\Meilisearch;
 use App\Models\Category;
+use App\Repository\Elasticsearch;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -48,6 +49,11 @@ class CategoryDatatable extends Component
     {
         
         Meilisearch::get()->index('category')->deleteDocument($id);
+        $params = [
+            'index' => 'article',
+            'id'    => $id,
+        ];
+        $es = Elasticsearch::delete($params);
         
         $category = Category::where('id', $id)->delete();
         activity()

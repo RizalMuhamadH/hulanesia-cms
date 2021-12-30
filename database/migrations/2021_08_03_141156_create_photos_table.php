@@ -18,11 +18,11 @@ class CreatePhotosTable extends Migration
             $table->string('title');
             $table->string('slug');
             $table->string('description');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('admin_id');
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('admin_id')->references('id')->on('admins');
         });
     }
 

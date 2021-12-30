@@ -9,7 +9,7 @@ use Livewire\WithPagination;
 
 class PhotoDatatable extends Component
 {
-    
+
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
@@ -25,16 +25,16 @@ class PhotoDatatable extends Component
     public function render()
     {
         if ($this->search != null) {
-            $this->data = Photo::with(['user'])->where('title', 'like', '%' . $this->search . '%')->latest()->paginate(10);
+            $this->data = Photo::with(['editor'])->where('title', 'like', '%' . $this->search . '%')->latest()->paginate(10);
         } else {
-            $this->data = Photo::with(['user'])->latest()->paginate(10);
+            $this->data = Photo::with(['editor'])->latest()->paginate(10);
         }
 
         return view('livewire.datatable.photo-datatable', [
             'data' => $this->data
         ]);
     }
-    
+
     public function destroy($id)
     {
         $this->dispatchBrowserEvent('swal:confirm', [
@@ -48,15 +48,17 @@ class PhotoDatatable extends Component
 
     public function delete($id)
     {
-        
-        Meilisearch::get()->index('photo')->deleteDocument($id);
-        
-        $photo = Photo::where('id', $id)->delete();
+
+        // Meilisearch::get()->index('photo')->deleteDocument($id);
+
+        $photo = Photo::with('images')->find($id);
 
         activity()
-            ->performedOn($photo)
+            ->performedOn(new Photo())
             ->event('delete')
-            ->withProperties(['data' => $photo->with(['images'])])
+            ->withProperties(['data' => $photo])
             ->log('delete photo');
+
+        $photo->delete();
     }
 }

@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('categories/edit/{id}', [CategoryController::class, 'edit'])->middleware(['can:edit_categories'])->name('category.edit');
     Route::post('categories/add', [CategoryController::class, 'store'])->middleware(['can:add_categories'])->name('category.store');
     Route::post('categories/update/{id}', [CategoryController::class, 'update'])->middleware(['can:edit_categories'])->name('category.update');
+    Route::get('categories/bulk', [CategoryController::class, 'bulk'])->middleware(['can:edit_categories'])->name('category.bulk');
 
     Route::get('tags', [TagController::class, 'index'])->middleware(['can:browse_tags'])->name('tag.index');
     Route::get('tags/add', [TagController::class, 'add'])->middleware(['can:add_tags'])->name('tag.add');
@@ -73,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('posts/edit/{id}', [PostController::class, 'edit'])->middleware(['can:edit_posts'])->name('post.edit');
     Route::post('posts/add', [PostController::class, 'store'])->middleware(['can:add_posts'])->name('post.store');
     Route::post('posts/update/{post}', [PostController::class, 'update'])->middleware(['can:edit_posts'])->name('post.update');
+    Route::get('posts/bulk', [PostController::class, 'bulk'])->middleware(['can:edit_posts'])->name('post.bulk');
 
     
     Route::get('photos', [PhotoController::class, 'index'])->middleware(['can:browse_photos'])->name('photo.index');
@@ -80,6 +82,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('photos/edit/{id}', [PhotoController::class, 'edit'])->middleware(['can:edit_photos'])->name('photo.edit');
     Route::post('photos/add', [PhotoController::class, 'store'])->middleware(['can:add_photos'])->name('photo.store');
     Route::post('photos/update/{photo}', [PhotoController::class, 'update'])->middleware(['can:edit_photos'])->name('photo.update');
+    Route::get('photos/bulk', [PhotoController::class, 'bulk'])->middleware(['can:edit_photos'])->name('photo.bulk');
 
     Route::get('roles', [RoleController::class, 'index'])->middleware(['can:browse_roles'])->name('role.index');
     Route::get('roles/add', [RoleController::class, 'add'])->middleware(['can:add_roles'])->name('role.add');

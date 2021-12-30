@@ -8,6 +8,7 @@ use App\Http\Resources\PhotoResource;
 use Illuminate\Http\Request;
 use App\Models\Photo;
 use App\Models\User;
+use App\Repository\Elasticsearch;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Facades\LogBatch;
@@ -15,6 +16,13 @@ use Spatie\Activitylog\Models\Activity;
 
 class PhotoController extends Controller
 {
+    private $repository;
+
+    public function __construct(Elasticsearch $repository)
+    {
+        $this->repository = $repository;
+    }
+    
     public function index()
     {
         return view('photo.index');
@@ -39,7 +47,7 @@ class PhotoController extends Controller
             'title' => $request->title,
             'slug' => Str::slug($request->title, "-"),
             'description' => $request->description,
-            'user_id' => Auth::user()->id
+            'admin_id' => Auth::user()->id
         ]);
 
         if ($request->hasFile('images')) {
@@ -72,15 +80,18 @@ class PhotoController extends Controller
             $options = json_decode(json_encode($options));
 
             $paths = (new MultipleImageHandler($request, 'photos', 'images', $options))->handle();
-            foreach ($paths as $key => $path) {
-                $images[$key] = ['path' => $path, 'caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source];
+            for ($i=0; $i < count($paths); $i++) { 
+                $images[$i] = ['path' => $paths[$i], 'caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source];
             }
             $photo->images()->createMany([...$images]);
         }
 
-        Meilisearch::get()->index('photo')->addDocuments([
-            json_decode((new PhotoResource($photo))->toJson(), true)
-        ]);
+        $params = [
+            'index' => 'photo',
+            'id'    => $photo->id,
+            'body'  => json_decode((new PhotoResource($photo))->toJson(), true)
+        ];
+        $es = $this->repository->create($params);
 
         activity()
             ->performedOn(new Photo())
@@ -153,9 +164,12 @@ class PhotoController extends Controller
             $photo->images()->update(['caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source]);
         }
 
-        Meilisearch::get()->index('photo')->updateDocuments([
-            json_decode((new PhotoResource($photo))->toJson(), true)
-        ]);
+        $params = [
+            'index' => 'photo',
+            'id'    => $photo->id,
+            'body'  => ['doc' => json_decode((new PhotoResource($photo))->toJson(), true)]
+        ];
+        $es = $this->repository->create($params);
 
         activity()
             ->performedOn($photo)
@@ -164,5 +178,35 @@ class PhotoController extends Controller
             ->log('update photo');
 
         return redirect()->route('photo.index')->with('message', 'Add Successfully');
+    }
+
+    public function bulk()
+    {
+        $photos = Photo::query()->get();
+
+        $params = ['body' => []];
+        foreach ($photos as $photo) {
+            $params['body'][] = [
+                'index' => [
+                    '_index' => 'article',
+                    '_id'    => $photo->id
+                ]
+            ];
+
+            $params['body'][] = json_decode((new PhotoResource($photo))->toJson(), true);
+
+            if (count($params['body']) === 1000) {
+                $responses = $this->repository->bulk($params);
+                $params = ['body' => []];
+
+                unset($responses);
+            }
+        }
+
+        if(!empty($params['body'])) {
+            $responses = $this->repository->bulk($params);
+        }
+
+        return redirect()->route('photo.index')->with('message', 'Bulk Successfully');
     }
 }

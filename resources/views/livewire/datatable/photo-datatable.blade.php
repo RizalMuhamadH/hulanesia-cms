@@ -25,7 +25,7 @@
                     <tr>
                         <th>#</th>
                         <th>Title</th>
-                        <th>User</th>
+                        <th>Editor</th>
                         <th>Create At</th>
                         <th>Action</th>
                     </tr>
@@ -33,7 +33,7 @@
                         <tr>
                             <td>{{ $loop->index + 1 }}</td>
                             <td>{{ $item->title }}</td>
-                            <td>{{ $item->user->name ?? '' }}</td>
+                            <td>{{ $item->editor->name ?? '' }}</td>
                             <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
                             <td>
                                 @can('edit_photos')

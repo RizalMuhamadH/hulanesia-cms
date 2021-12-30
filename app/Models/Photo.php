@@ -15,7 +15,7 @@ class Photo extends Model
         'title',
         'slug',
         'description',
-        'user_id'
+        'admin_id'
     ];
 
     public function images()
@@ -23,8 +23,8 @@ class Photo extends Model
         return $this->morphMany(Image::class, 'imageable');
     }
     
-    public function user()
+    public function editor()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'admin_id');
     }
 }

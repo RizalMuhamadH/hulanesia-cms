@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Datatable;
 
 use App\Models\Post;
 use App\Helpers\Meilisearch;
+use App\Repository\Elasticsearch;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -49,7 +50,11 @@ class PostsDatatable extends Component
 
     public function delete($id)
     {
-        Meilisearch::get()->index('post')->deleteDocument($id);
+        $params = [
+            'index' => 'article',
+            'id'    => $id,
+        ];
+        $es = Elasticsearch::delete($params);
 
         $post = Post::where('id', $id)->delete();
 

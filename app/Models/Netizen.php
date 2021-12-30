@@ -23,6 +23,7 @@ class Netizen extends Model
     protected $fillable = [
         'name',
         'email',
+        'profile_photo_path'
     ];
 
     /**

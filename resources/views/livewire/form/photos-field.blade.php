@@ -34,7 +34,7 @@
                             <a href="#" wire:click.prevent="removeImg({{$loop->index}}, {{$image->id}})" class="fas fa-times"></a>
                             <label class="mb-4">
                                 <figure class="imagecheck-figure">
-                                    <img src="/storage/{{ $image->path ?? '' }}" class="img-fluid" alt="" srcset="">
+                                    <img src="{{ env('STORAGE') }}/storage/{{ $image->path ?? '' }}" class="img-fluid" alt="" srcset="">
                                 </figure>
                             </label>
                         </div>

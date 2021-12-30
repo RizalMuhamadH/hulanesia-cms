@@ -16,7 +16,7 @@ class DashboardController extends Controller
         $tag = Tag::count();
         $category = Category::count();
         $post = Post::count();
-        $latest = Post::with(['category', 'image', 'user'])->latest()->take(5)->get();
+        $latest = Post::with(['category', 'image', 'author', 'author.image'])->latest()->take(5)->get();
         return view('dashboard', compact(['user', 'tag', 'category', 'post', 'latest']));
     }
 }

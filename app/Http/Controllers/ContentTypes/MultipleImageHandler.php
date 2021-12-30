@@ -68,7 +68,7 @@ class MultipleImageHandler extends BaseType
                 }
             )->encode($file->getClientOriginalExtension(), $resize_quality);
 
-            Storage::disk(config('voyager.storage.disk'))->put($filePath, (string) $image, 'public');
+            Storage::disk('minio')->put($filePath, (string) $image, 'public');
 
             if (isset($this->options->thumbnails)) {
                 foreach ($this->options->thumbnails as $thumbnails) {
@@ -106,7 +106,7 @@ class MultipleImageHandler extends BaseType
                             ->encode($file->getClientOriginalExtension(), $resize_quality);
                     }
 
-                    Storage::disk(config('voyager.storage.disk'))->put(
+                    Storage::disk('minio')->put(
                         $path . $filename . '-' . $thumbnails->name . '.' . $file->getClientOriginalExtension(),
                         (string) $image,
                         'public'
