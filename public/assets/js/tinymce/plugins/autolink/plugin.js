@@ -1,12 +1,5 @@
-/**
- * Copyright (c) Tiny Technologies, Inc. All rights reserved.
- * Licensed under the LGPL or a commercial license.
- * For LGPL see License.txt in the project root for license information.
- * For commercial licenses see https://www.tiny.cloud/
- *
- * Version: 5.8.1 (2021-05-20)
- */
 (function () {
+var autolink = (function () {
     'use strict';
 
     var global = tinymce.util.Tools.resolve('tinymce.PluginManager');
@@ -14,13 +7,14 @@
     var global$1 = tinymce.util.Tools.resolve('tinymce.Env');
 
     var getAutoLinkPattern = function (editor) {
-      return editor.getParam('autolink_pattern', /^(https?:\/\/|ssh:\/\/|ftp:\/\/|file:\/|www\.|(?:mailto:)?[A-Z0-9._%+\-]+@(?!.*@))(.+)$/i);
+      return editor.getParam('autolink_pattern', /^(https?:\/\/|ssh:\/\/|ftp:\/\/|file:\/|www\.|(?:mailto:)?[A-Z0-9._%+\-]+@)(.+)$/i);
     };
     var getDefaultLinkTarget = function (editor) {
-      return editor.getParam('default_link_target', false);
+      return editor.getParam('default_link_target', '');
     };
-    var getDefaultLinkProtocol = function (editor) {
-      return editor.getParam('link_default_protocol', 'http', 'string');
+    var Settings = {
+      getAutoLinkPattern: getAutoLinkPattern,
+      getDefaultLinkTarget: getDefaultLinkTarget
     };
 
     var rangeEqualsDelimiterOrSpace = function (rangeString, delimiter) {
@@ -62,13 +56,13 @@
       }
     };
     var parseCurrentLine = function (editor, endOffset, delimiter) {
-      var end, endContainer, bookmark, text, prev, len, rngText;
-      var autoLinkPattern = getAutoLinkPattern(editor);
-      var defaultLinkTarget = getDefaultLinkTarget(editor);
+      var rng, end, start, endContainer, bookmark, text, matches, prev, len, rngText;
+      var autoLinkPattern = Settings.getAutoLinkPattern(editor);
+      var defaultLinkTarget = Settings.getDefaultLinkTarget(editor);
       if (editor.selection.getNode().tagName === 'A') {
         return;
       }
-      var rng = editor.selection.getRng().cloneRange();
+      rng = editor.selection.getRng(true).cloneRange();
       if (rng.startOffset < 5) {
         prev = rng.endContainer.previousSibling;
         if (!prev) {
@@ -102,7 +96,7 @@
           end = rng.endOffset - 1 - endOffset;
         }
       }
-      var start = end;
+      start = end;
       do {
         setStart(rng, endContainer, end >= 2 ? end - 2 : 0);
         setEnd(rng, endContainer, end >= 1 ? end - 1 : 0);
@@ -125,18 +119,17 @@
         setEnd(rng, endContainer, start - 1);
       }
       text = rng.toString().trim();
-      var matches = text.match(autoLinkPattern);
-      var protocol = getDefaultLinkProtocol(editor);
+      matches = text.match(autoLinkPattern);
       if (matches) {
         if (matches[1] === 'www.') {
-          matches[1] = protocol + '://www.';
+          matches[1] = 'http://www.';
         } else if (/@$/.test(matches[1]) && !/^mailto:/.test(matches[1])) {
           matches[1] = 'mailto:' + matches[1];
         }
         bookmark = editor.selection.getBookmark();
         editor.selection.setRng(rng);
         editor.execCommand('createlink', false, matches[1] + matches[2]);
-        if (defaultLinkTarget !== false) {
+        if (defaultLinkTarget) {
           editor.dom.setAttrib(editor.selection.getNode(), 'target', defaultLinkTarget);
         }
         editor.selection.moveToBookmark(bookmark);
@@ -150,7 +143,7 @@
           return handleEnter(editor);
         }
       });
-      if (global$1.browser.isIE()) {
+      if (global$1.ie) {
         editor.on('focus', function () {
           if (!autoUrlDetectState) {
             autoUrlDetectState = true;
@@ -173,13 +166,15 @@
         }
       });
     };
+    var Keys = { setup: setup };
 
+    global.add('autolink', function (editor) {
+      Keys.setup(editor);
+    });
     function Plugin () {
-      global.add('autolink', function (editor) {
-        setup(editor);
-      });
     }
 
-    Plugin();
+    return Plugin;
 
 }());
+})();

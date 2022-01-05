@@ -33,17 +33,6 @@ class Post extends Model
 
     protected $dates = ['published_at'];
     
-    const SEARCHABLE_FIELDS = ['id', 'title', 'description'];
-
-    public function shouldBeSearchable()
-    {
-        return $this->status === 'PUBLISH';
-    }
-
-    public function toSearchableArray()
-    {
-        return $this->only(self::SEARCHABLE_FIELDS);
-    }
 
     public function user()
     {

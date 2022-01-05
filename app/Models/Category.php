@@ -12,9 +12,13 @@ class Category extends Model
     protected $fillable = [
         'name',
         'slug',
+        'title',
+        'description',
         'parent_id',
         'order'
     ];
+
+    protected $dates = ['created_at'];
 
     public function posts()
     {

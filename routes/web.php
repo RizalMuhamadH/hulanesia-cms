@@ -38,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('categories/add', [CategoryController::class, 'add'])->middleware(['can:add_categories'])->name('category.add');
     Route::get('categories/edit/{id}', [CategoryController::class, 'edit'])->middleware(['can:edit_categories'])->name('category.edit');
     Route::post('categories/add', [CategoryController::class, 'store'])->middleware(['can:add_categories'])->name('category.store');
-    Route::post('categories/update/{id}', [CategoryController::class, 'update'])->middleware(['can:edit_categories'])->name('category.update');
+    Route::post('categories/update/{category}', [CategoryController::class, 'update'])->middleware(['can:edit_categories'])->name('category.update');
     Route::get('categories/bulk', [CategoryController::class, 'bulk'])->middleware(['can:edit_categories'])->name('category.bulk');
 
     Route::get('tags', [TagController::class, 'index'])->middleware(['can:browse_tags'])->name('tag.index');
@@ -46,6 +46,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('tags/edit/{id}', [TagController::class, 'edit'])->middleware(['can:edit_tags'])->name('tag.edit');
     Route::post('tags/add', [TagController::class, 'store'])->middleware(['can:add_tags'])->name('tag.store');
     Route::post('tags/update/{id}', [TagController::class, 'update'])->middleware(['can:edit_tags'])->name('tag.update');
+    Route::get('tags/bulk', [TagController::class, 'bulk'])->middleware(['can:edit_tags'])->name('tag.bulk');
 
     Route::get('features', [FeatureController::class, 'index'])->middleware(['can:browse_features'])->name('feature.index');
     Route::get('features/add', [FeatureController::class, 'add'])->middleware(['can:add_features'])->name('feature.add');
@@ -70,13 +71,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::get('posts', [PostController::class, 'index'])->middleware(['can:browse_posts'])->name('post.index');
+    Route::get('posts/popup', [PostController::class, 'popup'])->name('post.popup');
     Route::get('posts/add', [PostController::class, 'add'])->middleware(['can:add_posts'])->name('post.add');
     Route::get('posts/edit/{id}', [PostController::class, 'edit'])->middleware(['can:edit_posts'])->name('post.edit');
     Route::post('posts/add', [PostController::class, 'store'])->middleware(['can:add_posts'])->name('post.store');
     Route::post('posts/update/{post}', [PostController::class, 'update'])->middleware(['can:edit_posts'])->name('post.update');
     Route::get('posts/bulk', [PostController::class, 'bulk'])->middleware(['can:edit_posts'])->name('post.bulk');
 
-    
+
     Route::get('photos', [PhotoController::class, 'index'])->middleware(['can:browse_photos'])->name('photo.index');
     Route::get('photos/add', [PhotoController::class, 'add'])->middleware(['can:add_photos'])->name('photo.add');
     Route::get('photos/edit/{id}', [PhotoController::class, 'edit'])->middleware(['can:edit_photos'])->name('photo.edit');
@@ -90,7 +92,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('roles/add', [RoleController::class, 'store'])->middleware(['can:add_roles'])->name('role.store');
     Route::post('roles/update/{role}', [RoleController::class, 'update'])->middleware(['can:edit_roles'])->name('role.update');
 });
-
 
 Route::post('upload/image', [UploadController::class, 'image'])->name('upload.image');
 

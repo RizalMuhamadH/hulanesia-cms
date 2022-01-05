@@ -27,9 +27,9 @@
                                         value="{{ $content->title ?? '' }}" required>
                                 </div>
                                 <!-- <div class="form-group">
-                                                            <label class="col-form-label">Slug</label>
-                                                            <input type="text" class="form-control">
-                                                        </div> -->
+                                                                                    <label class="col-form-label">Slug</label>
+                                                                                    <input type="text" class="form-control">
+                                                                                </div> -->
                                 <div class="form-group">
                                     <label class="col-form-label">Summary</label>
                                     <textarea rows="10" class="form-control"
@@ -94,9 +94,9 @@
                                         value="{{ $content->author_id ?? '' }}" required>
                                         <option value="">Null</option>
                                         @foreach ($users as $item)
-                                        <option value="{{ $item->id }}" @isset($content)
-                                            {{ $content->author_id == $item->id ? 'selected' : '' }} @endisset>
-                                            {{ $item->name }}</option>
+                                            <option value="{{ $item->id }}" @isset($content)
+                                                {{ $content->author_id == $item->id ? 'selected' : '' }} @endisset>
+                                                {{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -134,7 +134,8 @@
                                 @isset($content)
                                     <div class="form-group">
                                         <label class="col-form-label">Preview</label>
-                                        <img src="{{ env('STORAGE') }}/storage/{{ $content->image->path }}" class="img-fluid" alt="" srcset="">
+                                        <img src="{{ env('STORAGE') }}/storage/{{ $content->image->path }}"
+                                            class="img-fluid" alt="" srcset="">
                                     </div>
                                 @endisset
 
@@ -194,6 +195,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 @endsection
 @push('script')
@@ -223,6 +225,19 @@
             label_selected: "Change File", // Default: Change File
             no_label: false, // Default: false
             success_callback: null // Default: null
+        });
+    </script>
+    <script>
+        $('document').ready(function() {
+            
+            $("#modal-iframe").on('load', function() {
+                $(this).contents().find('.btn-choice').click(function() {
+                    var title = $(this).data('title');
+                    var url = $(this).data('url');
+                    tinymce.activeEditor.execCommand('mceInsertContent', false, '<p><strong>Baca Juga: <a href="'+url+'">'+title+'</a></strong></p>');
+                    $('#articleModal').modal('hide');
+                });
+            });
         });
     </script>
 @endpush

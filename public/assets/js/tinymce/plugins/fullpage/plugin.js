@@ -1,12 +1,5 @@
-/**
- * Copyright (c) Tiny Technologies, Inc. All rights reserved.
- * Licensed under the LGPL or a commercial license.
- * For LGPL see License.txt in the project root for license information.
- * For commercial licenses see https://www.tiny.cloud/
- *
- * Version: 5.8.1 (2021-05-20)
- */
 (function () {
+var fullpage = (function () {
     'use strict';
 
     var Cell = function (initial) {
@@ -17,26 +10,17 @@
       var set = function (v) {
         value = v;
       };
+      var clone = function () {
+        return Cell(get());
+      };
       return {
         get: get,
-        set: set
+        set: set,
+        clone: clone
       };
     };
 
     var global = tinymce.util.Tools.resolve('tinymce.PluginManager');
-
-    var __assign = function () {
-      __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-          s = arguments[i];
-          for (var p in s)
-            if (Object.prototype.hasOwnProperty.call(s, p))
-              t[p] = s[p];
-        }
-        return t;
-      };
-      return __assign.apply(this, arguments);
-    };
 
     var global$1 = tinymce.util.Tools.resolve('tinymce.util.Tools');
 
@@ -70,26 +54,33 @@
     var getDefaultDocType = function (editor) {
       return editor.getParam('fullpage_default_doctype', '<!DOCTYPE html>');
     };
-    var getProtect = function (editor) {
-      return editor.getParam('protect');
+    var Settings = {
+      shouldHideInSourceView: shouldHideInSourceView,
+      getDefaultXmlPi: getDefaultXmlPi,
+      getDefaultEncoding: getDefaultEncoding,
+      getDefaultFontFamily: getDefaultFontFamily,
+      getDefaultFontSize: getDefaultFontSize,
+      getDefaultTextColor: getDefaultTextColor,
+      getDefaultTitle: getDefaultTitle,
+      getDefaultDocType: getDefaultDocType
     };
 
     var parseHeader = function (head) {
       return global$2({
         validate: false,
         root_name: '#document'
-      }).parse(head, { format: 'xhtml' });
+      }).parse(head);
     };
     var htmlToData = function (editor, head) {
       var headerFragment = parseHeader(head);
       var data = {};
       var elm, matches;
-      var getAttr = function (elm, name) {
+      function getAttr(elm, name) {
         var value = elm.attr(name);
         return value || '';
-      };
-      data.fontface = getDefaultFontFamily(editor);
-      data.fontsize = getDefaultFontSize(editor);
+      }
+      data.fontface = Settings.getDefaultFontFamily(editor);
+      data.fontsize = Settings.getDefaultFontSize(editor);
       elm = headerFragment.firstChild;
       if (elm.type === 7) {
         data.xml_pi = true;
@@ -140,19 +131,19 @@
       return data;
     };
     var dataToHtml = function (editor, data, head) {
-      var headElement, elm, value;
+      var headerFragment, headElement, html, elm, value;
       var dom = editor.dom;
-      var setAttr = function (elm, name, value) {
+      function setAttr(elm, name, value) {
         elm.attr(name, value ? value : undefined);
-      };
-      var addHeadNode = function (node) {
+      }
+      function addHeadNode(node) {
         if (headElement.firstChild) {
           headElement.insert(node, headElement.firstChild);
         } else {
           headElement.append(node);
         }
-      };
-      var headerFragment = parseHeader(head);
+      }
+      headerFragment = parseHeader(head);
       headElement = headerFragment.getAll('head')[0];
       if (!headElement) {
         elm = headerFragment.getAll('html')[0];
@@ -288,92 +279,70 @@
       if (!headElement.firstChild) {
         headElement.remove();
       }
-      var html = global$4({
+      html = global$4({
         validate: false,
         indent: true,
+        apply_source_formatting: true,
         indent_before: 'head,html,body,meta,title,script,link,style',
         indent_after: 'head,html,body,meta,title,script,link,style'
       }).serialize(headerFragment);
       return html.substring(0, html.indexOf('</body>'));
     };
+    var Parser = {
+      parseHeader: parseHeader,
+      htmlToData: htmlToData,
+      dataToHtml: dataToHtml
+    };
 
     var open = function (editor, headState) {
-      var data = htmlToData(editor, headState.get());
-      var defaultData = {
-        title: '',
-        keywords: '',
-        description: '',
-        robots: '',
-        author: '',
-        docencoding: ''
-      };
-      var initialData = __assign(__assign({}, defaultData), data);
+      var data = Parser.htmlToData(editor, headState.get());
       editor.windowManager.open({
-        title: 'Metadata and Document Properties',
-        size: 'normal',
-        body: {
-          type: 'panel',
-          items: [
-            {
-              name: 'title',
-              type: 'input',
-              label: 'Title'
-            },
-            {
-              name: 'keywords',
-              type: 'input',
-              label: 'Keywords'
-            },
-            {
-              name: 'description',
-              type: 'input',
-              label: 'Description'
-            },
-            {
-              name: 'robots',
-              type: 'input',
-              label: 'Robots'
-            },
-            {
-              name: 'author',
-              type: 'input',
-              label: 'Author'
-            },
-            {
-              name: 'docencoding',
-              type: 'input',
-              label: 'Encoding'
-            }
-          ]
+        title: 'Document properties',
+        data: data,
+        defaults: {
+          type: 'textbox',
+          size: 40
         },
-        buttons: [
+        body: [
           {
-            type: 'cancel',
-            name: 'cancel',
-            text: 'Cancel'
+            name: 'title',
+            label: 'Title'
           },
           {
-            type: 'submit',
-            name: 'save',
-            text: 'Save',
-            primary: true
+            name: 'keywords',
+            label: 'Keywords'
+          },
+          {
+            name: 'description',
+            label: 'Description'
+          },
+          {
+            name: 'robots',
+            label: 'Robots'
+          },
+          {
+            name: 'author',
+            label: 'Author'
+          },
+          {
+            name: 'docencoding',
+            label: 'Encoding'
           }
         ],
-        initialData: initialData,
-        onSubmit: function (api) {
-          var nuData = api.getData();
-          var headHtml = dataToHtml(editor, global$1.extend(data, nuData), headState.get());
+        onSubmit: function (e) {
+          var headHtml = Parser.dataToHtml(editor, global$1.extend(data, e.data), headState.get());
           headState.set(headHtml);
-          api.close();
         }
       });
     };
+    var Dialog = { open: open };
 
     var register = function (editor, headState) {
       editor.addCommand('mceFullPageProperties', function () {
-        open(editor, headState);
+        Dialog.open(editor, headState);
       });
     };
+    var Commands = { register: register };
 
     var protectHtml = function (protect, html) {
       global$1.each(protect, function (pattern) {
@@ -388,6 +357,10 @@
         return unescape(m);
       });
     };
+    var Protect = {
+      protectHtml: protectHtml,
+      unprotectHtml: unprotectHtml
+    };
 
     var each = global$1.each;
     var low = function (s) {
@@ -396,16 +369,17 @@
       });
     };
     var handleSetContent = function (editor, headState, footState, evt) {
-      var startPos, endPos, content, styles = '';
+      var startPos, endPos, content, headerFragment, styles = '';
       var dom = editor.dom;
+      var elm;
       if (evt.selection) {
         return;
       }
-      content = protectHtml(getProtect(editor), evt.content);
+      content = Protect.protectHtml(editor.settings.protect, evt.content);
       if (evt.format === 'raw' && headState.get()) {
         return;
       }
-      if (evt.source_view && shouldHideInSourceView(editor)) {
+      if (evt.source_view && Settings.shouldHideInSourceView(editor)) {
         return;
       }
       if (content.length === 0 && !evt.source_view) {
@@ -426,27 +400,30 @@
         headState.set(getDefaultHeader(editor));
         footState.set('\n</body>\n</html>');
       }
-      var headerFragment = parseHeader(headState.get());
+      headerFragment = Parser.parseHeader(headState.get());
       each(headerFragment.getAll('style'), function (node) {
         if (node.firstChild) {
           styles += node.firstChild.value;
         }
       });
-      var bodyElm = headerFragment.getAll('body')[0];
-      if (bodyElm) {
+      elm = headerFragment.getAll('body')[0];
+      if (elm) {
         dom.setAttribs(editor.getBody(), {
-          style: bodyElm.attr('style') || '',
-          dir: bodyElm.attr('dir') || '',
-          vLink: bodyElm.attr('vlink') || '',
-          link: bodyElm.attr('link') || '',
-          aLink: bodyElm.attr('alink') || ''
+          style: elm.attr('style') || '',
+          dir: elm.attr('dir') || '',
+          vLink: elm.attr('vlink') || '',
+          link: elm.attr('link') || '',
+          aLink: elm.attr('alink') || ''
         });
       }
       dom.remove('fullpage_styles');
       var headElm = editor.getDoc().getElementsByTagName('head')[0];
       if (styles) {
-        var styleElm = dom.add(headElm, 'style', { id: 'fullpage_styles' });
-        styleElm.appendChild(document.createTextNode(styles));
+        dom.add(headElm, 'style', { id: 'fullpage_styles' }, styles);
+        elm = dom.get('fullpage_styles');
+        if (elm.styleSheet) {
+          elm.styleSheet.cssText = styles;
+        }
       }
       var currentStyleSheetsMap = {};
       global$1.each(headElm.getElementsByTagName('link'), function (stylesheet) {
@@ -463,7 +440,7 @@
           dom.add(headElm, 'link', {
             'rel': 'stylesheet',
             'text': 'text/css',
-            href: href,
+            'href': href,
             'data-mce-fullpage': '1'
           });
         }
@@ -475,33 +452,33 @@
     };
     var getDefaultHeader = function (editor) {
       var header = '', value, styles = '';
-      if (getDefaultXmlPi(editor)) {
-        var piEncoding = getDefaultEncoding(editor);
+      if (Settings.getDefaultXmlPi(editor)) {
+        var piEncoding = Settings.getDefaultEncoding(editor);
         header += '<?xml version="1.0" encoding="' + (piEncoding ? piEncoding : 'ISO-8859-1') + '" ?>\n';
       }
-      header += getDefaultDocType(editor);
+      header += Settings.getDefaultDocType(editor);
       header += '\n<html>\n<head>\n';
-      if (value = getDefaultTitle(editor)) {
+      if (value = Settings.getDefaultTitle(editor)) {
         header += '<title>' + value + '</title>\n';
       }
-      if (value = getDefaultEncoding(editor)) {
+      if (value = Settings.getDefaultEncoding(editor)) {
         header += '<meta http-equiv="Content-Type" content="text/html; charset=' + value + '" />\n';
       }
-      if (value = getDefaultFontFamily(editor)) {
+      if (value = Settings.getDefaultFontFamily(editor)) {
         styles += 'font-family: ' + value + ';';
       }
-      if (value = getDefaultFontSize(editor)) {
+      if (value = Settings.getDefaultFontSize(editor)) {
         styles += 'font-size: ' + value + ';';
       }
-      if (value = getDefaultTextColor(editor)) {
+      if (value = Settings.getDefaultTextColor(editor)) {
         styles += 'color: ' + value + ';';
       }
       header += '</head>\n<body' + (styles ? ' style="' + styles + '"' : '') + '>\n';
       return header;
     };
     var handleGetContent = function (editor, head, foot, evt) {
-      if (evt.format === 'html' && !evt.selection && (!evt.source_view || !shouldHideInSourceView(editor))) {
-        evt.content = unprotectHtml(global$1.trim(head) + '\n' + global$1.trim(evt.content) + '\n' + global$1.trim(foot));
+      if (!evt.selection && (!evt.source_view || !Settings.shouldHideInSourceView(editor))) {
+        evt.content = Protect.unprotectHtml(global$1.trim(head) + '\n' + global$1.trim(evt.content) + '\n' + global$1.trim(foot));
       }
     };
     var setup = function (editor, headState, footState) {
@@ -512,33 +489,31 @@
         handleGetContent(editor, headState.get(), footState.get(), evt);
       });
     };
+    var FilterContent = { setup: setup };
 
     var register$1 = function (editor) {
-      editor.ui.registry.addButton('fullpage', {
-        tooltip: 'Metadata and document properties',
-        icon: 'document-properties',
-        onAction: function () {
-          editor.execCommand('mceFullPageProperties');
-        }
+      editor.addButton('fullpage', {
+        title: 'Document properties',
+        cmd: 'mceFullPageProperties'
       });
-      editor.ui.registry.addMenuItem('fullpage', {
-        text: 'Metadata and document properties',
-        icon: 'document-properties',
-        onAction: function () {
-          editor.execCommand('mceFullPageProperties');
-        }
+      editor.addMenuItem('fullpage', {
+        text: 'Document properties',
+        cmd: 'mceFullPageProperties',
+        context: 'file'
       });
     };
+    var Buttons = { register: register$1 };
 
+    global.add('fullpage', function (editor) {
+      var headState = Cell(''), footState = Cell('');
+      Commands.register(editor, headState);
+      Buttons.register(editor);
+      FilterContent.setup(editor, headState, footState);
+    });
     function Plugin () {
-      global.add('fullpage', function (editor) {
-        var headState = Cell(''), footState = Cell('');
-        register(editor, headState);
-        register$1(editor);
-        setup(editor, headState, footState);
-      });
     }
 
-    Plugin();
+    return Plugin;
 
 }());
+})();

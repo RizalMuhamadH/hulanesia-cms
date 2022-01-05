@@ -15,18 +15,18 @@
     <!-- CSS Libraries -->
 
     <!-- Template CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/summernote/dist/summernote-bs4.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/selectric/public/selectric.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/sweetalert2/dist/sweetalert2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/izitoast/iziToast.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/select2/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/all.css') }}">
+    <link rel="stylesheet" href="{{ mix('assets/css/summernote/dist/summernote-bs4.css') }}">
+    <link rel="stylesheet" href="{{ mix('assets/css/selectric/public/selectric.css') }}">
+    <link rel="stylesheet" href="{{ mix('assets/css/sweetalert2/dist/sweetalert2.min.css') }}">
+    <link rel="stylesheet" href="{{ mix('assets/css/izitoast/iziToast.min.css') }}">
+    <link rel="stylesheet" href="{{ mix('assets/css/select2/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ mix('assets/css/all.css') }}">
     @stack('style')
     @livewireStyles
 
 
-    <script src="{{ mix("assets/js/tinymce/tinymce.min.js") }}"></script>
-    <script src="{{ asset("js/app.js") }}"></script>
+    <script src="{{ mix('assets/js/tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 </head>
 
 <body>
@@ -43,6 +43,8 @@
                     @yield('body')
                 </section>
             </div>
+
+            @include('section.modal')
             @include('layouts.footer')
         </div>
     </div>
@@ -58,18 +60,18 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-    <script src="{{ asset('assets/js/stisla.js') }}"></script>
+    <script src="{{ mix('assets/js/stisla.js') }}"></script>
 
     <!-- JS Libraies -->
 
     <!-- Template JS File -->
-    <script src="{{ asset('assets/js/scripts.js') }}"></script>
-    <script src="{{ asset('assets/js/custom.js') }}"></script>
-    <script src="{{ asset('assets/js/sweetalert2/dist/sweetalert2.min.js') }}"></script>
-    <script src="{{ asset('assets/js/summernote/dist/summernote-bs4.js') }}"></script>
-    <script src="{{ asset('assets/js/selectric/public/jquery.selectric.min.js') }}"></script>
-    <script src="{{ asset('assets/js/izitoast/iziToast.min.js') }}"></script>
-    <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
+    <script src="{{ mix('assets/js/scripts.js') }}"></script>
+    <script src="{{ mix('assets/js/custom.js') }}"></script>
+    <script src="{{ mix('assets/js/sweetalert2/dist/sweetalert2.min.js') }}"></script>
+    <script src="{{ mix('assets/js/summernote/dist/summernote-bs4.js') }}"></script>
+    <script src="{{ mix('assets/js/selectric/public/jquery.selectric.min.js') }}"></script>
+    <script src="{{ mix('assets/js/izitoast/iziToast.min.js') }}"></script>
+    <script src="{{ mix('assets/js/select2/select2.full.min.js') }}"></script>
     @stack('script')
     @livewireScripts
     <!-- Page Specific JS File -->

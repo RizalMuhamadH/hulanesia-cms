@@ -15,6 +15,7 @@ use Spatie\Activitylog\Facades\LogBatch;
 use Spatie\Activitylog\Models\Activity;
 use App\Http\Resources\PostResource;
 use App\Helpers\Meilisearch;
+use App\Http\Resources\PostListResource;
 use App\Models\Netizen;
 use App\Repository\Elasticsearch;
 
@@ -26,7 +27,7 @@ class PostController extends Controller
     {
         $this->repository = $repository;
     }
-    
+
     public function index()
     {
         return view('post.index');
@@ -214,7 +215,7 @@ class PostController extends Controller
             'index' => 'article',
             'id'    => $post->id,
             'body'  => [
-            'doc'   => json_decode((new PostResource($post))->toJson(), true)
+                'doc'   => json_decode((new PostResource($post))->toJson(), true)
             ]
         ];
         $es = $this->repository->update($params);
@@ -251,10 +252,16 @@ class PostController extends Controller
             }
         }
 
-        if(!empty($params['body'])) {
+        if (!empty($params['body'])) {
             $responses = $this->repository->bulk($params);
         }
 
         return redirect()->route('post.index')->with('message', 'Bulk Successfully');
+    }
+
+    
+    public function popup()
+    {
+        return view('popup.post');
     }
 }

@@ -82,10 +82,6 @@ class CategoryController extends Controller
             'order' => $request->order
         ]);
 
-        Meilisearch::get()->index('category')->addDocuments([
-            json_decode((new CategoryResource($category))->toJson(), true)
-        ]);
-
         $params = [
             'index' => 'category',
             'id'    => $category->id,
@@ -93,7 +89,7 @@ class CategoryController extends Controller
                 'doc' => json_decode((new CategoryResource($category))->toJson(), true)
                 ]
         ];
-        $es = $this->repository->create($params);
+        $es = $this->repository->update($params);
 
         activity()
             ->performedOn(new Category())
