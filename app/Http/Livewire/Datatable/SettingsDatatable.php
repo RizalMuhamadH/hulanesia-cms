@@ -32,7 +32,7 @@ class SettingsDatatable extends Component
             'data' => $this->data
         ]);
     }
-    
+
     public function destroy($id)
     {
         $this->dispatchBrowserEvent('swal:confirm', [
@@ -46,11 +46,11 @@ class SettingsDatatable extends Component
 
     public function delete($id)
     {
-        $feature = Setting::where('id', $id)->delete();
+        $setting = Setting::where('id', $id)->delete();
         activity()
-            ->performedOn($feature)
+            ->performedOn(new Setting())
             ->event('delete')
-            ->withProperties(['data' => $feature])
+            ->withProperties(['data' => $setting])
             ->log('delete setting');
     }
 }

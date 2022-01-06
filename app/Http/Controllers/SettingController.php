@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SettingResource;
+use App\Repository\Elasticsearch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Setting;
 
 class SettingController extends Controller
 {
+    private $repository;
+
+    public function __construct(Elasticsearch $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function index()
     {
         return view('setting.index');
@@ -32,6 +41,13 @@ class SettingController extends Controller
 
         ]);
 
+        $params = [
+            'index' => 'setting',
+            'id'    => $setting->id,
+            'body'  => json_decode((new SettingResource($setting))->toJson(), true)
+        ];
+        $es = $this->repository->create($params);
+
         activity()
             ->performedOn($setting)
             ->event('store')
@@ -49,9 +65,9 @@ class SettingController extends Controller
         return view('setting.edit-add', ['content' => $setting, 'action' => $action]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Setting $setting)
     {
-        $update = Setting::where('id', $id)->update([
+        $setting->update([
             'name' => $request->name,
             'slug' => Str::slug($request->name, "-"),
             'content' => $request->content,
@@ -60,12 +76,43 @@ class SettingController extends Controller
             'seo_title' => $request->seo_title,
         ]);
 
+        $params = [
+            'index' => 'setting',
+            'id'    => $setting->id,
+            'body'  => [
+                'doc'   => json_decode((new PostResource($setting))->toJson(), true)
+            ]
+        ];
+        $es = $this->repository->update($params);
+
         activity()
             ->performedOn(new Setting())
             ->event('update')
-            ->withProperties(['data' => $update])
+            ->withProperties(['data' => $setting])
             ->log('update setting');
 
         return redirect()->route('setting.index')->with('message', 'Update Successfully');
+    }
+
+    public function bulk()
+    {
+        $settings = Setting::query()->get();
+
+        $params = ['body' => []];
+
+        foreach ($settings as $setting) {
+            $params['body'][] = [
+                'index' => [
+                    '_index' => 'setting',
+                    '_id' => $setting->id
+                ]
+            ];
+
+            $params['body'][] = json_decode((new SettingResource($setting))->toJson(), true);
+        }
+
+        $this->repository->bulk($params);
+
+        return redirect()->route('setting.index')->with('message', 'Bulk Successfully');
     }
 }

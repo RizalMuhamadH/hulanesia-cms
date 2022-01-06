@@ -58,7 +58,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/add', [SettingController::class, 'add'])->middleware(['can:add_settings'])->name('setting.add');
     Route::get('settings/edit/{id}', [SettingController::class, 'edit'])->middleware(['can:edit_settings'])->name('setting.edit');
     Route::post('settings/add', [SettingController::class, 'store'])->middleware(['can:add_settings'])->name('setting.store');
-    Route::post('settings/update/{id}', [SettingController::class, 'update'])->middleware(['can:edit_settings'])->name('setting.update');
+    Route::post('settings/update/{setting}', [SettingController::class, 'update'])->middleware(['can:edit_settings'])->name('setting.update');
+    Route::get('settings/bulk', [SettingController::class, 'bulk'])->middleware(['can:edit_settings'])->name('setting.bulk');
 
     Route::get('users', [UserController::class, 'index'])->middleware(['can:browse_users'])->name('user.index');
     Route::get('users/add', [UserController::class, 'add'])->middleware(['can:add_users'])->name('user.add');
