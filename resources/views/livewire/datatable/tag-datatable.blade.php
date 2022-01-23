@@ -7,14 +7,14 @@
           
         @endcan
         <div class="card-header-form">
-            <form>
+            {{-- <form> --}}
               <div class="input-group">
                 <input wire:model.debounce.500ms="search" type="text" class="form-control" placeholder="Search">
                 {{-- <div class="input-group-btn">
                   <button class="btn btn-primary"><i class="fas fa-search"></i></button>
                 </div> --}}
               </div>
-            </form>
+            {{-- </form> --}}
           </div>
       </div>
       <div class="card-body p-0">
@@ -29,7 +29,8 @@
             </tr>
             @foreach ($data as $item)
             <tr>
-                <td>{{ $loop->index+1 }}</td>
+                <td>
+                  <input type="checkbox" class="check-box tag-{{ $item->id }}" data-name="{{ $item->name }}" data-id="{{ $item->id }}" data-elm="#select-tags"></td>
                 <td>{{ $item->name }}</td>
                 <td>{{ $item->slug }}</td>
                 <td>{{ $item->created_at->format('d, M Y H:m') }}</td>

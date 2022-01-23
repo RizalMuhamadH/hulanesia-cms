@@ -39,14 +39,12 @@ class PostController extends Controller
 
         $action = 'Add';
         $categories = Category::with('children')->where('parent_id', 0)->get();
-        $tags = Tag::get();
         $features = Feature::get();
         $users = Netizen::get();
 
         return view('post.edit-add', [
             'action' => $action,
             'categories' => $categories,
-            'tags' => $tags,
             'features' => $features,
             'users' => $users
         ]);
@@ -133,7 +131,6 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
 
         $categories = Category::with('children')->where('parent_id', 0)->get();
-        $tags = Tag::get();
         $features = Feature::get();
         $users = Netizen::get();
 
@@ -142,7 +139,6 @@ class PostController extends Controller
             'content' => $post,
             'action' => $action,
             'categories' => $categories,
-            'tags' => $tags,
             'features' => $features,
             'users' => $users
         ]);

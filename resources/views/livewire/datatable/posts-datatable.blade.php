@@ -9,14 +9,15 @@
                 
             @endcan
             <div class="card-header-form">
-                <form>
+                {{-- <form> --}}
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search">
+                        <input wire:model.debounce.500ms="search" type="text" class="form-control" placeholder="Search">
+                        {{-- <input type="text" class="form-control" placeholder="Search">
                         <div class="input-group-btn">
                             <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                        </div>
+                        </div> --}}
                     </div>
-                </form>
+                {{-- </form> --}}
             </div>
         </div>
         <div class="card-body p-0">
@@ -27,11 +28,11 @@
                         <th>Title</th>
                         <th>category</th>
                         <th>Feature</th>
-                        <th>Tags</th>
+                        {{-- <th>Tags</th> --}}
                         <th>Status</th>
                         <th>Author</th>
                         <th>Published</th>
-                        <th>Create At</th>
+                        {{-- <th>Create At</th> --}}
                         <th>Action</th>
                     </tr>
                     @foreach ($data as $item)
@@ -40,11 +41,11 @@
                             <td>{{ $item->title }}</td>
                             <td>{{ $item->category->name }}</td>
                             <td>{{ $item->feature->name }}</td>
-                            <td>
+                            {{-- <td>
                                 @foreach ($item->tags as $tag)
                                     <div class="badge badge-primary">{{ $tag->name }}</div>
                                 @endforeach
-                            </td>
+                            </td> --}}
                             <td>
                                 @if ($item->status == 'DRAFT')
                                     <div class="badge badge-danger">{{ $item->status }}</div>
@@ -57,7 +58,7 @@
                             </td>
                             <td>{{ $item->author->name ?? '' }}</td>
                             <td>{{ $item->published_at != null ? $item->published_at->format('d, M Y H:m') : '' }}</td>
-                            <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
+                            {{-- <td>{{ $item->created_at->format('d, M Y H:m') }}</td> --}}
                             <td>
                                 @can('edit_posts')
                                 <a href="{{ route('post.edit', $item->id) }}" class="btn btn-info">Edit</a>

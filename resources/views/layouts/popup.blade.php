@@ -27,8 +27,14 @@
     <div id="app">
         <div class="main-wrapper">
 
+            <div class="navbar-bg"></div>
             <!-- Main Content -->
-            @yield('body')
+
+            {{-- <div class="main-content"> --}}
+                <section class="section">
+                    @yield('body')
+                </section>
+            {{-- </div> --}}
             <!-- End Main Content -->
         </div>
     </div>

@@ -27,9 +27,9 @@
                                         value="{{ $content->title ?? '' }}" required>
                                 </div>
                                 <!-- <div class="form-group">
-                                                                                    <label class="col-form-label">Slug</label>
-                                                                                    <input type="text" class="form-control">
-                                                                                </div> -->
+                                                                                                            <label class="col-form-label">Slug</label>
+                                                                                                            <input type="text" class="form-control">
+                                                                                                        </div> -->
                                 <div class="form-group">
                                     <label class="col-form-label">Summary</label>
                                     <textarea rows="10" class="form-control"
@@ -43,7 +43,8 @@
 
                                                 <optgroup label="{{ $item->name }}">
                                                     @foreach ($item->children as $sub)
-                                                        <option value="{{ $sub->id }}" @isset($content)
+                                                        <option value="{{ $sub->id }}"
+                                                            @isset($content)
                                                                 {{ $content->category_id == $sub->id ? 'selected' : '' }}
                                                             @endisset>
                                                             {{ $sub->name }}</option>
@@ -146,25 +147,24 @@
                                 </div>
 
                                 <div class="form-group">
-                                    @isset($content)
-                                        @php
-                                            $value = [];
-                                            for ($i = 0; $i < count($content->tags); $i++) {
-                                                $value[$i] = $content->tags[$i]->id;
-                                            }
-                                            $collection = collect($value);
-                                            // $value = json_encode($value);
-                                            // dd($collection);
-                                        @endphp
-                                    @endisset
                                     <label class="col-form-label">Tags</label>
-                                    <select id="tags" class="form-control select2" multiple="" name="tags[]" required>
-                                        @foreach ($tags as $item)
+                                    <select id="select-tags" class="form-control select2" multiple="" name="tags[]"
+                                        required>
+                                        {{-- @foreach ($tags as $item)
                                             <option value="{{ $item->id }}" @isset($content)
                                                 {{ $collection->contains($item->id) ? 'selected' : '' }} @endisset>
                                                 {{ $item->name }}</option>
-                                        @endforeach
+                                        @endforeach --}}
+                                        @isset($content)
+                                            @foreach ($content->tags as $item)
+                                                <option value="{{ $item->id }}" selected>
+                                                    {{ $item->name }}</option>
+                                            @endforeach
+                                        @endisset
                                     </select>
+                                    <button type="button" class="btn-tag btn btn-icon icon-left btn-primary btn-sm mt-3"
+                                        data-title="Tambah/Edit Tag" data-url="{{ route('tag.index', ['layout' => 'popup']) }}"><i
+                                            class="fas fa-plus"></i> Add/Edit Tag</button>
                                 </div>
 
                                 <div class="form-group">
@@ -186,7 +186,7 @@
                             <div class="form-group row">
                                 <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2"></label>
                                 <div class="col-sm-12 col-md-7">
-                                    <button class="btn btn-primary">Publish</button>
+                                    <button type="submit" class="btn btn-primary">Publish</button>
                                 </div>
                             </div>
 
@@ -229,14 +229,80 @@
     </script>
     <script>
         $('document').ready(function() {
-            
+
+            $('.btn-tag').click(function() {
+                var url = $(this).data('url');
+                var title = $(this).data('title');
+
+
+                $('#modal-title').html(title);
+                $('#modal-iframe').attr('src', url);
+                $('#articleModal').modal('show');
+            });
+
+            $("#select-tags").select2({
+                minimumInputLength: 2,
+                multiple: true,
+                ajax: {
+                    url: "{{ route('tag.search') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            q: params.term,
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    },
+
+                },
+
+            });
+
             $("#modal-iframe").on('load', function() {
+
+                $.each($("#select-tags").val(), function(index, value) {
+                    $("#modal-iframe").contents().find(".tag-" + value).attr('checked', true);
+                });
+
                 $(this).contents().find('.btn-choice').click(function() {
                     var title = $(this).data('title');
                     var url = $(this).data('url');
-                    tinymce.activeEditor.execCommand('mceInsertContent', false, '<p><strong>Baca Juga: <a href="'+url+'">'+title+'</a></strong></p>');
+                    tinymce.activeEditor.execCommand('mceInsertContent', false,
+                        '<p><strong>Baca Juga: <a href="' + url + '">' + title +
+                        '</a></strong></p>');
                     $('#articleModal').modal('hide');
                 });
+
+                $(this).contents().find('.check-box').click(function(e) {
+                    var elm = window.parent.$($(this).data('elm'));
+                    var name = $(this).data('name');
+                    var id = $(this).data('id');
+
+                    if (e.target.checked) {
+
+                        var option = $('<option></option>').attr('selected', true).text(name).val(
+                            id);
+                        elm.append(option);
+                        elm.trigger('change');
+                    } else {
+                        window.parent.$($(this).data('elm') + " option[value='" + id +
+                            "']").remove();
+                        elm.trigger('change');
+                    }
+                });
+
+                // $(this).contents().find('.check-box').on('ifUnchecked', function(e) {
+                //     console.log(e);
+                //     var elm = window.parent.$($(this).data('elm'));
+                //     window.parent.$($(this).data('elm') + " option[value='" + $(this).data('id') +
+                //         "']").remove();
+                //     elm.trigger('change');
+                // });
+
             });
         });
     </script>

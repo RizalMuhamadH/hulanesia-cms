@@ -17,16 +17,18 @@ class TagController extends Controller
         $this->repository = $repository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('tag.index');
+        $layout = $request->layout ?? 'app';
+        return view('tag.index', ['layout' => $layout]);
     }
 
-    public function add()
+    public function add(Request $request)
     {
         $action = 'Add';
+        $layout = $request->layout ?? 'app';
 
-        return view('tag.edit-add', ['action' => $action]);
+        return view('tag.edit-add', ['action' => $action, 'layout' => $layout]);
     }
 
     public function store(Request $request)
@@ -52,12 +54,13 @@ class TagController extends Controller
         return redirect()->route('tag.index')->with('message', 'Add Successfully');
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $tag = Tag::findOrFail($id);
 
         $action = 'Edit';
-        return view('tag.edit-add', ['content' => $tag, 'action' => $action]);
+        $layout = $request->layout ?? 'app';
+        return view('tag.edit-add', ['content' => $tag, 'action' => $action, 'layout' => $layout]);
     }
 
     public function update(Request $request, $id)
@@ -113,5 +116,10 @@ class TagController extends Controller
         }
 
         return redirect()->route('tag.index')->with('message', 'Bulk Successfully');
+    }
+
+    public function search(Request $request)
+    {
+        return Tag::select(['id', 'name as text'])->where('name', 'like', '%'.$request->q.'%')->limit(20)->get();
     }
 }

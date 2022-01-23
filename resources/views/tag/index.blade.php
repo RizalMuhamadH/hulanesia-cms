@@ -1,6 +1,4 @@
-@extends('layouts.app')
-@push('style')
-@endpush
+@extends('layouts.'.$layout ?? 'app')
 @section('body')
     <div class="section-header">
         <h1>Tags</h1>

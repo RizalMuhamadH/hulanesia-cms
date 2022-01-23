@@ -48,7 +48,8 @@ tinymce.PluginManager.add('article', function (editor, url) {
     text: 'Baca Juga',
     icon: "browse",
     onclick: function onclick() {
-      console.log('clicked');
+      $('#modal-title').html('Artikel Baca Juga');
+      $('#modal-iframe').attr('src', '/posts/popup');
       $('#articleModal').modal('show');
     }
   });

@@ -47,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('tags/add', [TagController::class, 'store'])->middleware(['can:add_tags'])->name('tag.store');
     Route::post('tags/update/{id}', [TagController::class, 'update'])->middleware(['can:edit_tags'])->name('tag.update');
     Route::get('tags/bulk', [TagController::class, 'bulk'])->middleware(['can:edit_tags'])->name('tag.bulk');
+    Route::get('tags/search', [TagController::class, 'search'])->middleware(['can:browse_tags'])->name('tag.search');
 
     Route::get('features', [FeatureController::class, 'index'])->middleware(['can:browse_features'])->name('feature.index');
     Route::get('features/add', [FeatureController::class, 'add'])->middleware(['can:add_features'])->name('feature.add');
