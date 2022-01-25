@@ -11,6 +11,7 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -93,6 +94,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('roles/edit/{role}', [RoleController::class, 'edit'])->middleware(['can:edit_roles'])->name('role.edit');
     Route::post('roles/add', [RoleController::class, 'store'])->middleware(['can:add_roles'])->name('role.store');
     Route::post('roles/update/{role}', [RoleController::class, 'update'])->middleware(['can:edit_roles'])->name('role.update');
+
+    Route::get('videos', [VideoController::class, 'index'])->middleware(['can:browse_videos'])->name('video.index');
+    Route::get('videos/add', [VideoController::class, 'create'])->middleware(['can:add_videos'])->name('video.add');
+    Route::get('videos/edit/{video}', [VideoController::class, 'edit'])->middleware(['can:edit_videos'])->name('video.edit');
+    Route::post('videos/add', [VideoController::class, 'store'])->middleware(['can:add_videos'])->name('video.store');
+    Route::post('videos/update/{video}', [VideoController::class, 'update'])->middleware(['can:edit_videos'])->name('video.update');
 });
 
 Route::post('upload/image', [UploadController::class, 'image'])->name('upload.image');

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Http\Resources\PostResource;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 
 use App\Models\Post;
 
-class PostSchedule implements ShouldQueue
+class PostSchedule implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -22,10 +23,12 @@ class PostSchedule implements ShouldQueue
      */
 
     protected $post;
+    protected $repository;
 
-    public function __construct($post)
+    public function __construct($post, $repository)
     {
         $this->post = $post;
+        $this->repository = $repository;
     }
 
     /**
@@ -35,6 +38,15 @@ class PostSchedule implements ShouldQueue
      */
     public function handle()
     {
-        Post::where('id', $this->post->id)->update(['status' => 'PUBLISH']);
+        $post = Post::where('id', $this->post->id)->update(['status' => 'PUBLISH']);
+
+        $params = [
+            'index' => 'article',
+            'id'    => $this->post->id,
+            'body'  => [
+                'doc'   => json_decode((new PostResource($post))->toJson(), true)
+            ]
+        ];
+        $es = $this->repository->update($params);
     }
 }

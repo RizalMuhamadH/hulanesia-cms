@@ -1,4 +1,4 @@
-@extends('layouts.'.$layout != null ? $layout : 'app')
+@extends('layouts.'.$layout)
 @section('body')
     <div class="section-header">
         <h1>{{ $action }} Tags</h1>

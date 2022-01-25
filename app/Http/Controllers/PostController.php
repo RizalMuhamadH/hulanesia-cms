@@ -16,6 +16,7 @@ use Spatie\Activitylog\Models\Activity;
 use App\Http\Resources\PostResource;
 use App\Helpers\Meilisearch;
 use App\Http\Resources\PostListResource;
+use App\Jobs\PostSchedule;
 use App\Models\Netizen;
 use App\Repository\Elasticsearch;
 
@@ -52,6 +53,17 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
+        // dd(now()->diffInMinutes($request->published_at));
+        // dd(now()->addMinutes($request->published_at)->minute);
+
+        if ($request->status == 'SCHEDULE') {
+            $published_at = $request->published_at;
+        } else if ($request->status == 'PUBLISH') {
+            $published_at = now();
+        } else {
+            $published_at = null;
+        }
+
         $post = Post::create([
             'title' => $request->title,
             'slug' => Str::slug($request->title, "-"),
@@ -65,7 +77,7 @@ class PostController extends Controller
             'meta_description' => $request->meta_description,
             'meta_keywords' => $request->meta_keywords,
             'seo_title' => $request->seo_title,
-            'published_at' => $request->published_at,
+            'published_at' => $published_at,
             'admin_id' => Auth::user()->id,
             'author_id' => $request->author_id
         ]);
@@ -117,6 +129,12 @@ class PostController extends Controller
         ];
         $es = $this->repository->create($params);
 
+        if($request->status == 'SCHEDULE'){
+            PostSchedule::dispatchSync(new PostSchedule($post, $this->repository))->delay(now()->addMinutes(now()->diffInMinutes($request->published_at)));
+        }
+
+        // PostSchedule::dispatch($post, $this->repository);
+
         activity()
             ->performedOn(new Post())
             ->event('store')
@@ -146,6 +164,12 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
+        if ($post->status == 'DRAFT' && $request->status == 'PUBLISH') {
+            $published_at = now();
+        } else {
+            $published_at = $post->published_at;
+        }
+
         $post->update([
 
             'title' => $request->title,
@@ -160,7 +184,8 @@ class PostController extends Controller
             'meta_description' => $request->meta_description,
             'meta_keywords' => $request->meta_keywords,
             'seo_title' => $request->seo_title,
-            'author_id' => $request->author_id
+            'author_id' => $request->author_id,
+            'published_at' => $published_at
         ]);
 
         // dd($post->tags->pluck('id'));

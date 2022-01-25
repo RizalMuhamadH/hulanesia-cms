@@ -85,7 +85,7 @@ class TagController extends Controller
             ->withProperties(['data' => $tag])
             ->log('store tag');
 
-        return redirect()->route('tag.index')->with('message', 'Update Successfully');;
+        return redirect()->route('tag.index')->with('message', 'Update Successfully');
     }
 
     public function bulk()

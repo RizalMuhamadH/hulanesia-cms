@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             {{-- <h4>Full Width</h4> --}}
-            @can('add_posts', Model::class)
+            @can('add_users', Model::class)
                 <a href="{{ route('user.add') }}" class="btn btn-icon icon-left btn-primary"><i class="fas fa-plus"></i>
                     Add</a>
 

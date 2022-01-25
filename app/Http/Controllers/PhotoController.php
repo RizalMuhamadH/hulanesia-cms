@@ -188,7 +188,7 @@ class PhotoController extends Controller
         foreach ($photos as $photo) {
             $params['body'][] = [
                 'index' => [
-                    '_index' => 'article',
+                    '_index' => 'photo',
                     '_id'    => $photo->id
                 ]
             ];

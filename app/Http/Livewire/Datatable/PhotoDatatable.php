@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Datatable;
 
 use App\Helpers\Meilisearch;
 use App\Models\Photo;
+use App\Repository\Elasticsearch;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -49,7 +50,11 @@ class PhotoDatatable extends Component
     public function delete($id)
     {
 
-        // Meilisearch::get()->index('photo')->deleteDocument($id);
+        $params = [
+            'index' => 'photo',
+            'id'    => $id,
+        ];
+        $es = Elasticsearch::delete($params);
 
         $photo = Photo::with('images')->find($id);
 

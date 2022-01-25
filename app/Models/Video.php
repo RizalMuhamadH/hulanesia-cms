@@ -11,8 +11,14 @@ class Video extends Model
 
     protected $guarded = [];
 
-    public function videoable()
-    {
-        return $this->morphTo();
-    }
+    protected $fillable = [
+        'title',
+        'vid',
+        'slug',
+        'description',
+        'slug',
+        'thumbnail',
+        'duration',
+        'status',
+    ];
 }

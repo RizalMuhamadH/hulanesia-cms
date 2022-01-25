@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Datatable;
 
 use App\Models\Setting;
+use App\Repository\Elasticsearch;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -46,6 +47,13 @@ class SettingsDatatable extends Component
 
     public function delete($id)
     {
+        
+        $params = [
+            'index' => 'setting',
+            'id'    => $id,
+        ];
+        $es = Elasticsearch::delete($params);
+        
         $setting = Setting::where('id', $id)->delete();
         activity()
             ->performedOn(new Setting())

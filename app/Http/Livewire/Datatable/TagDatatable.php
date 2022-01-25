@@ -12,7 +12,13 @@ class TagDatatable extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search;
+    public $layout;
     private $data = [];
+
+    public function mount($layout)
+    {
+        $this->layout = $layout;
+    }
 
     protected $updatesQueryString = [
         ['query' => ['search' => '']]
