@@ -69,6 +69,23 @@
                                         @endforeach
                                     </select>
                                 </div>
+
+                                <div class="form-group">
+                                    <label class="col-form-label">Related</label>
+                                    <select id="select-posts" class="form-control select2" multiple="" name="related[]"
+                                        required>
+                                        @isset($content)
+                                            @foreach ($content->related as $item)
+                                                <option value="{{ $item->id }}" selected>
+                                                    {{ $item->title }}</option>
+                                            @endforeach
+                                        @endisset
+                                    </select>
+                                    <button type="button" class="btn-popup btn btn-icon icon-left btn-primary btn-sm mt-3"
+                                        data-title="Related Posts" data-url="{{ route('post.index', ['layout' => 'popup']) }}"><i
+                                            class="fas fa-plus"></i> Select Related Posts</button>
+                                </div>
+
                                 <div class="form-group">
                                     <label class="col-form-label">Content</label>
                                     <textarea id="tinymce" rows="10" class="form-control"
@@ -105,14 +122,14 @@
                                 <div class="form-group">
                                     <label class="col-form-label">Status</label>
                                     <select id="status" class="form-control selectric" name="status"
-                                        value="{{ $content->status ?? '' }}" required>
+                                        value="{{ $content->status->value ?? '' }}" required>
                                         <option value="DRAFT" @isset($content)
-                                            {{ $content->status == 'DRAFT' ? 'selected' : '' }} @endisset>DRAFT</option>
+                                            {{ $content->status->value == 'DRAFT' ? 'selected' : '' }} @endisset>DRAFT</option>
                                         <option value="PUBLISH" @isset($content)
-                                            {{ $content->status == 'PUBLISH' ? 'selected' : '' }} @endisset>PUBLISH
+                                            {{ $content->status->value == 'PUBLISH' ? 'selected' : '' }} @endisset>PUBLISH
                                         </option>
                                         <option value="SCHEDULE" @isset($content)
-                                            {{ $content->status == 'SCHEDULE' ? 'selected' : '' }} @endisset>SCHEDULE
+                                            {{ $content->status->value == 'SCHEDULE' ? 'selected' : '' }} @endisset>SCHEDULE
                                         </option>
                                     </select>
                                 </div>
@@ -162,7 +179,7 @@
                                             @endforeach
                                         @endisset
                                     </select>
-                                    <button type="button" class="btn-tag btn btn-icon icon-left btn-primary btn-sm mt-3"
+                                    <button type="button" class="btn-popup btn btn-icon icon-left btn-primary btn-sm mt-3"
                                         data-title="Tambah/Edit Tag" data-url="{{ route('tag.index', ['layout' => 'popup']) }}"><i
                                             class="fas fa-plus"></i> Add/Edit Tag</button>
                                 </div>
@@ -230,7 +247,7 @@
     <script>
         $('document').ready(function() {
 
-            $('.btn-tag').click(function() {
+            $('.btn-popup').click(function() {
                 var url = $(this).data('url');
                 var title = $(this).data('title');
 
@@ -262,10 +279,36 @@
 
             });
 
+            $("#select-posts").select2({
+                minimumInputLength: 3,
+                multiple: true,
+                ajax: {
+                    url: "{{ route('post.search') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            q: params.term,
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    },
+
+                },
+
+            });
+
             $("#modal-iframe").on('load', function() {
 
                 $.each($("#select-tags").val(), function(index, value) {
                     $("#modal-iframe").contents().find(".tag-" + value).attr('checked', true);
+                });
+
+                $.each($("#select-posts").val(), function(index, value) {
+                    $("#modal-iframe").contents().find(".post-" + value).attr('checked', true);
                 });
 
                 $(this).contents().find('.btn-choice').click(function() {
@@ -294,14 +337,6 @@
                         elm.trigger('change');
                     }
                 });
-
-                // $(this).contents().find('.check-box').on('ifUnchecked', function(e) {
-                //     console.log(e);
-                //     var elm = window.parent.$($(this).data('elm'));
-                //     window.parent.$($(this).data('elm') + " option[value='" + $(this).data('id') +
-                //         "']").remove();
-                //     elm.trigger('change');
-                // });
 
             });
         });

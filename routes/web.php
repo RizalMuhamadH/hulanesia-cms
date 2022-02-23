@@ -80,6 +80,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('posts/add', [PostController::class, 'store'])->middleware(['can:add_posts'])->name('post.store');
     Route::post('posts/update/{post}', [PostController::class, 'update'])->middleware(['can:edit_posts'])->name('post.update');
     Route::get('posts/bulk', [PostController::class, 'bulk'])->middleware(['can:edit_posts'])->name('post.bulk');
+    Route::get('posts/search', [PostController::class, 'search'])->middleware(['can:browse_posts'])->name('post.search');
 
 
     Route::get('photos', [PhotoController::class, 'index'])->middleware(['can:browse_photos'])->name('photo.index');

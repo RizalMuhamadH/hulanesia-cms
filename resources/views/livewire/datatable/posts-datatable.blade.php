@@ -3,20 +3,22 @@
 
         <div class="card-header d-flex justify-content-between">
             {{-- <h4>Full Width</h4> --}}
-            @can('add_posts')
-            <a href="{{ route('post.add') }}" class="btn btn-icon icon-left btn-primary"><i class="fas fa-plus"></i>
-                Add</a>
-                
-            @endcan
+            @if ($layout == 'app')
+                @can('add_posts')
+                    <a href="{{ route('post.add') }}" class="btn btn-icon icon-left btn-primary"><i
+                            class="fas fa-plus"></i>
+                        Add</a>
+                @endcan
+            @endif
             <div class="card-header-form">
                 {{-- <form> --}}
-                    <div class="input-group">
-                        <input wire:model.debounce.500ms="search" type="text" class="form-control" placeholder="Search">
-                        {{-- <input type="text" class="form-control" placeholder="Search">
+                <div class="input-group">
+                    <input wire:model.debounce.500ms="search" type="text" class="form-control" placeholder="Search">
+                    {{-- <input type="text" class="form-control" placeholder="Search">
                         <div class="input-group-btn">
                             <button class="btn btn-primary"><i class="fas fa-search"></i></button>
                         </div> --}}
-                    </div>
+                </div>
                 {{-- </form> --}}
             </div>
         </div>
@@ -33,11 +35,21 @@
                         <th>Author</th>
                         <th>Published</th>
                         {{-- <th>Create At</th> --}}
-                        <th>Action</th>
+                        @if ($layout == 'app')
+                            <th>Action</th>
+                        @endif
                     </tr>
                     @foreach ($data as $item)
                         <tr>
-                            <td>{{ $loop->index + 1 }}</td>
+                            <td>
+                                @if ($layout == 'app')
+                                    {{ $loop->index + 1 }}
+                                @else
+                                    <input type="checkbox" class="check-box post-{{ $item->id }}"
+                                        data-name="{{ $item->title }}" data-id="{{ $item->id }}"
+                                        data-elm="#select-posts">
+                                @endif
+                            </td>
                             <td>{{ $item->title }}</td>
                             <td>{{ $item->category->name }}</td>
                             <td>{{ $item->feature->name }}</td>
@@ -47,28 +59,30 @@
                                 @endforeach
                             </td> --}}
                             <td>
-                                @if ($item->status == 'DRAFT')
-                                    <div class="badge badge-danger">{{ $item->status }}</div>
-                                @elseif ($item->status == 'PUBLISH')
+                                @if ($item->status->value == 'DRAFT')
+                                    <div class="badge badge-danger">{{ $item->status->value }}</div>
+                                @elseif ($item->status->value == 'PUBLISH')
 
-                                    <div class="badge badge-success">{{ $item->status }}</div>
+                                    <div class="badge badge-success">{{ $item->status->value }}</div>
                                 @else
-                                    <div class="badge badge-warning">{{ $item->status }}</div>
+                                    <div class="badge badge-warning">{{ $item->status->value }}</div>
                                 @endif
                             </td>
                             <td>{{ $item->author->name ?? '' }}</td>
-                            <td>{{ $item->published_at != null ? $item->published_at->format('d, M Y H:m') : '' }}</td>
-                            {{-- <td>{{ $item->created_at->format('d, M Y H:m') }}</td> --}}
-                            <td>
-                                @can('edit_posts')
-                                <a href="{{ route('post.edit', $item->id) }}" class="btn btn-info">Edit</a>
-                                    
-                                @endcan
-                                @can('delete_posts')
-                                <button wire:click="destroy({{ $item->id }})" class="btn btn-danger">Delete</button>
-                                    
-                                @endcan
+                            <td>{{ $item->published_at != null ? $item->published_at->format('d, M Y H:m') : '' }}
                             </td>
+                            {{-- <td>{{ $item->created_at->format('d, M Y H:m') }}</td> --}}
+                            @if ($layout == 'app')
+                                <td>
+                                    @can('edit_posts')
+                                        <a href="{{ route('post.edit', $item->id) }}" class="btn btn-info">Edit</a>
+                                    @endcan
+                                    @can('delete_posts')
+                                        <button wire:click="destroy({{ $item->id }})"
+                                            class="btn btn-danger">Delete</button>
+                                    @endcan
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
                     {{-- <tr>
@@ -88,7 +102,6 @@
     </div>
 
     <script>
-
         window.addEventListener('swal:confirm', e => {
             Swal.fire({
                 title: e.detail.title,

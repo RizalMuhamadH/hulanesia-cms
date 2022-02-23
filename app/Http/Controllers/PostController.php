@@ -29,9 +29,12 @@ class PostController extends Controller
         $this->repository = $repository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('post.index');
+        $layout = $request->layout ?? 'app';
+        return view('post.index', [
+            'layout' => $layout
+        ]);
     }
 
     public function add()
@@ -84,6 +87,7 @@ class PostController extends Controller
 
 
         $post->tags()->attach($request->tags);
+        $post->related()->attach($request->related);
 
         if ($request->hasFile('image')) {
 
@@ -192,6 +196,7 @@ class PostController extends Controller
         // $post->tags()->sync($post->tags->pluck('id'));
         $post->tags()->detach();
         $post->tags()->attach($request->tags);
+        $post->related()->attach($request->related);
 
         if ($request->hasFile('image')) {
 
@@ -278,6 +283,11 @@ class PostController extends Controller
         }
 
         return redirect()->route('post.index')->with('message', 'Bulk Successfully');
+    }
+
+    public function search(Request $request)
+    {
+        return Post::select(['id', 'title as text'])->where('status', 'PUBLISH')->where('title', 'like', '%'.$request->q.'%')->limit(20)->get();
     }
 
     

@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Datatable;
 
-
+use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Helpers\Meilisearch;
 use App\Repository\Elasticsearch;
@@ -16,6 +16,7 @@ class PostsDatatable extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search;
+    public $layout;
     private $data = [];
 
     protected $updatesQueryString = [
@@ -24,12 +25,27 @@ class PostsDatatable extends Component
 
     protected $listeners = ['delete' => 'delete'];
 
+    public function mount($layout)
+    {
+        $this->layout = $layout;
+    }
+
     public function render()
     {
         if ($this->search != null) {
-            $this->data = Post::with(['category', 'feature', 'image', 'tags', 'user', 'author'])->where('title', 'like', '%' . $this->search . '%')->latest()->paginate(10)->appends(array('search' => $this->search));
+            $layout = $this->layout;
+            $this->data = Post::with(['category', 'feature', 'image', 'tags', 'user', 'author'])->where(function ($q) use ($layout) {
+                $q->where('title', 'like', '%' . $this->search . '%');
+                if($layout == 'popup'){
+                    $q->where('status', PostStatus::PUBLISH);
+                }
+            })->latest()->paginate(10)->appends(array('search' => $this->search));
         } else {
-            $this->data = Post::with(['category', 'feature', 'image', 'tags', 'user', 'author'])->latest()->paginate(10);
+            $this->data = Post::with(['category', 'feature', 'image', 'tags', 'user', 'author'])->where(function ($q) {
+                if($this->layout == 'popup'){
+                    $q->where('status', PostStatus::PUBLISH);
+                }
+            })->latest()->paginate(10);
         }
 
         return view('livewire.datatable.posts-datatable', [

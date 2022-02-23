@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.'.$layout ?? 'app')
 @section('body')
     <div class="section-header">
         <h1>Posts</h1>
@@ -7,6 +7,6 @@
         </div>
     </div>
     <div class="section-body">
-        <livewire:datatable.posts-datatable />
+        <livewire:datatable.posts-datatable :layout="$layout" />
     </div>
 @endsection

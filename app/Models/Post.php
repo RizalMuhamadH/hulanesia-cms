@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PostStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -29,6 +30,10 @@ class Post extends Model
         'meta_keywords',
         'seo_title',
         'published_at'
+    ];
+
+    protected $casts = [
+        'status' => PostStatus::class
     ];
 
     protected $dates = ['published_at'];
@@ -72,5 +77,15 @@ class Post extends Model
     public function bodylinks()
     {
         return $this->morphMany(Bodylink::class, 'bodylinkable');
+    }
+
+    public function related()
+    {
+        return $this->morphToMany(static::class, 'relatable')->withTimestamps();
+    }
+
+    public function parents()
+    {
+        return $this->morphedByMany(static::class, 'relatable');
     }
 }

@@ -26,6 +26,7 @@ class PostResource extends JsonResource
             'category'          => new PostCategoryResource($this->category),
             'editor'            => new PostEditorResource($this->user),
             'author'            => new PostAuthorResource($this->author),
+            'related'           => PostListResource::collection($this->related),
             'status'            => $this->status,
             'tags'              => PostTagResource::collection($this->tags),
             'image'             => new ImageResource($this->image),
