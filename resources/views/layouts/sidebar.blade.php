@@ -12,7 +12,7 @@
           @can('browse_posts')
           {{-- <li class="{{ Request::segment(1) == 'posts' ? 'active' : '' }}"><a class="nav-link" href="/posts"><i class="fas fa-stream"></i> <span>Posts</span></a></li> --}}
           <li class="nav-item dropdown {{ Request::segment(1) == 'posts' ? 'active' : '' }}">
-            <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Editorial</span></a>
+            <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-stream"></i> <span>Editorial</span></a>
             <ul class="dropdown-menu">
               <li class="{{ Request::segment(1) == 'posts' && request()->post == null ? 'active' : '' }}"><a class="nav-link" href="{{ route('post.index') }}">All</a></li>
               <li class="{{ request()->post == 'publish' ? 'active' : '' }}"><a class="nav-link" href="{{ route('post.index', ['post' => 'publish']) }}">Published</a></li>
