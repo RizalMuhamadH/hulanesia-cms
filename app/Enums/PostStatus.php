@@ -7,4 +7,5 @@ enum PostStatus: string {
     case PUBLISH = 'PUBLISH';
     case ARCHIVE = 'ARCHIVE';
     case SCHEDULE = 'SCHEDULE';
+    case TRASH = 'TRASH';
 }

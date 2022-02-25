@@ -108,20 +108,20 @@
                                             {{ $item->category->name }}
                                         </td>
                                         <td>
-                                            {{ $item->status }}
+                                            {{ $item->status->value }}
                                         </td>
-                                        <td class="d-flex">
+                                        <td>
                                             @if ($item->author)
                                                 @if ($item->author->image)
-                                                    <figure>
+                                                    {{-- <figure> --}}
                                                         <img src="/storage/{{ $item->author->image->thumbnail('small', 'path') }}"
                                                             class="avatar mr-2 avatar-sm">
-                                                    </figure>
+                                                    {{-- </figure> --}}
                                                 @else
-                                                    <figure>
+                                                    {{-- <figure> --}}
                                                         <img src="https://ui-avatars.com/api/?name={{ $item->author->name }}&color=7F9CF5&background=EBF4FF"
                                                             class="avatar mr-2 avatar-sm">
-                                                    </figure>
+                                                    {{-- </figure> --}}
                                                 @endif
                                                 {{-- {{ $item->author->name }} --}}
                                             @endif

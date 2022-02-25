@@ -7,6 +7,6 @@
         </div>
     </div>
     <div class="section-body">
-        <livewire:datatable.posts-datatable :layout="$layout" />
+        <livewire:datatable.posts-datatable :layout="$layout" :status="request()->post ?? 'all' " />
     </div>
 @endsection

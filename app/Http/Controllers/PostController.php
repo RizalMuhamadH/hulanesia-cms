@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PostStatus;
 use App\Http\Controllers\ContentTypes\ImageHandler;
 use Illuminate\Http\Request;
 use App\Models\Category;
@@ -133,7 +134,7 @@ class PostController extends Controller
         ];
         $es = $this->repository->create($params);
 
-        if($request->status == 'SCHEDULE'){
+        if ($request->status == 'SCHEDULE') {
             PostSchedule::dispatchSync(new PostSchedule($post, $this->repository))->delay(now()->addMinutes(now()->diffInMinutes($request->published_at)));
         }
 
@@ -150,7 +151,9 @@ class PostController extends Controller
 
     public function edit($id)
     {
+
         $post = Post::findOrFail($id);
+        // $this->authorize('update', $post);
 
         $categories = Category::with('children')->where('parent_id', 0)->get();
         $features = Feature::get();
@@ -168,6 +171,9 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
+
+        $this->authorize('update', $post);
+
         if ($post->status == 'DRAFT' && $request->status == 'PUBLISH') {
             $published_at = now();
         } else {
@@ -196,7 +202,7 @@ class PostController extends Controller
         // $post->tags()->sync($post->tags->pluck('id'));
         $post->tags()->detach();
         $post->tags()->attach($request->tags);
-        $post->related()->attach($request->related);
+        $post->related()->sync($request->related);
 
         if ($request->hasFile('image')) {
 
@@ -287,10 +293,10 @@ class PostController extends Controller
 
     public function search(Request $request)
     {
-        return Post::select(['id', 'title as text'])->where('status', 'PUBLISH')->where('title', 'like', '%'.$request->q.'%')->limit(20)->get();
+        return Post::select(['id', 'title as text'])->where('status', 'PUBLISH')->where('title', 'like', '%' . $request->q . '%')->limit(20)->get();
     }
 
-    
+
     public function popup()
     {
         return view('popup.post');

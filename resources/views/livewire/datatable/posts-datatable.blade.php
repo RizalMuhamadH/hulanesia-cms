@@ -60,12 +60,12 @@
                             </td> --}}
                             <td>
                                 @if ($item->status->value == 'DRAFT')
-                                    <div class="badge badge-danger">{{ $item->status->value }}</div>
+                                    <div class="badge badge-warning">{{ $item->status->value }}</div>
                                 @elseif ($item->status->value == 'PUBLISH')
 
                                     <div class="badge badge-success">{{ $item->status->value }}</div>
                                 @else
-                                    <div class="badge badge-warning">{{ $item->status->value }}</div>
+                                    <div class="badge badge-danger">{{ $item->status->value }}</div>
                                 @endif
                             </td>
                             <td>{{ $item->author->name ?? '' }}</td>
@@ -74,13 +74,25 @@
                             {{-- <td>{{ $item->created_at->format('d, M Y H:m') }}</td> --}}
                             @if ($layout == 'app')
                                 <td>
-                                    @can('edit_posts')
-                                        <a href="{{ route('post.edit', $item->id) }}" class="btn btn-info">Edit</a>
-                                    @endcan
-                                    @can('delete_posts')
-                                        <button wire:click="destroy({{ $item->id }})"
-                                            class="btn btn-danger">Delete</button>
-                                    @endcan
+                                    @if ($status == 'trash')
+                                        @can('forceDelete', $item)
+                                            <button wire:click="forceDestroy({{ $item->id }})"
+                                                class="btn btn-danger">Force Delete</button>
+                                        @endcan
+                                        @can('restore', $item)
+                                            <button wire:click="restore({{ $item->id }})"
+                                                class="btn btn-warning">Restore</button>
+                                        @endcan
+                                    @else
+                                        @can(['edit_posts', 'update'], $item)
+                                            <a href="{{ route('post.edit', $item->id) }}" class="btn btn-info">Edit</a>
+                                        @endcan
+                                        @can(['delete_posts', 'delete'], $item)
+                                            <button wire:click="destroy({{ $item->id }})"
+                                                class="btn btn-danger">Delete</button>
+                                        @endcan
+                                    @endif
+
                                 </td>
                             @endif
                         </tr>
@@ -113,8 +125,18 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.Livewire.emit('delete', e.detail.id);
+                    window.Livewire.emit('delete', {id: e.detail.id, force: e.detail.force});
                 }
+            });
+        });
+
+        window.addEventListener('swal:response', e => {
+            Swal.fire({
+                position: 'center',
+                icon: e.detail.type,
+                title: e.detail.title,
+                showConfirmButton: false,
+                timer: 1500
             });
         });
     </script>

@@ -81,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('posts/update/{post}', [PostController::class, 'update'])->middleware(['can:edit_posts'])->name('post.update');
     Route::get('posts/bulk', [PostController::class, 'bulk'])->middleware(['can:edit_posts'])->name('post.bulk');
     Route::get('posts/search', [PostController::class, 'search'])->middleware(['can:browse_posts'])->name('post.search');
+    // Route::get('posts/{postStatus}', [PostController::class, 'index'])->middleware(['can:browse_posts'])->name('post.status');
 
 
     Route::get('photos', [PhotoController::class, 'index'])->middleware(['can:browse_photos'])->name('photo.index');
