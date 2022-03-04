@@ -47,4 +47,19 @@ class Elasticsearch {
     {
         $this->client->bulk($params);
     }
+
+    public function search($params)
+    {
+        return $this->client->search($params);
+    }
+
+    public function createIndex($params)
+    {
+        return $this->client->indices()->create($params);
+    }
+
+    public function existIndex($params)
+    {
+        return $this->client->indices()->exists($params);
+    }
 }

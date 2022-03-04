@@ -18,6 +18,7 @@ class PostsDatatable extends Component
 
     public $search;
     public $layout;
+    public $style;
     public $status = "all";
     private $data = [];
 
@@ -27,10 +28,11 @@ class PostsDatatable extends Component
 
     protected $listeners = ['delete' => 'delete'];
 
-    public function mount($layout, $status)
+    public function mount($layout, $status, $style)
     {
         $this->layout = $layout;
         $this->status = $status;
+        $this->style = $style;
     }
 
     public function render()

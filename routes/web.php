@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeatureController;
+use App\Http\Controllers\FeatureManagementController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\VideoController;
+use App\Http\Livewire\Management\FeatureManagement;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -94,6 +96,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('posts/search', 'search')->middleware(['can:browse_posts'])->name('post.search');
     });
 
+    Route::get('posts/{slug}', FeatureManagement::class)->middleware(['can:add_posts'])->name('post.management');
+
     Route::controller(PhotoController::class)->group(function(){
         Route::get('photos', 'index')->middleware(['can:browse_photos'])->name('photo.index');
         Route::get('photos/add', 'add')->middleware(['can:add_photos'])->name('photo.add');
@@ -121,11 +125,10 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-    // Route::get('posts/{postStatus}', [PostController::class, 'index'])->middleware(['can:browse_posts'])->name('post.status');
-
-
-
-
+    
+    
+    
+    
 });
 
 Route::post('upload/image', [UploadController::class, 'image'])->name('upload.image');

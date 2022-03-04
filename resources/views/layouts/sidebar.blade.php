@@ -17,6 +17,9 @@
               <li class="{{ Request::segment(1) == 'posts' && request()->post == null ? 'active' : '' }}"><a class="nav-link" href="{{ route('post.index') }}">All</a></li>
               <li class="{{ request()->post == 'publish' ? 'active' : '' }}"><a class="nav-link" href="{{ route('post.index', ['post' => 'publish']) }}">Published</a></li>
               <li class="{{ request()->post == 'draft' ? 'active' : '' }}"><a class="nav-link" href="{{ route('post.index', ['post' => 'draft']) }}">Draft</a></li>
+              <li class="{{ Request::segment(2) == 'editor_choice' ? 'active' : '' }}"><a class="nav-link" href="{{ route('post.management', ['slug' => 'editor_choice']) }}">Editor Choice</a></li>
+              <li class="{{ Request::segment(2) == 'headline' ? 'active' : '' }}"><a class="nav-link" href="{{ route('post.management', ['slug' => 'headline']) }}">Headline</a></li>
+              <li class="{{ Request::segment(2) == 'breaking_news' ? 'active' : '' }}"><a class="nav-link" href="{{ route('post.management', ['slug' => 'breaking_news']) }}">Breaking News</a></li>
               <li class="{{ request()->post == 'trash' ? 'active' : '' }}"><a class="nav-link" href="{{ route('post.index', ['post' => 'trash']) }}">Trash</a></li>
             </ul>
           </li>

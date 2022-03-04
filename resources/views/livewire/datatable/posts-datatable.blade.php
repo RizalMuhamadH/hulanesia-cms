@@ -44,10 +44,14 @@
                             <td>
                                 @if ($layout == 'app')
                                     {{ $loop->index + 1 }}
-                                @else
+                                @elseif ($style == 'checkbox')
                                     <input type="checkbox" class="check-box post-{{ $item->id }}"
                                         data-name="{{ $item->title }}" data-id="{{ $item->id }}"
                                         data-elm="#select-posts">
+                                @else
+                                    <button type="button" class="btn-choice btn btn-icon icon-left btn-primary mt-3 mr-4"
+                                        data-id="{{ $item->id }}"><i class="fas fa-check"></i>
+                                        Select</button>
                                 @endif
                             </td>
                             <td>{{ $item->title }}</td>
@@ -62,7 +66,6 @@
                                 @if ($item->status->value == 'DRAFT')
                                     <div class="badge badge-warning">{{ $item->status->value }}</div>
                                 @elseif ($item->status->value == 'PUBLISH')
-
                                     <div class="badge badge-success">{{ $item->status->value }}</div>
                                 @else
                                     <div class="badge badge-danger">{{ $item->status->value }}</div>
@@ -125,7 +128,10 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.Livewire.emit('delete', {id: e.detail.id, force: e.detail.force});
+                    window.Livewire.emit('delete', {
+                        id: e.detail.id,
+                        force: e.detail.force
+                    });
                 }
             });
         });
