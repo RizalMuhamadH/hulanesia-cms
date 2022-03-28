@@ -14,15 +14,15 @@ class FeatureManagement extends Component
     public $size = 5;
     public $items = [];
     public $title = '';
-    private $source = [];
-    private $index = "";
+    public $source = [];
+    public $slug;
     protected $repo;
     protected $listeners = ['select' => 'select'];
 
     public function mount($slug)
     {
         if(IndexState::tryFrom($slug) != null) {
-            $this->index = $slug;
+            $this->slug = $slug;
             $this->title = str()->title(str()->replace('_',' ', $slug));
         } else {
             abort(404);
@@ -30,12 +30,12 @@ class FeatureManagement extends Component
         
         $this->repo = new Elasticsearch();
 
-        if(!$this->repo->existIndex(['index' => $this->index])) {
-            $this->repo->createIndex(['index' => $this->index]);
+        if(!$this->repo->existIndex(['index' => $this->slug])) {
+            $this->repo->createIndex(['index' => $this->slug]);
         }
 
         $repo = $this->repo->search([
-            'index' => $this->index,
+            'index' => $this->slug,
         ]);
 
         foreach ($repo['hits']['hits'] as $hit) {
@@ -72,11 +72,12 @@ class FeatureManagement extends Component
         $this->bulkDelete();
 
         $items = $this->items;
+        $slug = $this->slug;
         $params = ['body' => []];
         foreach ($items as $key => $item) {
             $params['body'][] = [
                 'index' => [
-                    '_index' => $this->index,
+                    '_index' => $slug,
                     '_id'    => $key + 1
                 ]
             ];
@@ -85,7 +86,8 @@ class FeatureManagement extends Component
         }
 
         if (count($items) != 0) {
-            $this->repo->bulk($params);
+            $repo = new Elasticsearch();
+            $repo->bulk($params);
 
             $this->dispatchBrowserEvent('swal:response', [
                 'title' => 'Post has been added successfully.',
@@ -97,17 +99,19 @@ class FeatureManagement extends Component
     public function bulkDelete()
     {
         $params = ['body' => []];
+        $slug = $this->slug;
         foreach ($this->source as $key => $item) {
             $params['body'][] = [
                 'delete' => [
-                    '_index' => $this->index,
+                    '_index' => $slug,
                     '_id'    => $key + 1
                 ]
             ];
         }
 
         if (count($this->source) != 0) {
-            $this->repo->bulk($params);
+            $repo = new Elasticsearch();
+            $repo->bulk($params);
         }
     }
 }
