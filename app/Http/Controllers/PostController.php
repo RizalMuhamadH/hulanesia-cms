@@ -61,6 +61,16 @@ class PostController extends Controller
         // dd(now()->diffInMinutes($request->published_at));
         // dd(now()->addMinutes($request->published_at)->minute);
 
+        $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'required',
+            'body' => 'required',
+            'category_id' => 'required',
+            'feature_id' => 'required',
+            'image' => 'required',
+            'tags' => 'required',
+        ]);
+
         if ($request->status == 'SCHEDULE') {
             $published_at = $request->published_at;
         } else if ($request->status == 'PUBLISH') {
@@ -70,7 +80,7 @@ class PostController extends Controller
         }
 
         DB::transaction(function () use ($request, $published_at) {
-            
+
             $post = Post::create([
                 'title' => $request->title,
                 'slug' => Str::slug($request->title, "-"),
@@ -85,16 +95,16 @@ class PostController extends Controller
                 'meta_keywords' => $request->meta_keywords,
                 'seo_title' => $request->seo_title,
                 'published_at' => $published_at,
-                'admin_id' => Auth::user()->id,
-                'author_id' => $request->author_id
+                'admin_id' => Auth::user()->hasRole('writter') ? null : Auth::user()->id,
+                'author_id' => Auth::user()->hasRole('writter') ? Auth::user()->id : $request->author_id
             ]);
-    
-    
+
+
             $post->tags()->attach($request->tags);
             $post->related()->attach($request->related);
-    
+
             if ($request->hasFile('image')) {
-    
+
                 $options = [
                     "resize" => [
                         "width" => "1024",
@@ -121,28 +131,28 @@ class PostController extends Controller
                     ]
                 ];
                 $options = json_decode(json_encode($options));
-    
+
                 $path = (new ImageHandler($request, 'posts', 'image', $options))->handle();
                 $post->image()->create(['path' => $path, 'caption' => $request->caption]);
             }
-    
+
             // Meilisearch::get()->index('post')->addDocuments([
             //     json_decode((new PostResource($post))->toJson(), true)
             // ]);
-    
+
             $params = [
                 'index' => 'article',
                 'id'    => $post->id,
                 'body'  => json_decode((new PostResource($post))->toJson(), true)
             ];
             $es = $this->repository->create($params);
-    
+
             if ($request->status == 'SCHEDULE') {
                 PostSchedule::dispatchSync(new PostSchedule($post, $this->repository))->delay(now()->addMinutes(now()->diffInMinutes($request->published_at)));
             }
-    
+
             // PostSchedule::dispatch($post, $this->repository);
-    
+
             activity()
                 ->performedOn(new Post())
                 ->event('store')
@@ -185,83 +195,88 @@ class PostController extends Controller
             $published_at = $post->published_at;
         }
 
-        $post->update([
 
-            'title' => $request->title,
-            'slug' => Str::slug($request->title, "-"),
-            'description' => $request->description,
-            'body' => $request->body,
-            'source' => $request->source,
-            'source_link' => $request->source_link,
-            'feature_id' => $request->feature_id,
-            'category_id' => $request->category_id,
-            'status' => $request->status,
-            'meta_description' => $request->meta_description,
-            'meta_keywords' => $request->meta_keywords,
-            'seo_title' => $request->seo_title,
-            'author_id' => $request->author_id,
-            'published_at' => $published_at
-        ]);
+        DB::transaction(function () use ($request, $published_at, $post) {
+            $post->update([
 
-        // dd($post->tags->pluck('id'));
-        // $post->tags()->sync($post->tags->pluck('id'));
-        $post->tags()->detach();
-        $post->tags()->attach($request->tags);
-        $post->related()->sync($request->related);
+                'title' => $request->title,
+                'slug' => Str::slug($request->title, "-"),
+                'description' => $request->description,
+                'body' => $request->body,
+                'source' => $request->source,
+                'source_link' => $request->source_link,
+                'feature_id' => $request->feature_id,
+                'category_id' => $request->category_id,
+                'status' => $request->status,
+                'meta_description' => $request->meta_description,
+                'meta_keywords' => $request->meta_keywords,
+                'seo_title' => $request->seo_title,
+                'author_id' => $request->author_id,
+                'published_at' => $published_at,
+                'admin_id' => Auth::user()->hasRole('writter') ? null : Auth::user()->id,
+                'author_id' => Auth::user()->hasRole('writter') ? Auth::user()->id : $request->author_id
+            ]);
 
-        if ($request->hasFile('image')) {
+            // dd($post->tags->pluck('id'));
+            // $post->tags()->sync($post->tags->pluck('id'));
+            $post->tags()->detach();
+            $post->tags()->attach($request->tags);
+            $post->related()->sync($request->related);
 
-            $options = [
-                "resize" => [
-                    "width" => "1024",
-                    "height" => "null"
-                ],
-                "quality" => "70%",
-                "upsize" => true,
-                "thumbnails" => [
-                    [
-                        "name" => "medium",
-                        "scale" => "50%"
+            if ($request->hasFile('image')) {
+
+                $options = [
+                    "resize" => [
+                        "width" => "1024",
+                        "height" => "null"
                     ],
-                    [
-                        "name" => "small",
-                        "scale" => "25%"
-                    ],
-                    [
-                        "name" => "cropped",
-                        "crop" => [
-                            "width" => "300",
-                            "height" => "250"
+                    "quality" => "70%",
+                    "upsize" => true,
+                    "thumbnails" => [
+                        [
+                            "name" => "medium",
+                            "scale" => "50%"
+                        ],
+                        [
+                            "name" => "small",
+                            "scale" => "25%"
+                        ],
+                        [
+                            "name" => "cropped",
+                            "crop" => [
+                                "width" => "300",
+                                "height" => "250"
+                            ]
                         ]
                     ]
+                ];
+                $options = json_decode(json_encode($options));
+
+                $path = (new ImageHandler($request, 'posts', 'image', $options))->handle();
+                $post->image->delete();
+                $post->image()->create(['path' => $path, 'caption' => $request->caption]);
+            } else {
+                $post->image()->update(['caption' => $request->caption]);
+            }
+            // Meilisearch::get()->index('post')->updateDocuments([
+            //     json_decode((new PostResource($post))->toJson(), true)
+            // ]);
+
+            $params = [
+                'index' => 'article',
+                'id'    => $post->id,
+                'body'  => [
+                    'doc'   => json_decode((new PostResource($post))->toJson(), true)
                 ]
             ];
-            $options = json_decode(json_encode($options));
+            $es = $this->repository->update($params);
 
-            $path = (new ImageHandler($request, 'posts', 'image', $options))->handle();
-            $post->image->delete();
-            $post->image()->create(['path' => $path, 'caption' => $request->caption]);
-        } else {
-            $post->image()->update(['caption' => $request->caption]);
-        }
-        // Meilisearch::get()->index('post')->updateDocuments([
-        //     json_decode((new PostResource($post))->toJson(), true)
-        // ]);
-
-        $params = [
-            'index' => 'article',
-            'id'    => $post->id,
-            'body'  => [
-                'doc'   => json_decode((new PostResource($post))->toJson(), true)
-            ]
-        ];
-        $es = $this->repository->update($params);
-
-        activity()
-            ->performedOn($post)
-            ->event('update')
-            ->withProperties(['data' => $post->with(['tags', 'image'])])
-            ->log('update post');
+            activity()
+                ->performedOn($post)
+                ->event('update')
+                ->withProperties(['data' => $post->with(['tags', 'image'])])
+                ->log('update post');
+        });
 
         return redirect()->route('post.index')->with('message', 'Add Successfully');
     }

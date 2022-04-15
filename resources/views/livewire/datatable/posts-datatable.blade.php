@@ -32,6 +32,7 @@
                         <th>Feature</th>
                         {{-- <th>Tags</th> --}}
                         <th>Status</th>
+                        <th>Editor</th>
                         <th>Author</th>
                         <th>Published</th>
                         {{-- <th>Create At</th> --}}
@@ -71,6 +72,7 @@
                                     <div class="badge badge-danger">{{ $item->status->value }}</div>
                                 @endif
                             </td>
+                            <td>{{ $item->user->name ?? '' }}</td>
                             <td>{{ $item->author->name ?? '' }}</td>
                             <td>{{ $item->published_at != null ? $item->published_at->format('d, M Y H:m') : '' }}
                             </td>

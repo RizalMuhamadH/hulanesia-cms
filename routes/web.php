@@ -96,7 +96,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('posts/search', 'search')->middleware(['can:browse_posts'])->name('post.search');
     });
 
-    Route::get('posts/{slug}', FeatureManagement::class)->middleware(['can:add_posts'])->name('post.management');
+    Route::get('posts/{slug}', FeatureManagement::class)->middleware(['role:editor|admin'])->name('post.management');
 
     Route::controller(PhotoController::class)->group(function(){
         Route::get('photos', 'index')->middleware(['can:browse_photos'])->name('photo.index');

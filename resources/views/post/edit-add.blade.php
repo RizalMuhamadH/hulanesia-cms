@@ -27,35 +27,30 @@
                                         value="{{ $content->title ?? '' }}" required>
                                 </div>
                                 <!-- <div class="form-group">
-                                                                                                            <label class="col-form-label">Slug</label>
-                                                                                                            <input type="text" class="form-control">
-                                                                                                        </div> -->
+                                                                                                                    <label class="col-form-label">Slug</label>
+                                                                                                                    <input type="text" class="form-control">
+                                                                                                                </div> -->
                                 <div class="form-group">
                                     <label class="col-form-label">Summary</label>
-                                    <textarea rows="10" class="form-control"
-                                        name="description">{{ $content->description ?? '' }}</textarea>
+                                    <textarea rows="10" class="form-control" name="description">{{ $content->description ?? '' }}</textarea>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Category</label>
                                     <select id="category" class="form-control selectric" name="category_id" required>
                                         @foreach ($categories as $item)
                                             @if (count($item->children) != 0)
-
                                                 <optgroup label="{{ $item->name }}">
                                                     @foreach ($item->children as $sub)
                                                         <option value="{{ $sub->id }}"
-                                                            @isset($content)
-                                                                {{ $content->category_id == $sub->id ? 'selected' : '' }}
-                                                            @endisset>
+                                                            @isset($content) {{ $content->category_id == $sub->id ? 'selected' : '' }} @endisset>
                                                             {{ $sub->name }}</option>
                                                     @endforeach
                                                 </optgroup>
                                             @else
-                                                <option value="{{ $item->id }}" @isset($content)
-                                                    {{ $content->category_id == $item->id ? 'selected' : '' }} @endisset>
+                                                <option value="{{ $item->id }}"
+                                                    @isset($content) {{ $content->category_id == $item->id ? 'selected' : '' }} @endisset>
                                                     {{ $item->name }}</option>
                                             @endif
-
                                         @endforeach
                                     </select>
                                 </div>
@@ -63,8 +58,8 @@
                                     <label class="col-form-label">Feature</label>
                                     <select id="feature" class="form-control selectric" name="feature_id" required>
                                         @foreach ($features as $item)
-                                            <option value="{{ $item->id }}" @isset($content)
-                                                {{ $content->feature_id == $item->id ? 'selected' : '' }} @endisset>
+                                            <option value="{{ $item->id }}"
+                                                @isset($content) {{ $content->feature_id == $item->id ? 'selected' : '' }} @endisset>
                                                 {{ $item->name }}</option>
                                         @endforeach
                                     </select>
@@ -82,14 +77,14 @@
                                         @endisset
                                     </select>
                                     <button type="button" class="btn-popup btn btn-icon icon-left btn-primary btn-sm mt-3"
-                                        data-title="Related Posts" data-url="{{ route('post.index', ['layout' => 'popup']) }}"><i
+                                        data-title="Related Posts"
+                                        data-url="{{ route('post.index', ['layout' => 'popup']) }}"><i
                                             class="fas fa-plus"></i> Select Related Posts</button>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-form-label">Content</label>
-                                    <textarea id="tinymce" rows="10" class="form-control"
-                                        name="body">{{ $content->body ?? '' }}</textarea>
+                                    <textarea id="tinymce" rows="10" class="form-control" name="body">{{ $content->body ?? '' }}</textarea>
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md-6 col-12">
@@ -106,33 +101,37 @@
                             </div>
 
                             <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="col-form-label">Author</label>
-                                    <select id="author_id" class="form-control select2" name="author_id"
-                                        value="{{ $content->author_id ?? '' }}" required>
-                                        <option value="">Null</option>
-                                        @foreach ($users as $item)
-                                            <option value="{{ $item->id }}" @isset($content)
-                                                {{ $content->author_id == $item->id ? 'selected' : '' }} @endisset>
-                                                {{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-form-label">Status</label>
-                                    <select id="status" class="form-control selectric" name="status"
-                                        value="{{ $content->status->value ?? '' }}" required>
-                                        <option value="DRAFT" @isset($content)
-                                            {{ $content->status->value == 'DRAFT' ? 'selected' : '' }} @endisset>DRAFT</option>
-                                        <option value="PUBLISH" @isset($content)
-                                            {{ $content->status->value == 'PUBLISH' ? 'selected' : '' }} @endisset>PUBLISH
-                                        </option>
-                                        <option value="SCHEDULE" @isset($content)
-                                            {{ $content->status->value == 'SCHEDULE' ? 'selected' : '' }} @endisset>SCHEDULE
-                                        </option>
-                                    </select>
-                                </div>
+                                @if (Auth::user()->hasRole('editor') || Auth::user()->hasRole('admin'))
+                                    <div class="form-group">
+                                        <label class="col-form-label">Author</label>
+                                        <select id="author_id" class="form-control select2" name="author_id"
+                                            value="{{ $content->author_id ?? '' }}" required>
+                                            <option value="">Null</option>
+                                            @foreach ($users as $item)
+                                                <option value="{{ $item->id }}"
+                                                    @isset($content) {{ $content->author_id == $item->id ? 'selected' : '' }} @endisset>
+                                                    {{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label">Status</label>
+                                        <select id="status" class="form-control selectric" name="status"
+                                            value="{{ $content->status->value ?? '' }}" required>
+                                            <option value="DRAFT"
+                                                @isset($content) {{ $content->status->value == 'DRAFT' ? 'selected' : '' }} @endisset>
+                                                DRAFT</option>
+                                            <option value="PUBLISH"
+                                                @isset($content) {{ $content->status->value == 'PUBLISH' ? 'selected' : '' }} @endisset>
+                                                PUBLISH
+                                            </option>
+                                            <option value="SCHEDULE"
+                                                @isset($content) {{ $content->status->value == 'SCHEDULE' ? 'selected' : '' }} @endisset>
+                                                SCHEDULE
+                                            </option>
+                                        </select>
+                                    </div>
+                                @endif
 
                                 <div class="form-group" id="publish">
                                     <label class="col-form-label">Publish</label>
@@ -159,8 +158,7 @@
 
                                 <div class="form-group">
                                     <label class="col-form-label">Caption</label>
-                                    <textarea rows="10" class="form-control"
-                                        name="caption">{{ $content->image->caption ?? '' }}</textarea>
+                                    <textarea rows="10" class="form-control" name="caption">{{ $content->image->caption ?? '' }}</textarea>
                                 </div>
 
                                 <div class="form-group">
@@ -180,7 +178,8 @@
                                         @endisset
                                     </select>
                                     <button type="button" class="btn-popup btn btn-icon icon-left btn-primary btn-sm mt-3"
-                                        data-title="Tambah/Edit Tag" data-url="{{ route('tag.index', ['layout' => 'popup']) }}"><i
+                                        data-title="Tambah/Edit Tag"
+                                        data-url="{{ route('tag.index', ['layout' => 'popup']) }}"><i
                                             class="fas fa-plus"></i> Add/Edit Tag</button>
                                 </div>
 

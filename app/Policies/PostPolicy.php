@@ -28,6 +28,14 @@ class PostPolicy
             return true;
         }
 
+        if($post->admin_id == null && $post->status == 'DRAFT' && $user->hasRole('editor')){
+            return true;
+        }
+
+        if($post->author_id == $user->id && $post->status == 'DRAFT' && $post->admin_id == null){
+            return true;
+        }
+
 
         // return Response::deny('You are not allowed to edit this post.');
         return false;
@@ -48,6 +56,14 @@ class PostPolicy
         }
 
         if($user->id == $post->admin_id){
+            return true;
+        }
+
+        if($post->admin_id == null && $post->status == 'DRAFT' && $user->hasRole('editor')){
+            return true;
+        }
+
+        if($post->author_id == $user->id && $post->status == 'DRAFT' && $post->admin_id == null){
             return true;
         }
 
