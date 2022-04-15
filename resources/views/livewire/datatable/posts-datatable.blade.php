@@ -29,7 +29,6 @@
                         <th>#</th>
                         <th>Title</th>
                         <th>category</th>
-                        <th>Feature</th>
                         {{-- <th>Tags</th> --}}
                         <th>Status</th>
                         <th>Editor</th>
@@ -57,7 +56,6 @@
                             </td>
                             <td>{{ $item->title }}</td>
                             <td>{{ $item->category->name }}</td>
-                            <td>{{ $item->feature->name }}</td>
                             {{-- <td>
                                 @foreach ($item->tags as $tag)
                                     <div class="badge badge-primary">{{ $tag->name }}</div>

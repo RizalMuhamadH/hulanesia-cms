@@ -54,16 +54,6 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Feature</label>
-                                    <select id="feature" class="form-control selectric" name="feature_id" required>
-                                        @foreach ($features as $item)
-                                            <option value="{{ $item->id }}"
-                                                @isset($content) {{ $content->feature_id == $item->id ? 'selected' : '' }} @endisset>
-                                                {{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
 
                                 <div class="form-group">
                                     <label class="col-form-label">Related</label>

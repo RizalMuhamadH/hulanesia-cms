@@ -39,7 +39,7 @@ class PostsDatatable extends Component
     {
 
         $layout = $this->layout;
-        $posts = Post::with(['category', 'feature', 'image', 'tags', 'user', 'author']);
+        $posts = Post::with(['category', 'image', 'tags', 'user', 'author']);
         if (strtoupper($this->status) == PostStatus::TRASH->value) $posts->onlyTrashed();
         $posts->where(function ($q) use ($layout) {
             if ($this->search != null) {

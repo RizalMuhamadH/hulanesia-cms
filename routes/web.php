@@ -55,13 +55,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('tags/search', 'search')->middleware(['can:browse_tags'])->name('tag.search');
     });
 
-    Route::controller(FeatureController::class)->group(function(){
-        Route::get('features', 'index')->middleware(['can:browse_features'])->name('feature.index');
-        Route::get('features/add', 'add')->middleware(['can:add_features'])->name('feature.add');
-        Route::get('features/edit/{id}', 'edit')->middleware(['can:edit_features'])->name('feature.edit');
-        Route::post('features/add', 'store')->middleware(['can:add_features'])->name('feature.store');
-        Route::post('features/update/{id}', 'update')->middleware(['can:edit_features'])->name('feature.update');
-    });
+    // Route::controller(FeatureController::class)->group(function(){
+    //     Route::get('features', 'index')->middleware(['can:browse_features'])->name('feature.index');
+    //     Route::get('features/add', 'add')->middleware(['can:add_features'])->name('feature.add');
+    //     Route::get('features/edit/{id}', 'edit')->middleware(['can:edit_features'])->name('feature.edit');
+    //     Route::post('features/add', 'store')->middleware(['can:add_features'])->name('feature.store');
+    //     Route::post('features/update/{id}', 'update')->middleware(['can:edit_features'])->name('feature.update');
+    // });
 
     Route::controller(SettingController::class)->group(function(){
         Route::get('settings', 'index')->middleware(['can:browse_settings'])->name('setting.index');

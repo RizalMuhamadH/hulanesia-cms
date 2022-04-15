@@ -54,11 +54,6 @@ class Post extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function feature()
-    {
-        return $this->belongsTo(Feature::class);
-    }
-
     public function image()
     {
         return $this->morphOne(Image::class, 'imageable');

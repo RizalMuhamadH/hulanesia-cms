@@ -45,13 +45,11 @@ class PostController extends Controller
 
         $action = 'Add';
         $categories = Category::with('children')->where('parent_id', 0)->get();
-        $features = Feature::get();
         $users = Netizen::get();
 
         return view('post.edit-add', [
             'action' => $action,
             'categories' => $categories,
-            'features' => $features,
             'users' => $users
         ]);
     }
@@ -66,7 +64,6 @@ class PostController extends Controller
             'description' => 'required',
             'body' => 'required',
             'category_id' => 'required',
-            'feature_id' => 'required',
             'image' => 'required',
             'tags' => 'required',
         ]);
@@ -88,7 +85,6 @@ class PostController extends Controller
                 'body' => $request->body,
                 'source' => $request->source,
                 'source_link' => $request->source_link,
-                'feature_id' => $request->feature_id,
                 'category_id' => $request->category_id,
                 'status' => $request->status,
                 'meta_description' => $request->meta_description,
@@ -171,7 +167,6 @@ class PostController extends Controller
         // $this->authorize('update', $post);
 
         $categories = Category::with('children')->where('parent_id', 0)->get();
-        $features = Feature::get();
         $users = Netizen::get();
 
         $action = 'Edit';
@@ -179,7 +174,6 @@ class PostController extends Controller
             'content' => $post,
             'action' => $action,
             'categories' => $categories,
-            'features' => $features,
             'users' => $users
         ]);
     }
@@ -205,7 +199,6 @@ class PostController extends Controller
                 'body' => $request->body,
                 'source' => $request->source,
                 'source_link' => $request->source_link,
-                'feature_id' => $request->feature_id,
                 'category_id' => $request->category_id,
                 'status' => $request->status,
                 'meta_description' => $request->meta_description,

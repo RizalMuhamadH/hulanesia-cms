@@ -49,11 +49,11 @@
                 <li class="{{ Request::segment(1) == 'tags' ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('tag.index') }}"><i class="fas fa-tag"></i> <span>Tags</span></a></li>
             @endcan
-            @can('browse_features')
+            {{-- @can('browse_features')
                 <li class="{{ Request::segment(1) == 'features' ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('feature.index') }}"><i class="fas fa-asterisk"></i> <span>Features</span></a>
                 </li>
-            @endcan
+            @endcan --}}
             @can('browse_users')
                 <li class="{{ Request::segment(1) == 'users' ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('user.index') }}"><i class="fas fa-user-circle"></i> <span>Users</span></a></li>
