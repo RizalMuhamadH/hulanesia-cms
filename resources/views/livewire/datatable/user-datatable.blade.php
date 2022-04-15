@@ -38,12 +38,12 @@
                             <td>
                                 @if ($item->image)
                                     <figure>
-                                        <img src="/storage/{{ $item->image->thumbnail('small', 'path') }}"
+                                        <img src="{{ env('STORAGE') }}/storage/{{ $item->image->thumbnail('small', 'path') }}"
                                             class="avatar mr-2 avatar-sm">
                                     </figure>
                                 @else
                                     <figure>
-                                        <img src="/storage/user/default.png" class="avatar mr-2 avatar-sm">
+                                        <img src="{{ 'https://ui-avatars.com/api/?name='.$item->name.'&color=7F9CF5&background=EBF4FF' }}" class="avatar mr-2 avatar-sm">
                                     </figure>
                                 @endif
                             </td>

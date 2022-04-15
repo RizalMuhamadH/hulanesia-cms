@@ -20,6 +20,7 @@ use App\Http\Resources\PostListResource;
 use App\Jobs\PostSchedule;
 use App\Models\Netizen;
 use App\Repository\Elasticsearch;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -68,83 +69,87 @@ class PostController extends Controller
             $published_at = null;
         }
 
-        $post = Post::create([
-            'title' => $request->title,
-            'slug' => Str::slug($request->title, "-"),
-            'description' => $request->description,
-            'body' => $request->body,
-            'source' => $request->source,
-            'source_link' => $request->source_link,
-            'feature_id' => $request->feature_id,
-            'category_id' => $request->category_id,
-            'status' => $request->status,
-            'meta_description' => $request->meta_description,
-            'meta_keywords' => $request->meta_keywords,
-            'seo_title' => $request->seo_title,
-            'published_at' => $published_at,
-            'admin_id' => Auth::user()->id,
-            'author_id' => $request->author_id
-        ]);
-
-
-        $post->tags()->attach($request->tags);
-        $post->related()->attach($request->related);
-
-        if ($request->hasFile('image')) {
-
-            $options = [
-                "resize" => [
-                    "width" => "1024",
-                    "height" => "null"
-                ],
-                "quality" => "70%",
-                "upsize" => true,
-                "thumbnails" => [
-                    [
-                        "name" => "medium",
-                        "scale" => "50%"
+        DB::transaction(function () use ($request, $published_at) {
+            
+            $post = Post::create([
+                'title' => $request->title,
+                'slug' => Str::slug($request->title, "-"),
+                'description' => $request->description,
+                'body' => $request->body,
+                'source' => $request->source,
+                'source_link' => $request->source_link,
+                'feature_id' => $request->feature_id,
+                'category_id' => $request->category_id,
+                'status' => $request->status,
+                'meta_description' => $request->meta_description,
+                'meta_keywords' => $request->meta_keywords,
+                'seo_title' => $request->seo_title,
+                'published_at' => $published_at,
+                'admin_id' => Auth::user()->id,
+                'author_id' => $request->author_id
+            ]);
+    
+    
+            $post->tags()->attach($request->tags);
+            $post->related()->attach($request->related);
+    
+            if ($request->hasFile('image')) {
+    
+                $options = [
+                    "resize" => [
+                        "width" => "1024",
+                        "height" => "null"
                     ],
-                    [
-                        "name" => "small",
-                        "scale" => "25%"
-                    ],
-                    [
-                        "name" => "cropped",
-                        "crop" => [
-                            "width" => "300",
-                            "height" => "250"
+                    "quality" => "70%",
+                    "upsize" => true,
+                    "thumbnails" => [
+                        [
+                            "name" => "medium",
+                            "scale" => "50%"
+                        ],
+                        [
+                            "name" => "small",
+                            "scale" => "25%"
+                        ],
+                        [
+                            "name" => "cropped",
+                            "crop" => [
+                                "width" => "300",
+                                "height" => "250"
+                            ]
                         ]
                     ]
-                ]
+                ];
+                $options = json_decode(json_encode($options));
+    
+                $path = (new ImageHandler($request, 'posts', 'image', $options))->handle();
+                $post->image()->create(['path' => $path, 'caption' => $request->caption]);
+            }
+    
+            // Meilisearch::get()->index('post')->addDocuments([
+            //     json_decode((new PostResource($post))->toJson(), true)
+            // ]);
+    
+            $params = [
+                'index' => 'article',
+                'id'    => $post->id,
+                'body'  => json_decode((new PostResource($post))->toJson(), true)
             ];
-            $options = json_decode(json_encode($options));
+            $es = $this->repository->create($params);
+    
+            if ($request->status == 'SCHEDULE') {
+                PostSchedule::dispatchSync(new PostSchedule($post, $this->repository))->delay(now()->addMinutes(now()->diffInMinutes($request->published_at)));
+            }
+    
+            // PostSchedule::dispatch($post, $this->repository);
+    
+            activity()
+                ->performedOn(new Post())
+                ->event('store')
+                ->withProperties(['data' => $post->with(['tags', 'image'])])
+                ->log('store post');
+        });
 
-            $path = (new ImageHandler($request, 'posts', 'image', $options))->handle();
-            $post->image()->create(['path' => $path, 'caption' => $request->caption]);
-        }
-
-        // Meilisearch::get()->index('post')->addDocuments([
-        //     json_decode((new PostResource($post))->toJson(), true)
-        // ]);
-
-        $params = [
-            'index' => 'article',
-            'id'    => $post->id,
-            'body'  => json_decode((new PostResource($post))->toJson(), true)
-        ];
-        $es = $this->repository->create($params);
-
-        if ($request->status == 'SCHEDULE') {
-            PostSchedule::dispatchSync(new PostSchedule($post, $this->repository))->delay(now()->addMinutes(now()->diffInMinutes($request->published_at)));
-        }
-
-        // PostSchedule::dispatch($post, $this->repository);
-
-        activity()
-            ->performedOn(new Post())
-            ->event('store')
-            ->withProperties(['data' => $post->with(['tags', 'image'])])
-            ->log('store post');
 
         return redirect()->route('post.index')->with('message', 'Add Successfully');
     }

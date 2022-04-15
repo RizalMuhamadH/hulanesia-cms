@@ -29,7 +29,7 @@
                     <div class="row">
                         <div class="form-group col-12 text-center">
                             <figure class="avatar mr-2 avatar-xl">
-                                <img src="{{ $user->image ? '/storage/'.$user->image->thumbnail('medium', 'path') : '/storage/user/default.png' }}" alt="...">
+                                <img src="{{ $user->image ? env('STORAGE').'/storage/'.$user->image->thumbnail('medium', 'path') : 'https://ui-avatars.com/api/?name='.Auth::user()->name.'&color=7F9CF5&background=EBF4FF' }}" alt="...">
                             </figure>
                         </div>
                       </div>
