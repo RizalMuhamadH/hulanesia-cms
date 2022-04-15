@@ -62,7 +62,7 @@
                                 </div>
                             </div>
 
-                            @if ($action == 'Add')
+                            {{-- @if ($action == 'Add') --}}
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2">Password
                                         Confirmation</label>
@@ -71,7 +71,7 @@
                                             {{ $action == 'Add' ? 'required' : '' }}>
                                     </div>
                                 </div>
-                            @endif
+                            {{-- @endif --}}
 
                             <div class="form-group row mb-4">
                                 <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2"></label>

@@ -74,9 +74,13 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         if ($request->password != null) {
+            $request->validate([
+                'password' => $this->passwordRules(),
+            ]);
             $user->password = Hash::make($request->password);
         }
         $user->save();
+        $user->syncRoles($request->input('roles'));
         // $update = user::where('id', $id)->update([
         //     'name' => $request->name,
         // ]);
