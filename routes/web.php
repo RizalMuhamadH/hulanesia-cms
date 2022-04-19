@@ -12,6 +12,7 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\VideoController;
 use App\Http\Livewire\Management\FeatureManagement;
 use Illuminate\Support\Facades\Route;
@@ -123,7 +124,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('videos/update/{video}', 'update')->middleware(['can:edit_videos'])->name('video.update');
     });
 
-
+    Route::controller(ReportController::class)->group(function(){
+        Route::get('reports', 'index')->middleware(['can:browse_reports'])->name('report.index');
+    });
 
     
     

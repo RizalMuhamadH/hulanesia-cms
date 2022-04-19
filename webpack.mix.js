@@ -107,3 +107,9 @@ mix.babel(
     "resources/js/custom_tinymce.js",
     "public/assets/js/custom_tinymce.js"
 );
+
+
+mix.babel(
+    "node_modules/moment/moment.js",
+    "public/assets/js/moment/moment.js"
+);

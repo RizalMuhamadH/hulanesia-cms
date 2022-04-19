@@ -9,7 +9,7 @@
         <ul class="sidebar-menu">
             <li class="menu-header">Dashboard</li>
             <li class="{{ Request::segment(1) == 'dashboard' ? 'active' : '' }}"><a class="nav-link"
-                    href="/dashboard"><i class="fas fa-fire"></i> <span>Dashboard</span></a></li>
+                    href="/dashboard"><i class="fas fa-chart-bar"></i> <span>Dashboard</span></a></li>
             @can('browse_posts')
                 {{-- <li class="{{ Request::segment(1) == 'posts' ? 'active' : '' }}"><a class="nav-link" href="/posts"><i class="fas fa-stream"></i> <span>Posts</span></a></li> --}}
                 <li class="nav-item dropdown {{ Request::segment(1) == 'posts' ? 'active' : '' }}">
@@ -73,6 +73,10 @@
             @can('browse_videos')
                 <li class="{{ Request::segment(1) == 'videos' ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('video.index') }}"><i class="fab fa-youtube"></i> <span>Videos</span></a></li>
+            @endcan
+            @can('browse_reports')
+                <li class="{{ Request::segment(1) == 'reports' ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('report.index') }}"><i class="fas fa-chart-pie"></i> <span>Reports</span></a></li>
             @endcan
         </ul>
 

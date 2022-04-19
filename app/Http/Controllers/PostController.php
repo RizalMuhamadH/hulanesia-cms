@@ -18,7 +18,6 @@ use App\Http\Resources\PostResource;
 use App\Helpers\Meilisearch;
 use App\Http\Resources\PostListResource;
 use App\Jobs\PostSchedule;
-use App\Models\Netizen;
 use App\Repository\Elasticsearch;
 use Illuminate\Support\Facades\DB;
 
@@ -45,7 +44,7 @@ class PostController extends Controller
 
         $action = 'Add';
         $categories = Category::with('children')->where('parent_id', 0)->get();
-        $users = Netizen::get();
+        $users = User::get();
 
         return view('post.edit-add', [
             'action' => $action,
@@ -167,7 +166,7 @@ class PostController extends Controller
         // $this->authorize('update', $post);
 
         $categories = Category::with('children')->where('parent_id', 0)->get();
-        $users = Netizen::get();
+        $users = User::get();
 
         $action = 'Edit';
         return view('post.edit-add', [

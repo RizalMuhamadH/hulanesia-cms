@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="{{ mix('assets/css/sweetalert2/dist/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{ mix('assets/css/izitoast/iziToast.min.css') }}">
     <link rel="stylesheet" href="{{ mix('assets/css/select2/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ mix('assets/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ mix('assets/css/all.css') }}">
     @stack('style')
     @livewireStyles
@@ -76,6 +77,8 @@
     <script src="{{ mix('assets/js/selectric/public/jquery.selectric.min.js') }}"></script>
     <script src="{{ mix('assets/js/izitoast/iziToast.min.js') }}"></script>
     <script src="{{ mix('assets/js/select2/select2.full.min.js') }}"></script>
+    <script src="{{ mix('assets/js/moment/moment.js') }}"></script>
+    <script src="{{ mix('assets/js/daterangepicker.js') }}"></script>
     @stack('script')
     @livewireScripts
     <!-- Page Specific JS File -->
