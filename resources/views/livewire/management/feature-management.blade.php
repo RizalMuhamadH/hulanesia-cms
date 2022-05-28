@@ -8,12 +8,17 @@
     <div class="section-body">
         <div class="d-flex mb-4">
             {{-- @if (count($items) < $size) --}}
-                <button type="button" @disabled(count($items) >= $size) class="btn-popup btn btn-icon icon-left btn-primary mt-3 mr-4"
-                    data-title="Tambah/Edit Tag"
-                    data-url="{{ route('post.index', ['layout' => 'popup', 'style' => 'choice']) }}"><i
-                        class="fas fa-plus"></i>
-                    Add</button>
+            <button type="button" @disabled(count($items) >= $size)
+                class="btn-popup btn btn-icon icon-left btn-primary mt-3 mr-4" data-title="Tambah/Edit Tag"
+                data-url="{{ route('post.index', ['layout' => 'popup', 'style' => 'choice']) }}"><i
+                    class="fas fa-plus"></i>
+                Add</button>
             {{-- @endif --}}
+            @if ($slug == 'popular')
+                <button type="button" wire:click="popularAnalytic()"
+                    class="btn btn-icon icon-left btn-primary mt-3 mr-4"><i class="far fa-arrow-alt-circle-down"></i>
+                    Load Popular</button>
+            @endif
             <button type="button" wire:click="bulk()" class="btn btn-icon icon-left btn-primary mt-3 mr-4"><i
                     class="fas fa-save"></i>
                 Save</button>
@@ -28,7 +33,8 @@
                             <img src="{{ env('STORAGE') }}{{ $item['image'] }}" class="img-fluid"
                                 alt="{{ $item['title'] }}" srcset="">
                             <div class="article-badge">
-                                <div wire:click="removeItem({{ $loop->index }})" class="article-badge-item bg-danger" style="cursor: pointer"><i class="fas fa-trash"></i> Delete</div>
+                                <div wire:click="removeItem({{ $loop->index }})" class="article-badge-item bg-danger"
+                                    style="cursor: pointer"><i class="fas fa-trash"></i> Delete</div>
                             </div>
                         </div>
                         <div class="article-details">

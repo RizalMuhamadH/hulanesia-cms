@@ -23,6 +23,9 @@
                         <li class="{{ request()->post == 'draft' ? 'active' : '' }}"><a class="nav-link"
                                 href="{{ route('post.index', ['post' => 'draft']) }}">Draft</a></li>
                         @if (!auth()->user()->hasRole('writter'))
+                            <li class="{{ Request::segment(2) == 'popular' ? 'active' : '' }}"><a class="nav-link"
+                                    href="{{ route('post.management', ['slug' => 'popular']) }}">Popular</a>
+                            </li>
                             <li class="{{ Request::segment(2) == 'editor_choice' ? 'active' : '' }}"><a
                                     class="nav-link"
                                     href="{{ route('post.management', ['slug' => 'editor_choice']) }}">Editor Choice</a>

@@ -19,6 +19,12 @@ use App\Helpers\Meilisearch;
 use App\Http\Resources\PostListResource;
 use App\Jobs\PostSchedule;
 use App\Repository\Elasticsearch;
+use Google\Analytics\Data\V1beta\BetaAnalyticsDataClient;
+use Google\Analytics\Data\V1beta\DateRange;
+use Google\Analytics\Data\V1beta\Dimension;
+use Google\Analytics\Data\V1beta\Metric;
+use Google\Analytics\Data\V1beta\OrderBy;
+use Google\Analytics\Data\V1beta\OrderBy\MetricOrderBy;
 use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
@@ -312,5 +318,69 @@ class PostController extends Controller
     public function popup()
     {
         return view('popup.post');
+    }
+
+    public function analytic()
+    {
+
+        $client = new BetaAnalyticsDataClient([
+            'credentials' => storage_path(env('ANALYTICS_CREDENTIALS_PATH')),
+        ]);
+
+        $response = $client->runReport([
+            'property' => 'properties/'.env('ANALYTIC_PROPERTY_ID'),
+            'dateRanges' => [
+                new DateRange([
+                    'start_date' => '7daysAgo',
+                    'end_date' => 'today',
+                ]),
+            ],
+            'dimensions' => [
+                new Dimension(
+                    [
+                        'name' => 'pageTitle',
+                    ]
+                ),
+                new Dimension(
+                    [
+                        'name' => 'pagePath',
+                    ]
+                ),
+            ],
+            'metrics' => [
+                new Metric(
+                    [
+                        'name' => 'screenPageViews',
+                    ]
+                )
+            ],
+            'orderBys' => [
+                new OrderBy(
+                    [
+                        'metric' => new MetricOrderBy(
+                            [
+                                'metric_name' => 'screenPageViews',
+                            ]
+                        ),
+                        'desc' => true
+                    ]
+                ),
+            ],
+            'pageSize' => 10,
+
+        ]);
+
+        $data = [];
+        foreach ($response->getRows() as $row) {
+            $data[] = [
+                'pageTitle' => $row->getDimensionValues()[0]->getValue(),
+                'pagePath' => $row->getDimensionValues()[1]->getValue(),
+                'screenPageViews' => $row->getMetricValue()[0]->getValue(),
+            
+            ];
+            // [END analyticsdata_json_credentials_run_report_response]
+        }
+
+        return $data;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Management;
 use App\Enums\IndexState;
 use App\Http\Resources\PostListResource;
 use App\Models\Post;
+use App\Repository\Analytics;
 use App\Repository\Elasticsearch;
 use Illuminate\Support\Arr;
 use Livewire\Component;
@@ -113,5 +114,14 @@ class FeatureManagement extends Component
             $repo = new Elasticsearch();
             $repo->bulk($params);
         }
+    }
+
+    public function popularAnalytic()
+    {
+        $analytic = new Analytics();
+
+        $this->items = $analytic->getPopular(env('ANALYTIC_PROPERTY_ID'));
+
+        $this->bulk();
     }
 }

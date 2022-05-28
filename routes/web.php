@@ -95,6 +95,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('posts/update/{post}', 'update')->middleware(['can:edit_posts'])->name('post.update');
         Route::get('posts/bulk', 'bulk')->middleware(['can:edit_posts'])->name('post.bulk');
         Route::get('posts/search', 'search')->middleware(['can:browse_posts'])->name('post.search');
+        Route::get('posts/analytic', 'analytic')->middleware(['can:browse_posts'])->name('post.analytic');
     });
 
     Route::get('posts/{slug}', FeatureManagement::class)->middleware(['role:editor|admin'])->name('post.management');
