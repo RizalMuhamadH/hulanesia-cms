@@ -23,6 +23,7 @@ class PostListResource extends JsonResource
             'category'          => $this->category->name,
             'category_url'      => $this->category->slug,
             'created_at'        => $this->created_at,
+            'publish_at'        => $this->published_at,
         ];
     }
 }

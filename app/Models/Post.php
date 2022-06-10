@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\PostStatus;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -37,6 +39,13 @@ class Post extends Model
     ];
 
     protected $dates = ['published_at'];
+
+    public function url(): Attribute
+{
+    return new Attribute(
+        get: fn ($value, $attributes) => env('WEBSITE_URL').'/'.$this->category->name.'/'.$attributes['id'].'/'.Carbon::parse($attributes['published_at'])->format('dmY').'/'.$attributes['slug'],
+    );
+}
     
 
     public function user()

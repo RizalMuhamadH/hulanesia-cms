@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 use App\Models\Post;
+use App\Repository\PushNotification;
 
 class PostSchedule implements ShouldQueue, ShouldBeUnique
 {
@@ -48,5 +49,9 @@ class PostSchedule implements ShouldQueue, ShouldBeUnique
             ]
         ];
         $es = $this->repository->update($params);
+
+
+        $push = new PushNotification();
+        $push->sendNotification($post->id,"Berita Terbaru", $post->title, env('STORAGE').'/'.$post->image->thumbnail('medium', 'path'), env('WEBSITE_URL').'/'.$post->url, "web");
     }
 }

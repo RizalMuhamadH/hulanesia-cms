@@ -49,7 +49,11 @@ class FeatureManagement extends Component
 
     public function render()
     {
-        return view('livewire.management.feature-management')->extends('layouts.app')->layoutData(['title' => 'Management '.$this->title])->section('body');
+        if($this->slug != 'popular') {
+            return view('livewire.management.feature-management')->extends('layouts.app')->layoutData(['title' => 'Management '.$this->title])->section('body');
+        } else {
+            return view('livewire.management.feature-popular')->extends('layouts.app')->layoutData(['title' => 'Management '.$this->title])->section('body');
+        }
     }
 
     public function select($id)
@@ -57,7 +61,11 @@ class FeatureManagement extends Component
         $post = Post::find($id)->first();
         // dd($post);
 
-        $this->items = Arr::prepend($this->items, json_decode((new PostListResource($post))->toJson(), true));
+        if($this->slug == 'popular'){
+            $this->items = Arr::prepend($this->items, ['pagePath' => $post->url, 'pageTitle' => $post->title]);
+        } else {
+            $this->items = Arr::prepend($this->items, json_decode((new PostListResource($post))->toJson(), true));
+        }
     }
 
     public function removeItem($index)

@@ -19,6 +19,7 @@ use App\Helpers\Meilisearch;
 use App\Http\Resources\PostListResource;
 use App\Jobs\PostSchedule;
 use App\Repository\Elasticsearch;
+use App\Repository\PushNotification;
 use Google\Analytics\Data\V1beta\BetaAnalyticsDataClient;
 use Google\Analytics\Data\V1beta\DateRange;
 use Google\Analytics\Data\V1beta\Dimension;
@@ -137,19 +138,22 @@ class PostController extends Controller
                 $post->image()->create(['path' => $path, 'caption' => $request->caption]);
             }
 
-            // Meilisearch::get()->index('post')->addDocuments([
-            //     json_decode((new PostResource($post))->toJson(), true)
-            // ]);
 
-            $params = [
-                'index' => 'article',
-                'id'    => $post->id,
-                'body'  => json_decode((new PostResource($post))->toJson(), true)
-            ];
-            $es = $this->repository->create($params);
-
+            
             if ($request->status == 'SCHEDULE') {
                 PostSchedule::dispatchSync(new PostSchedule($post, $this->repository))->delay(now()->addMinutes(now()->diffInMinutes($request->published_at)));
+            }
+            
+            if ($request->status == 'PUBLISH'){
+                $params = [
+                    'index' => 'article',
+                    'id'    => $post->id,
+                    'body'  => json_decode((new PostResource($post))->toJson(), true)
+                ];
+                $es = $this->repository->create($params);
+
+                $push = new PushNotification();
+                $push->sendNotification($post->id,"Berita Terbaru", $post->title, env('STORAGE').'/'.$post->image->thumbnail('medium', 'path'), env('WEBSITE_URL').'/'.$post->url, "web");
             }
 
             // PostSchedule::dispatch($post, $this->repository);
@@ -188,6 +192,8 @@ class PostController extends Controller
 
         $this->authorize('update', $post);
 
+        $current = $post;
+
         if ($post->status == 'DRAFT' && $request->status == 'PUBLISH') {
             $published_at = now();
         } else {
@@ -195,7 +201,7 @@ class PostController extends Controller
         }
 
 
-        DB::transaction(function () use ($request, $published_at, $post) {
+        DB::transaction(function () use ($request, $published_at, $post, $current) {
             $post->update([
 
                 'title' => $request->title,
@@ -256,9 +262,8 @@ class PostController extends Controller
             } else {
                 $post->image()->update(['caption' => $request->caption]);
             }
-            // Meilisearch::get()->index('post')->updateDocuments([
-            //     json_decode((new PostResource($post))->toJson(), true)
-            // ]);
+
+            $post = Post::findOrFail($post->id);
 
             $params = [
                 'index' => 'article',
@@ -268,6 +273,12 @@ class PostController extends Controller
                 ]
             ];
             $es = $this->repository->update($params);
+            
+            if ($current->status == 'DRAFT' && $request->status == 'PUBLISH'){
+                
+                $push = new PushNotification();
+                $push->sendNotification($post->id,"Berita Terbaru", $post->title, env('STORAGE').'/'.$post->image->thumbnail('medium', 'path'), env('WEBSITE_URL').'/'.$post->url, "web");
+            }
 
             activity()
                 ->performedOn($post)
