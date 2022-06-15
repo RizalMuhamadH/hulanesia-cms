@@ -7,11 +7,13 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Octopy\Impersonate\Concerns\Impersonate;
+use Octopy\Impersonate\ImpersonateAuthorization;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, Impersonate;
 
     protected $table = 'admins';
 
@@ -53,5 +55,11 @@ class User extends Authenticatable
     public function authorPost()
     {
         return $this->hasMany(Post::class, 'author_id')->where('status', PostStatus::PUBLISH);
+    }
+
+    public function impersonatable(ImpersonateAuthorization $authorization)
+    {
+        $authorization->impersonator(fn(User $user) => $user->hasRole('admin'));
+        $authorization->impersonated(fn(User $user) => $user->hasRole('writter') || $user->hasRole('editor'));
     }
 }

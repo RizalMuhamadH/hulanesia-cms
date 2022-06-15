@@ -2,6 +2,8 @@
 
 namespace App\Repository;
 
+use Berkayk\OneSignal\OneSignalFacade as OneSignal;
+
 class PushNotification{
     public function sendNotification($id, $title, $body, $img, $url, $topic)
 	{

@@ -11,9 +11,11 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 use App\Models\Post;
+use App\Repository\Elasticsearch;
 use App\Repository\PushNotification;
+use Elasticsearch\ClientBuilder;
 
-class PostSchedule implements ShouldQueue, ShouldBeUnique
+class PostSchedule implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -23,13 +25,11 @@ class PostSchedule implements ShouldQueue, ShouldBeUnique
      * @return void
      */
 
-    protected $post;
-    protected $repository;
+    protected $pid;
 
-    public function __construct($post, $repository)
+    public function __construct($pid)
     {
-        $this->post = $post;
-        $this->repository = $repository;
+        $this->pid = $pid;
     }
 
     /**
@@ -39,16 +39,24 @@ class PostSchedule implements ShouldQueue, ShouldBeUnique
      */
     public function handle()
     {
-        $post = Post::where('id', $this->post->id)->update(['status' => 'PUBLISH']);
+        $post = Post::find($this->pid);
+        $post->update(['status' => 'PUBLISH']);
+        $post->save();
+
+        // $post = Post::findOrFail($this->id);
 
         $params = [
             'index' => 'article',
-            'id'    => $this->post->id,
+            'id'    => $this->pid,
             'body'  => [
                 'doc'   => json_decode((new PostResource($post))->toJson(), true)
             ]
         ];
-        $es = $this->repository->update($params);
+
+        $repository = ClientBuilder::create()->setHosts([
+            env("ELASTICSEARCH_HOST", "")
+        ])->build();
+        $repository->create($params);
 
 
         $push = new PushNotification();

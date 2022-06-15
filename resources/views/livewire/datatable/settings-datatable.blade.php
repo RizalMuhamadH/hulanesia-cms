@@ -38,7 +38,7 @@
                             <td>{{ $item->seo_title }}</td>
                             <td>{{ $item->meta_description }}</td>
                             <td>{{ $item->meta_keywords }}</td>
-                            <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
+                            <td>{{ $item->created_at->format('d, M Y H:i') }}</td>
                             <td>
                                 @can('edit_settings')
                                 <a href="{{ route('setting.edit', $item->id) }}" class="btn btn-info">Edit</a>

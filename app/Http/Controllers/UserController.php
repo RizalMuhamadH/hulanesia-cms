@@ -93,4 +93,12 @@ class UserController extends Controller
 
         return redirect()->route('user.index')->with('message', 'Update Successfully');
     }
+
+    public function loginAs($id)
+    {
+        $user = User::find($id);
+        auth()->user()->impersonate($user);
+
+        return redirect()->route('dashboard');
+    }
 }

@@ -16,7 +16,7 @@ class ProfileController extends Controller
 {
 
     use PasswordValidationRules;
-    
+
     public function index()
     {
         return view('profile.index', [
@@ -27,54 +27,57 @@ class ProfileController extends Controller
     public function update(Request $request, $id)
     {
         // dd($request->all());
+        if(auth()->user()->id != $id){
+            return redirect()->back()->with('error', 'You are not authorized to edit this profile.');
+        }
 
-        if($request->password){
+        if ($request->password) {
             Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-                'email' => [
-                    'required',
-                    'string',
-                    'email',
-                    'max:255',
-                    Rule::unique(User::class),
-                ],
+                // 'email' => [
+                //     'required',
+                //     'string',
+                //     'email',
+                //     'max:255',
+                //     Rule::unique(User::class),
+                // ],
                 'password' => $this->passwordRules(),
             ])->validate();
         }
-        
+
         $user = User::find($id);
         $user->name = $request->name;
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
 
             $options = [
                 "resize" => [
-                    "width"=> "1000",
-                    "height"=> "null"
+                    "width" => "1000",
+                    "height" => "null"
                 ],
-                "quality"=> "70%",
-                "upsize"=> true,
-                "thumbnails"=> [
+                "quality" => "70%",
+                "upsize" => true,
+                "thumbnails" => [
                     [
-                        "name"=> "medium",
-                        "scale"=> "50%"
+                        "name" => "medium",
+                        "scale" => "50%"
                     ],
                     [
-                        "name"=> "small",
-                        "scale"=> "25%"
+                        "name" => "small",
+                        "scale" => "25%"
                     ],
                     [
-                        "name"=> "cropped",
-                        "crop"=> [
-                            "width"=> "300",
-                            "height"=> "250"
+                        "name" => "cropped",
+                        "crop" => [
+                            "width" => "300",
+                            "height" => "250"
                         ]
                     ]
                 ]
             ];
             $options = json_decode(json_encode($options));
-            
+
             $path = (new ImageHandler($request, 'users', 'image', $options))->handle();
-	    $user->image->delete();
+            $user->image->delete();
             $user->image()->create(['path' => $path]);
         }
         if ($request->password) {
@@ -91,6 +94,6 @@ class ProfileController extends Controller
             ->withProperties(['data' => $user])
             ->log('udate profile');
 
-        return redirect()->route('profile.index')->with('message', 'Update Successfully');;
+        return redirect()->route('profile.index')->with('message', 'Update Successfully');
     }
 }

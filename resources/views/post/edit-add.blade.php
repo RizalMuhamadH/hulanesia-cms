@@ -27,12 +27,15 @@
                                         value="{{ $content->title ?? '' }}" required>
                                 </div>
                                 <!-- <div class="form-group">
-                                                                                                                    <label class="col-form-label">Slug</label>
-                                                                                                                    <input type="text" class="form-control">
-                                                                                                                </div> -->
+                                                                                                                                            <label class="col-form-label">Slug</label>
+                                                                                                                                            <input type="text" class="form-control">
+                                                                                                                                        </div> -->
                                 <div class="form-group">
                                     <label class="col-form-label">Summary</label>
-                                    <textarea rows="10" class="form-control" name="description">{{ $content->description ?? '' }}</textarea>
+                                    <textarea rows="20" maxlength="255" class="description form-control" name="description">{{ $content->description ?? '' }}</textarea>
+                                    <div id="info-count" class="valid-feedback">
+                                        <span id="current">0</span><span id="maximum">/ 255</span>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Category</label>
@@ -328,6 +331,36 @@
                 });
 
             });
+
+            var count = {{ isset($content->description) ? strlen($content->description) : 0 }},
+                maximum = 255,
+                current = $('#current').text(count),
+                textarea = $('.description');
+                textarea.addClass(
+                    {{ isset($content->description) ? strlen($content->description) : 0 }} > (0.9 * maximum) ? 'is-invalid' : 'is-valid')
+
+            $('.description').keyup(function() {
+
+                var characterCount = $(this).val().length,
+                    infoCount = $('#info-count');
+
+                current.text(characterCount);
+
+                if (characterCount > (0.9 * maximum)) {
+                    infoCount.removeClass('valid-feedback')
+                    infoCount.addClass('invalid-feedback')
+                    textarea.removeClass('is-valid')
+                    textarea.addClass('is-invalid')
+                } else {
+                    infoCount.removeClass('invalid-feedback')
+                    infoCount.addClass('valid-feedback');
+                    textarea.removeClass('is-invalid')
+                    textarea.addClass('is-valid')
+                }
+
+
+            });
+
         });
     </script>
 @endpush

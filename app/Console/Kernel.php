@@ -2,8 +2,12 @@
 
 namespace App\Console;
 
+use App\Jobs\PostSchedule;
+use App\Models\Post;
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -25,6 +29,14 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('telescope:prune')->daily();
+
+        $posts = Post::query()->where('status', 'SCHEDULE')->get();
+
+        foreach ($posts as $post) {
+            $schedule->job(new PostSchedule($post->id))->when(fn()=> Carbon::parse($post->published_at)->isPast());
+        }
+        // PostSchedule::dispatch(28)->delay(Carbon::now()->addMinutes(1));
     }
 
     /**

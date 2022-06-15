@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -28,11 +29,11 @@ class PostPolicy
             return true;
         }
 
-        if($post->admin_id == null && $post->status == 'DRAFT' && $user->hasRole('editor')){
+        if($post->admin_id == null && $post->status == PostStatus::DRAFT && $user->hasRole('editor')){
             return true;
         }
 
-        if($post->author_id == $user->id && $post->status == 'DRAFT' && $post->admin_id == null){
+        if($post->author_id == $user->id && $post->status == PostStatus::DRAFT && $post->admin_id == null){
             return true;
         }
 
@@ -59,11 +60,11 @@ class PostPolicy
             return true;
         }
 
-        if($post->admin_id == null && $post->status == 'DRAFT' && $user->hasRole('editor')){
+        if($post->admin_id == null && $post->status == PostStatus::DRAFT && $user->hasRole('editor')){
             return true;
         }
 
-        if($post->author_id == $user->id && $post->status == 'DRAFT' && $post->admin_id == null){
+        if($post->author_id == $user->id && $post->status == PostStatus::DRAFT && $post->admin_id == null){
             return true;
         }
 

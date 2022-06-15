@@ -36,7 +36,7 @@
                 <td>{{ $item->vid }}</td>
                 <td>{{ $item->status == 0 ? 'FALSE' : 'TRUE' }}</td>
                 <td>{{ $item->duration }}</td>
-                <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
+                <td>{{ $item->created_at->format('d, M Y H:i') }}</td>
                 <td>
                   @can('edit_videos')
                   <a href="{{ route('video.edit', $item->id) }}" class="btn btn-info">Edit</a>

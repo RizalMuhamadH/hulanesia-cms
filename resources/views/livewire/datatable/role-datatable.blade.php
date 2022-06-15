@@ -31,7 +31,7 @@
                         <tr>
                             <td>{{ $loop->index + 1 }}</td>
                             <td>{{ $item->name }}</td>
-                            <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
+                            <td>{{ $item->created_at->format('d, M Y H:i') }}</td>
                             <td>
                                 @can('edit_roles')
                                 <a href="{{ route('role.edit', $item->id) }}" class="btn btn-info">Edit</a>

@@ -13,6 +13,11 @@ class Elasticsearch {
         ])->build();
     }
 
+    public function getInstance()
+    {
+        return $this->client;
+    }
+
     public function index($params)
     {
         $this->client->index($params);

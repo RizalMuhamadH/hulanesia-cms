@@ -72,7 +72,7 @@
                             </td>
                             <td>{{ $item->user->name ?? '' }}</td>
                             <td>{{ $item->author->name ?? '' }}</td>
-                            <td>{{ $item->published_at != null ? $item->published_at->format('d, M Y H:m') : '' }}
+                            <td>{{ $item->published_at != null ? $item->published_at->format('d, M Y H:i') : '' }}
                             </td>
                             {{-- <td>{{ $item->created_at->format('d, M Y H:m') }}</td> --}}
                             @if ($layout == 'app')

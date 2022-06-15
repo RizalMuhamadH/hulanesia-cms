@@ -35,7 +35,7 @@
                             <td>{{ $loop->index + 1 }}</td>
                             <td>{{ $item->title }}</td>
                             <td>{{ $item->editor->name ?? '' }}</td>
-                            <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
+                            <td>{{ $item->created_at->format('d, M Y H:i') }}</td>
                             <td>
                                 @can('edit_photos')
                                 <a href="{{ route('photo.edit', $item->id) }}" class="btn btn-info">Edit</a>

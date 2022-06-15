@@ -5,16 +5,15 @@
             @can('add_users', Model::class)
                 <a href="{{ route('user.add') }}" class="btn btn-icon icon-left btn-primary"><i class="fas fa-plus"></i>
                     Add</a>
-
             @endcan
             <div class="card-header-form">
                 {{-- <form> --}}
-                    <div class="input-group">
-                        <input wire:model.debounce.500ms="search" type="text" class="form-control" placeholder="Search">
-                        {{-- <div class="input-group-btn">
+                <div class="input-group">
+                    <input wire:model.debounce.500ms="search" type="text" class="form-control" placeholder="Search">
+                    {{-- <div class="input-group-btn">
                   <button class="btn btn-primary"><i class="fas fa-search"></i></button>
                 </div> --}}
-                    </div>
+                </div>
                 {{-- </form> --}}
             </div>
         </div>
@@ -43,7 +42,8 @@
                                     </figure>
                                 @else
                                     <figure>
-                                        <img src="{{ 'https://ui-avatars.com/api/?name='.$item->name.'&color=7F9CF5&background=EBF4FF' }}" class="avatar mr-2 avatar-sm">
+                                        <img src="{{ 'https://ui-avatars.com/api/?name=' . $item->name . '&color=7F9CF5&background=EBF4FF' }}"
+                                            class="avatar mr-2 avatar-sm">
                                     </figure>
                                 @endif
                             </td>
@@ -52,15 +52,19 @@
                                     <div class="badge badge-info">{{ $role->name }}</div>
                                 @endforeach
                             </td>
-                            <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
+                            <td>{{ $item->created_at->format('d, M Y H:i') }}</td>
                             <td>
                                 @can('edit_users')
-                                    <a href="{{ route('user.edit', $item->id) }}" class="btn btn-info">Edit</a>
+                                    @if (!is_admin($item->roles))
+                                        <a href="{{ route('user.login-as', $item->id) }}" class="btn btn-dark">Login
+                                            As</a>
+                                    @endif
 
+                                    <a href="{{ route('user.edit', $item->id) }}" class="btn btn-info">Edit</a>
                                 @endcan
                                 @can('delete_users')
-                                    <button wire:click="destroy({{ $item->id }})" class="btn btn-danger">Delete</button>
-
+                                    <button wire:click="destroy({{ $item->id }})"
+                                        class="btn btn-danger">Delete</button>
                                 @endcan
                             </td>
                         </tr>

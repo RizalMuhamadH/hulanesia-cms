@@ -33,7 +33,7 @@
                   <input type="checkbox" class="check-box tag-{{ $item->id }}" data-name="{{ $item->name }}" data-id="{{ $item->id }}" data-elm="#select-tags"></td>
                 <td>{{ $item->name }}</td>
                 <td>{{ $item->slug }}</td>
-                <td>{{ $item->created_at->format('d, M Y H:m') }}</td>
+                <td>{{ $item->created_at->format('d, M Y H:i') }}</td>
                 <td>
                   @can('edit_tags')
                   <a href="{{ route('tag.edit', ['id' => $item->id, 'layout' => $layout != 'app' ? $layout : null]) }}" class="btn btn-info">Edit</a>

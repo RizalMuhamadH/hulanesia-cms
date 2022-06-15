@@ -20,12 +20,14 @@ use App\Http\Resources\PostListResource;
 use App\Jobs\PostSchedule;
 use App\Repository\Elasticsearch;
 use App\Repository\PushNotification;
+use Carbon\Carbon;
 use Google\Analytics\Data\V1beta\BetaAnalyticsDataClient;
 use Google\Analytics\Data\V1beta\DateRange;
 use Google\Analytics\Data\V1beta\Dimension;
 use Google\Analytics\Data\V1beta\Metric;
 use Google\Analytics\Data\V1beta\OrderBy;
 use Google\Analytics\Data\V1beta\OrderBy\MetricOrderBy;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
@@ -62,6 +64,7 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->published_at);
         // dd(now()->diffInMinutes($request->published_at));
         // dd(now()->addMinutes($request->published_at)->minute);
 
@@ -74,9 +77,9 @@ class PostController extends Controller
             'tags' => 'required',
         ]);
 
-        if ($request->status == 'SCHEDULE') {
+        if ($request->status == PostStatus::SCHEDULE) {
             $published_at = $request->published_at;
-        } else if ($request->status == 'PUBLISH') {
+        } else if ($request->status == PostStatus::PUBLISH) {
             $published_at = now();
         } else {
             $published_at = null;
@@ -140,11 +143,13 @@ class PostController extends Controller
 
 
             
-            if ($request->status == 'SCHEDULE') {
-                PostSchedule::dispatchSync(new PostSchedule($post, $this->repository))->delay(now()->addMinutes(now()->diffInMinutes($request->published_at)));
-            }
+            // if ($request->status == 'SCHEDULE') {
+            //     $schedule = new Schedule();
+            //     $schedule->job(new PostSchedule($post, $this->repository))->when(fn()=> Carbon::parse($published_at)->isPast());
+            //     // PostSchedule::dispatchSync(new PostSchedule($post, $this->repository))->delay(now()->addMinutes(now()->diffInMinutes($request->published_at)));
+            // }
             
-            if ($request->status == 'PUBLISH'){
+            if ($request->status == PostStatus::PUBLISH){
                 $params = [
                     'index' => 'article',
                     'id'    => $post->id,
@@ -194,7 +199,7 @@ class PostController extends Controller
 
         $current = $post;
 
-        if ($post->status == 'DRAFT' && $request->status == 'PUBLISH') {
+        if ($post->status == PostStatus::DRAFT && $request->status == PostStatus::PUBLISH) {
             $published_at = now();
         } else {
             $published_at = $post->published_at;
@@ -274,7 +279,7 @@ class PostController extends Controller
             ];
             $es = $this->repository->update($params);
             
-            if ($current->status == 'DRAFT' && $request->status == 'PUBLISH'){
+            if ($current->status == PostStatus::DRAFT && $request->status == PostStatus::PUBLISH){
                 
                 $push = new PushNotification();
                 $push->sendNotification($post->id,"Berita Terbaru", $post->title, env('STORAGE').'/'.$post->image->thumbnail('medium', 'path'), env('WEBSITE_URL').'/'.$post->url, "web");
