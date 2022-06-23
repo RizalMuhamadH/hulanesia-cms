@@ -21,4 +21,6 @@ class Video extends Model
         'duration',
         'status',
     ];
+
+    protected $dates = ['created_at'];
 }

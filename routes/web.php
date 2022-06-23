@@ -129,6 +129,9 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(ReportController::class)->group(function () {
         Route::get('reports', 'index')->middleware(['can:browse_reports'])->name('report.index');
     });
+
+
+    Route::post('upload/photo', [UploadController::class, 'upload'])->name('upload.photo');
 });
 
 Route::post('upload/image', [UploadController::class, 'image'])->name('upload.image');

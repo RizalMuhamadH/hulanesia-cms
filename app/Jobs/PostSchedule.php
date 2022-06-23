@@ -53,10 +53,16 @@ class PostSchedule implements ShouldQueue
             ]
         ];
 
+        // $params = [
+        //     'index' => 'article',
+        //     'id'    => $this->pid,
+        //     'body'  => json_decode((new PostResource($post))->toJson(), true)
+        // ];
+
         $repository = ClientBuilder::create()->setHosts([
             env("ELASTICSEARCH_HOST", "")
         ])->build();
-        $repository->create($params);
+        $repository->update($params);
 
 
         $push = new PushNotification();

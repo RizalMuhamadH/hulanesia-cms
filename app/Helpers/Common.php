@@ -11,3 +11,10 @@ if(! function_exists('is_me')){
         return auth()->user()->id == $id;
     }
 }
+
+if(! function_exists('epoch')){
+    function epoch($unix){
+        $date = Carbon\Carbon::parse(((int)$unix/1000))->timezone(config('app.timezone'));
+        return $date;
+    }
+}

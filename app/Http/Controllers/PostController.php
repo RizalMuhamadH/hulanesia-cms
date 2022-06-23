@@ -16,6 +16,7 @@ use Spatie\Activitylog\Facades\LogBatch;
 use Spatie\Activitylog\Models\Activity;
 use App\Http\Resources\PostResource;
 use App\Helpers\Meilisearch;
+use App\Http\Requests\PostRequest;
 use App\Http\Resources\PostListResource;
 use App\Jobs\PostSchedule;
 use App\Repository\Elasticsearch;
@@ -62,20 +63,23 @@ class PostController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
         // dd($request->published_at);
         // dd(now()->diffInMinutes($request->published_at));
         // dd(now()->addMinutes($request->published_at)->minute);
 
-        $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'body' => 'required',
-            'category_id' => 'required',
-            'image' => 'required',
-            'tags' => 'required',
-        ]);
+        // $request->validate([
+        //     'title' => 'required|max:255',
+        //     'description' => 'required',
+        //     'body' => 'required',
+        //     'category_id' => 'required',
+        //     'image' => 'required',
+        //     'tags' => 'required',
+        // ]);
+
+        // $request->validated();
+
 
         if ($request->status == PostStatus::SCHEDULE) {
             $published_at = $request->published_at;
@@ -89,7 +93,7 @@ class PostController extends Controller
 
             $post = Post::create([
                 'title' => $request->title,
-                'slug' => Str::slug($request->title, "-"),
+                'slug' => $request->slug,
                 'description' => $request->description,
                 'body' => $request->body,
                 'source' => $request->source,
@@ -142,14 +146,14 @@ class PostController extends Controller
             }
 
 
-            
+
             // if ($request->status == 'SCHEDULE') {
             //     $schedule = new Schedule();
             //     $schedule->job(new PostSchedule($post, $this->repository))->when(fn()=> Carbon::parse($published_at)->isPast());
             //     // PostSchedule::dispatchSync(new PostSchedule($post, $this->repository))->delay(now()->addMinutes(now()->diffInMinutes($request->published_at)));
             // }
-            
-            if ($request->status == PostStatus::PUBLISH){
+
+            if ($request->status == PostStatus::PUBLISH) {
                 $params = [
                     'index' => 'article',
                     'id'    => $post->id,
@@ -158,7 +162,7 @@ class PostController extends Controller
                 $es = $this->repository->create($params);
 
                 $push = new PushNotification();
-                $push->sendNotification($post->id,"Berita Terbaru", $post->title, env('STORAGE').'/'.$post->image->thumbnail('medium', 'path'), env('WEBSITE_URL').'/'.$post->url, "web");
+                $push->sendNotification($post->id, "Berita Terbaru", $post->title, env('STORAGE') . '/' . $post->image->thumbnail('medium', 'path'), env('WEBSITE_URL') . '/' . $post->url, "web");
             }
 
             // PostSchedule::dispatch($post, $this->repository);
@@ -192,25 +196,37 @@ class PostController extends Controller
         ]);
     }
 
-    public function update(Request $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
 
         $this->authorize('update', $post);
 
+        // $request->validated();
+
         $current = $post;
 
-        if ($post->status == PostStatus::DRAFT && $request->status == PostStatus::PUBLISH) {
-            $published_at = now();
+        try {
+            $doc = $this->repository->get([
+                'index' => 'article',
+                'id'    => $post->id,
+                'type'  => '_doc'
+            ]);
+        } catch (\Throwable $th) {
+            $doc  = json_decode($th->getMessage(), true);
+        }
+
+        if ($post->status == PostStatus::DRAFT && $request->status == (PostStatus::PUBLISH)->value && $post->published_at == null) {
+            $published_at = Carbon::now();
         } else {
             $published_at = $post->published_at;
         }
 
 
-        DB::transaction(function () use ($request, $published_at, $post, $current) {
+        DB::transaction(function () use ($request, $published_at, $post, $current, $doc) {
             $post->update([
 
                 'title' => $request->title,
-                'slug' => Str::slug($request->title, "-"),
+                'slug' => $request->slug,
                 'description' => $request->description,
                 'body' => $request->body,
                 'source' => $request->source,
@@ -220,7 +236,6 @@ class PostController extends Controller
                 'meta_description' => $request->meta_description,
                 'meta_keywords' => $request->meta_keywords,
                 'seo_title' => $request->seo_title,
-                'author_id' => $request->author_id,
                 'published_at' => $published_at,
                 'admin_id' => Auth::user()->hasRole('writter') ? null : Auth::user()->id,
                 'author_id' => Auth::user()->hasRole('writter') ? Auth::user()->id : $request->author_id
@@ -228,8 +243,9 @@ class PostController extends Controller
 
             // dd($post->tags->pluck('id'));
             // $post->tags()->sync($post->tags->pluck('id'));
-            $post->tags()->detach();
-            $post->tags()->attach($request->tags);
+            // $post->tags()->detach();
+            // $post->tags()->attach($request->tags);
+            $post->tags()->sync($request->tags);
             $post->related()->sync($request->related);
 
             if ($request->hasFile('image')) {
@@ -268,21 +284,41 @@ class PostController extends Controller
                 $post->image()->update(['caption' => $request->caption]);
             }
 
-            $post = Post::findOrFail($post->id);
+            $post = Post::find($post->id);
 
-            $params = [
-                'index' => 'article',
-                'id'    => $post->id,
-                'body'  => [
-                    'doc'   => json_decode((new PostResource($post))->toJson(), true)
-                ]
-            ];
-            $es = $this->repository->update($params);
+            if ($doc['found'] && $post->status == PostStatus::PUBLISH) {
+                $params = [
+                    'index' => 'article',
+                    'id'    => $post->id,
+                    'body'  => [
+                        'doc'   => json_decode((new PostResource($post))->toJson(), true)
+                    ]
+                ];
+                $es = $this->repository->update($params);
+            } 
             
-            if ($current->status == PostStatus::DRAFT && $request->status == PostStatus::PUBLISH){
-                
+            if(!$doc['found'] && $post->status == PostStatus::PUBLISH) {
+                $params = [
+                    'index' => 'article',
+                    'id'    => $post->id,
+                    'body'  => json_decode((new PostResource($post))->toJson(), true)
+                ];
+                $es = $this->repository->create($params);
+            }
+
+            if($doc['found'] && $post->status == PostStatus::DRAFT) {
+                $params = [
+                    'index' => 'article',
+                    'id'    => $post->id,
+                ];
+                $es = $this->repository->delete($params);
+            }
+
+
+            if ($current->status == PostStatus::DRAFT && $request->status == PostStatus::PUBLISH) {
+
                 $push = new PushNotification();
-                $push->sendNotification($post->id,"Berita Terbaru", $post->title, env('STORAGE').'/'.$post->image->thumbnail('medium', 'path'), env('WEBSITE_URL').'/'.$post->url, "web");
+                $push->sendNotification($post->id, "Berita Terbaru", $post->title, env('STORAGE') . '/' . $post->image->thumbnail('medium', 'path'), env('WEBSITE_URL') . '/' . $post->url, "web");
             }
 
             activity()
@@ -344,7 +380,7 @@ class PostController extends Controller
         ]);
 
         $response = $client->runReport([
-            'property' => 'properties/'.env('ANALYTIC_PROPERTY_ID'),
+            'property' => 'properties/' . env('ANALYTIC_PROPERTY_ID'),
             'dateRanges' => [
                 new DateRange([
                     'start_date' => '7daysAgo',
@@ -392,7 +428,7 @@ class PostController extends Controller
                 'pageTitle' => $row->getDimensionValues()[0]->getValue(),
                 'pagePath' => $row->getDimensionValues()[1]->getValue(),
                 'screenPageViews' => $row->getMetricValue()[0]->getValue(),
-            
+
             ];
             // [END analyticsdata_json_credentials_run_report_response]
         }

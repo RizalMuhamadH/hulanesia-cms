@@ -23,7 +23,7 @@ class VideoResource extends JsonResource
             'thumbnail'         => $this->thumbnail,
             'duration'          => $this->duration,
             'status'            => $this->status,
-            'created_at'        => $this->created_at,
+            'created_at'        => $this->created_at->timestamp * 1000,
         ];
     }
 }

@@ -22,8 +22,8 @@ class PostListResource extends JsonResource
             'url'               => '/'.$this->category->slug.'/'.$this->id.'/'.Carbon::parse($this->published_at)->format('dmY').'/'.$this->slug,
             'category'          => $this->category->name,
             'category_url'      => $this->category->slug,
-            'created_at'        => $this->created_at,
-            'publish_at'        => $this->published_at,
+            'created_at'        => Carbon::parse($this->created_at)->timestamp * 1000,
+            'publish_at'        => Carbon::parse($this->published_at)->timestamp * 1000
         ];
     }
 }

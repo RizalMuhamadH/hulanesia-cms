@@ -23,7 +23,7 @@ class CategoryResource extends JsonResource
             'present'               => $this->present,
             'parent_id'             => $this->parent_id,
             'order'                 => $this->order,
-            'created_at'            => $this->created_at,
+            'created_at'            => $this->created_at->timestamp * 1000,
             // 'timestamp'             => $this->created_at->timestamp
         ];
     }

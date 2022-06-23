@@ -25,7 +25,7 @@ class ImageResource extends JsonResource
             ],
             'photographer'              => $this->photographer,
             'source'                    => $this->source,
-            'created_at'                => $this->created_at
+            'created_at'                => $this->created_at->timestamp * 1000
         ];
     }
 }

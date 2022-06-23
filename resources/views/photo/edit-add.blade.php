@@ -2,6 +2,10 @@
 @push('style')
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-timepicker.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/daterangepicker.css') }}">
+
+    <link rel="stylesheet" href="https://unpkg.com/filepond@4.30.4/dist/filepond.css">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
+    <link href="https://unpkg.com/filepond-plugin-file-poster/dist/filepond-plugin-file-poster.css" rel="stylesheet" />
 @endpush
 @section('body')
     <div class="section-header">
@@ -23,18 +27,22 @@
 
                             <div class="col-md-8">
                                 <div class="form-group">
-                                    <label class="col-form-label">Title</label>
+                                    <label class="col-form-label">Title*</label>
                                     <input type="text" class="form-control" name="title"
                                         value="{{ $content->title ?? '' }}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-form-label">Description</label>
-                                    <textarea id="tinymce" rows="5" class="form-control"
-                                        name="description">{{ $content->description ?? '' }}</textarea>
+                                    <label class="col-form-label">Description*</label>
+                                    <textarea id="tinymce" rows="5" class="form-control" name="description">{{ $content->description ?? '' }}</textarea>
                                 </div>
 
 
-                                <livewire:form.photos-field :current="$content->images ?? []">
+                                {{-- <livewire:form.photos-field :current="$content->images ?? []"> --}}
+
+                                {{-- <div class="form-group">
+                                    <label class="col-form-label">Images</label>
+                                    <input type="file" class="form-control">
+                                </div> --}}
 
                             </div>
 
@@ -42,8 +50,7 @@
 
                                 <div class="form-group">
                                     <label class="col-form-label">Caption</label>
-                                    <textarea rows="10" class="form-control"
-                                        name="caption">{{ $content->images[0]->caption ?? '' }}</textarea>
+                                    <textarea rows="10" class="form-control" name="caption">{{ $content->images[0]->caption ?? '' }}</textarea>
                                 </div>
 
                                 <div class="form-group">
@@ -51,6 +58,13 @@
                                     <input type="text" class="form-control" name="photographer"
                                         value="{{ $content->images[0]->photographer ?? '' }}">
                                 </div>
+
+                                <div class="form-group">
+                                    <label class="col-form-label">Images*</label>
+                                    <input type="file" name="images[]" required>
+                                </div>
+
+
                             </div>
 
 
@@ -58,7 +72,7 @@
                             <div class="form-group row">
                                 <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2"></label>
                                 <div class="col-sm-12 col-md-7">
-                                    <button class="btn btn-primary">Publish</button>
+                                    <button class="btn btn-primary">Save</button>
                                 </div>
                             </div>
 
@@ -70,21 +84,83 @@
     </div>
 @endsection
 @push('script')
-    <script src="{{ asset('assets/js/preview/jquery.uploadPreview.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap-timepicker.min.js') }}"></script>
     <script src="{{ asset('assets/js/daterangepicker.js') }}"></script>
     <script src="{{ asset('assets/js/custom_tinymce.js') }}"></script>
-    <script>
-        "use strict";
 
-        $.uploadPreview({
-            input_field: "#image-upload", // Default: .image-upload
-            preview_box: "#image-preview", // Default: .image-preview
-            label_field: "#image-label", // Default: .image-label
-            label_default: "Choose File", // Default: Choose File
-            label_selected: "Change File", // Default: Change File
-            no_label: false, // Default: false
-            success_callback: null // Default: null
+    <script src="https://unpkg.com/filepond-plugin-file-metadata/dist/filepond-plugin-file-metadata.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-file-poster/dist/filepond-plugin-file-poster.js"></script>
+    <script src="https://unpkg.com/filepond@4.30.4/dist/filepond.js"></script>
+
+    <script>
+
+        var photos = {!! json_encode($content->images ?? []) !!};
+        var storage = "{{ env('STORAGE') }}/storage/";
+
+        console.log(photos);
+
+        var files = photos.map(element => {
+            return {
+                        source: storage+element.path,
+                        options: {
+                            type: 'local',
+                            file: {
+                                name: element.path.split(/(\\|\/)/g).pop(),
+                                size: 0,
+                                type: 'image/'+element.path.split(".").pop(),
+                            },
+                            metadata: {
+                                poster: storage+element.path,
+                            },
+                        },
+                    };
+        });
+
+        $(document).ready(function() {
+            const inputElement = document.querySelector('input[type="file"]');
+
+            FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFilePoster,
+                FilePondPluginFileMetadata);
+
+            const pond = FilePond.create(inputElement, {
+                allowMultiple: true,
+                allowMultipleFileSelection: true,
+                allowBrowse: true,
+                allowFilePoster: true,
+                allowFileTypeValidation: true,
+                maxFiles: 5,
+                maxFileSize: '2MB',
+                allowFileTypeValidation: true,
+                allowFileExtensions: ['image/*'],
+
+                files: files,
+            });
+
+            FilePond.setOptions({
+                server: {
+                    url: '/upload/photo',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                },
+            });
+            // pond.on('addfile', function(file) {
+            //     console.log('File added', $('.filepond--data input').length);
+            //     // inputElement.name = pond.getFiles();
+            //     // inputElement.value = pond.getFiles()[0].file;
+
+            //     for (let i = 0; i < $('.filepond--data input').length; i++) {
+            //         let file = $('.filepond--data input').eq(i);
+            //         console.log(file.val());
+            //     }
+            // });
+
+            // pond.on('removefile', function(file) {
+            //     console.log('File removed', file);
+
+            //     // inputElement.value = pond.getFiles();
+            // });
         });
     </script>
 @endpush

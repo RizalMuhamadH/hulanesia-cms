@@ -21,9 +21,9 @@ class PhotoResource extends JsonResource
             'description'           => $this->description,
             'editor'                => new PostEditorResource($this->editor),
             'images'                => ImageResource::collection($this->images),
-            'created_at'            => $this->created_at,
+            'created_at'            => $this->created_at->timestamp * 1000,
             'deleted_at'            => $this->deleted_at,
-            'timestamp'             => $this->created_at->timestamp
+            'timestamp'             => $this->created_at->timestamp * 1000
         ];
     }
 }

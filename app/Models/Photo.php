@@ -18,6 +18,8 @@ class Photo extends Model
         'admin_id'
     ];
 
+    protected $dates = ['created_at'];
+
     public function images()
     {
         return $this->morphMany(Image::class, 'imageable');

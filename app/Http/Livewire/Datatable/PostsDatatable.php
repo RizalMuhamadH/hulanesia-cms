@@ -26,7 +26,7 @@ class PostsDatatable extends Component
         ['query' => ['search' => '']]
     ];
 
-    protected $listeners = ['delete' => 'delete'];
+    protected $listeners = ['delete' => 'delete', 'restore' => 'restore'];
 
     public function mount($layout, $status, $style)
     {
@@ -90,7 +90,7 @@ class PostsDatatable extends Component
 
     public function restore($id)
     {
-        $post = Post::findOrFail($id);
+        $post = Post::onlyTrashed()->findOrFail($id);
         if (auth()->user()->can('restore', $post)) {
             $post->restore();
             $post->update(['status' => PostStatus::DRAFT]);

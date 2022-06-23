@@ -61,8 +61,8 @@
                             </td>
                             <td>{{ $item['pageTitle'] }}</td>
                             <td>
-                                <div wire:click="removeItem({{ $loop->index }})" class="article-badge-item bg-danger"
-                                    style="cursor: pointer"><i class="fas fa-trash"></i> Delete</div>
+                                <button wire:click="removeItem({{ $loop->index }})" class="btn btn-icon icon-left btn-danger"
+                                    style="cursor: pointer"><i class="fas fa-trash"></i> Delete</button>
                             </td>
                         </tr>
                     @endforeach

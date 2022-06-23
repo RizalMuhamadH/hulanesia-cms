@@ -13,8 +13,11 @@ class Image extends Model
 
     protected $fillable = [
         'path',
-        'caption'
+        'caption',
+        'photographer'
     ];
+
+    protected $dates = ['created_at'];
 
     protected $guarded = [];
 

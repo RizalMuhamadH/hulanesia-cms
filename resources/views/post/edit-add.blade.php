@@ -23,19 +23,30 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label class="col-form-label">Title</label>
-                                    <input type="text" class="form-control" name="title"
-                                        value="{{ $content->title ?? '' }}" required>
+                                    <input type="text" class="form-control @error('title') is-invalid @enderror"
+                                        name="title" value="{{ $content->title ?? '' }}" required>
+                                    @error('title')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
                                 <!-- <div class="form-group">
-                                                                                                                                            <label class="col-form-label">Slug</label>
-                                                                                                                                            <input type="text" class="form-control">
-                                                                                                                                        </div> -->
+                                                                                                                                                                                        <label class="col-form-label">Slug</label>
+                                                                                                                                                                                        <input type="text" class="form-control">
+                                                                                                                                                                                    </div> -->
                                 <div class="form-group">
-                                    <label class="col-form-label">Summary</label>
-                                    <textarea rows="20" maxlength="255" class="description form-control" name="description">{{ $content->description ?? '' }}</textarea>
+                                    <label class="col-form-label">Description</label>
+                                    <textarea rows="20" maxlength="255" class="description form-control @error('description') is-invalid @enderror"
+                                        name="description">{{ $content->description ?? '' }}</textarea>
                                     <div id="info-count" class="valid-feedback">
                                         <span id="current">0</span><span id="maximum">/ 255</span>
                                     </div>
+                                    @error('description')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Category</label>
@@ -58,10 +69,11 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="related form-group">
                                     <label class="col-form-label">Related</label>
-                                    <select id="select-posts" class="form-control select2" multiple="" name="related[]"
-                                        required>
+                                    <select id="select-posts"
+                                        class="form-control select2 @error('related') is-invalid @enderror" multiple=""
+                                        name="related[]">
                                         @isset($content)
                                             @foreach ($content->related as $item)
                                                 <option value="{{ $item->id }}" selected>
@@ -69,6 +81,11 @@
                                             @endforeach
                                         @endisset
                                     </select>
+                                    @error('related')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                     <button type="button" class="btn-popup btn btn-icon icon-left btn-primary btn-sm mt-3"
                                         data-title="Related Posts"
                                         data-url="{{ route('post.index', ['layout' => 'popup']) }}"><i
@@ -135,10 +152,15 @@
 
                                 <div class="form-group">
                                     <label class="col-form-label">Image</label>
-                                    <div id="image-preview" class="image-preview">
+                                    <div id="image-preview" class="image-preview @error('image') is-invalid @enderror">
                                         <label for="image-upload" id="image-label">Choose File</label>
                                         <input type="file" name="image" id="image-upload" />
                                     </div>
+                                    @error('image')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
 
                                 @isset($content)
@@ -154,10 +176,11 @@
                                     <textarea rows="10" class="form-control" name="caption">{{ $content->image->caption ?? '' }}</textarea>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="tags form-group">
                                     <label class="col-form-label">Tags</label>
-                                    <select id="select-tags" class="form-control select2" multiple="" name="tags[]"
-                                        required>
+                                    <select id="select-tags"
+                                        class="form-control select2 @error('tags') is-invalid @enderror"
+                                        style="border-color: red" multiple="" name="tags[]" required>
                                         {{-- @foreach ($tags as $item)
                                             <option value="{{ $item->id }}" @isset($content)
                                                 {{ $collection->contains($item->id) ? 'selected' : '' }} @endisset>
@@ -170,7 +193,13 @@
                                             @endforeach
                                         @endisset
                                     </select>
-                                    <button type="button" class="btn-popup btn btn-icon icon-left btn-primary btn-sm mt-3"
+                                    @error('tags')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                    <button type="button"
+                                        class="btn-popup btn btn-icon icon-left btn-primary btn-sm mt-3"
                                         data-title="Tambah/Edit Tag"
                                         data-url="{{ route('tag.index', ['layout' => 'popup']) }}"><i
                                             class="fas fa-plus"></i> Add/Edit Tag</button>
@@ -195,7 +224,7 @@
                             <div class="form-group row">
                                 <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2"></label>
                                 <div class="col-sm-12 col-md-7">
-                                    <button type="submit" class="btn btn-primary">Publish</button>
+                                    <button type="submit" class="btn btn-primary">Save</button>
                                 </div>
                             </div>
 
@@ -212,6 +241,7 @@
     <script src="{{ asset('assets/js/bootstrap-timepicker.min.js') }}"></script>
     <script src="{{ asset('assets/js/daterangepicker.js') }}"></script>
     <script src="{{ asset('assets/js/custom_tinymce.js') }}"></script>
+
     <script>
         "use strict";
 
@@ -336,8 +366,15 @@
                 maximum = 255,
                 current = $('#current').text(count),
                 textarea = $('.description');
+
+            if (count == 0) {
+                textarea.addClass('is-invalid')
+                $('#info-count').addClass('invalid-feedback')
+            } else {
                 textarea.addClass(
-                    {{ isset($content->description) ? strlen($content->description) : 0 }} > (0.9 * maximum) ? 'is-invalid' : 'is-valid')
+                    count > (0.9 * maximum) ?
+                    'is-invalid' : 'is-valid')
+            }
 
             $('.description').keyup(function() {
 
@@ -347,6 +384,11 @@
                 current.text(characterCount);
 
                 if (characterCount > (0.9 * maximum)) {
+                    infoCount.removeClass('valid-feedback')
+                    infoCount.addClass('invalid-feedback')
+                    textarea.removeClass('is-valid')
+                    textarea.addClass('is-invalid')
+                } else if (characterCount == 0) {
                     infoCount.removeClass('valid-feedback')
                     infoCount.addClass('invalid-feedback')
                     textarea.removeClass('is-valid')
@@ -363,4 +405,12 @@
 
         });
     </script>
+
+    @error('tags')
+        <script>
+            $('document').ready(function() {
+                $('.tags .select2-selection.select2-selection--multiple').css('border-color', 'red')
+            });
+        </script>
+    @enderror
 @endpush
