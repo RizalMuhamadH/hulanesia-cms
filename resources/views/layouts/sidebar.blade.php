@@ -81,6 +81,10 @@
                 <li class="{{ Request::segment(1) == 'reports' ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('report.index') }}"><i class="fas fa-chart-pie"></i> <span>Reports</span></a></li>
             @endcan
+            @can('browse_management-rss')
+                <li class="{{ Request::segment(1) == 'management-rss' ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('management-rss.index') }}"><i class="fas fa-rss"></i> <span>Feed</span></a></li>
+            @endcan
         </ul>
 
         {{-- <div class="mt-4 mb-4 p-3 hide-sidebar-mini">

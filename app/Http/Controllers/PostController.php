@@ -81,9 +81,9 @@ class PostController extends Controller
         // $request->validated();
 
 
-        if ($request->status == PostStatus::SCHEDULE) {
+        if ($request->status == (PostStatus::SCHEDULE)->value) {
             $published_at = $request->published_at;
-        } else if ($request->status == PostStatus::PUBLISH) {
+        } else if ($request->status == (PostStatus::PUBLISH)->value || $request->status == (PostStatus::ARCHIVE)->value) {
             $published_at = now();
         } else {
             $published_at = null;
@@ -153,14 +153,16 @@ class PostController extends Controller
             //     // PostSchedule::dispatchSync(new PostSchedule($post, $this->repository))->delay(now()->addMinutes(now()->diffInMinutes($request->published_at)));
             // }
 
-            if ($request->status == PostStatus::PUBLISH) {
+            if ($request->status == (PostStatus::PUBLISH)->value || $request->status == (PostStatus::ARCHIVE)->value) {
                 $params = [
                     'index' => 'article',
                     'id'    => $post->id,
                     'body'  => json_decode((new PostResource($post))->toJson(), true)
                 ];
                 $es = $this->repository->create($params);
+            }
 
+            if ($request->status == (PostStatus::PUBLISH)->value) {
                 $push = new PushNotification();
                 $push->sendNotification($post->id, "Berita Terbaru", $post->title, env('STORAGE') . '/' . $post->image->thumbnail('medium', 'path'), env('WEBSITE_URL') . '/' . $post->url, "web");
             }
@@ -216,6 +218,8 @@ class PostController extends Controller
         }
 
         if ($post->status == PostStatus::DRAFT && $request->status == (PostStatus::PUBLISH)->value && $post->published_at == null) {
+            $published_at = Carbon::now();
+        } else if($request->status == (PostStatus::ARCHIVE)->value && $post->published_at == null){
             $published_at = Carbon::now();
         } else {
             $published_at = $post->published_at;
@@ -286,7 +290,7 @@ class PostController extends Controller
 
             $post = Post::find($post->id);
 
-            if ($doc['found'] && $post->status == PostStatus::PUBLISH) {
+            if ($doc['found'] && $post->status == PostStatus::PUBLISH || $post->status == PostStatus::ARCHIVE) {
                 $params = [
                     'index' => 'article',
                     'id'    => $post->id,
@@ -297,7 +301,7 @@ class PostController extends Controller
                 $es = $this->repository->update($params);
             } 
             
-            if(!$doc['found'] && $post->status == PostStatus::PUBLISH) {
+            if(!$doc['found'] && $post->status == PostStatus::PUBLISH || $post->status == PostStatus::ARCHIVE) {
                 $params = [
                     'index' => 'article',
                     'id'    => $post->id,
@@ -315,7 +319,7 @@ class PostController extends Controller
             }
 
 
-            if ($current->status == PostStatus::DRAFT && $request->status == PostStatus::PUBLISH) {
+            if ($current->status == PostStatus::DRAFT && $request->status == (PostStatus::PUBLISH)->value) {
 
                 $push = new PushNotification();
                 $push->sendNotification($post->id, "Berita Terbaru", $post->title, env('STORAGE') . '/' . $post->image->thumbnail('medium', 'path'), env('WEBSITE_URL') . '/' . $post->url, "web");

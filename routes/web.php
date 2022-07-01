@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FeedController;
+use App\Http\Controllers\ManagementRssController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
@@ -63,6 +65,14 @@ Route::middleware(['auth'])->group(function () {
     //     Route::post('features/add', 'store')->middleware(['can:add_features'])->name('feature.store');
     //     Route::post('features/update/{id}', 'update')->middleware(['can:edit_features'])->name('feature.update');
     // });
+
+    Route::controller(ManagementRssController::class)->group(function(){
+        Route::get('management-rss', 'index')->middleware(['can:browse_management-rss'])->name('management-rss.index');
+        Route::get('management-rss/add', 'add')->middleware(['can:add_management-rss'])->name('management-rss.add');
+        Route::get('management-rss/edit/{id}', 'edit')->middleware(['can:edit_management-rss'])->name('management-rss.edit');
+        Route::post('management-rss/add', 'store')->middleware(['can:add_management-rss'])->name('management-rss.store');
+        Route::patch('management-rss/update/{id}', 'update')->middleware(['can:edit_management-rss'])->name('management-rss.update');
+    });
 
     Route::controller(SettingController::class)->group(function () {
         Route::get('settings', 'index')->middleware(['can:browse_settings'])->name('setting.index');
@@ -135,6 +145,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::post('upload/image', [UploadController::class, 'image'])->name('upload.image');
+
+Route::middleware(['throttle:feed'])->get('feed/{feed}/{token}', [FeedController::class, 'render'])->name('feed.rss');
 
 // Route::get('/test', function () {
 //     Auth::user()->impersonate(User::find(4));
