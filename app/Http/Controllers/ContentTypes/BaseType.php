@@ -33,12 +33,13 @@ abstract class BaseType
      * @param $slug
      * @param $row
      */
-    public function __construct(Request $request, $slug, $row, $options)
+    public function __construct(Request $request, $slug, $row, $options, $file = null)
     {
         $this->request = $request;
         $this->slug = $slug;
         $this->row = $row;
         $this->options = $options;
+        $this->file = $file;
     }
 
     /**

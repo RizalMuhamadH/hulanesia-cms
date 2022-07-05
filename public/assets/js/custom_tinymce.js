@@ -3,10 +3,10 @@ var editor_config = {
   selector: "#tinymce",
   relative_urls: false,
   height: 500,
-  plugins: ["advlist autolink lists link image charmap print preview hr anchor pagebreak", "searchreplace wordcount visualblocks visualchars code fullscreen", "insertdatetime media nonbreaking save table directionality", "emoticons template paste textpattern article"],
-  toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media article",
-  file_picker_types: 'image',
-  image_dimensions: false,
+  plugins: ["advlist autolink lists link charmap print preview hr anchor pagebreak", "searchreplace wordcount visualblocks visualchars code fullscreen", "insertdatetime media nonbreaking save table directionality", "emoticons template paste textpattern article imagepicker"],
+  toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link imagepicker media article",
+  // file_picker_types: 'image',
+  // image_dimensions: false,
   file_picker_callback: function file_picker_callback(cb, value, meta) {
     if (meta.filetype == 'image') {
       var input = document.createElement('input');
@@ -57,6 +57,25 @@ tinymce.PluginManager.add('article', function (editor, url) {
     getMetadata: function getMetadata() {
       return {
         name: "Article"
+      };
+    }
+  };
+});
+tinymce.PluginManager.add('imagepicker', function (editor, url) {
+  // Add a button that opens a window
+  editor.addButton('imagepicker', {
+    text: '',
+    icon: "image",
+    onclick: function onclick() {
+      $('#modal-title').html('Photo');
+      $('#modal-iframe').attr('src', '/media?layout=popup');
+      $('#articleModal').modal('show');
+    }
+  });
+  return {
+    getMetadata: function getMetadata() {
+      return {
+        name: "imagepicker"
       };
     }
   };

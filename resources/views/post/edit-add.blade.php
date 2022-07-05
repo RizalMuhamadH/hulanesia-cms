@@ -135,6 +135,10 @@
                                                 @isset($content) {{ $content->status->value == 'PUBLISH' ? 'selected' : '' }} @endisset>
                                                 PUBLISH
                                             </option>
+                                            <option value="ARCHIVE"
+                                                @isset($content) {{ $content->status->value == 'ARCHIVE' ? 'selected' : '' }} @endisset>
+                                                ARCHIVE
+                                            </option>
                                             <option value="SCHEDULE"
                                                 @isset($content) {{ $content->status->value == 'SCHEDULE' ? 'selected' : '' }} @endisset>
                                                 SCHEDULE
@@ -339,6 +343,15 @@
                     tinymce.activeEditor.execCommand('mceInsertContent', false,
                         '<p><strong>Baca Juga: <a href="' + url + '">' + title +
                         '</a></strong></p>');
+                    $('#articleModal').modal('hide');
+                });
+
+                $(this).contents().find('.btn-picker').click(function() {
+                    var caption = $(this).data('caption');
+                    var src = $(this).data('src');
+                    tinymce.activeEditor.execCommand('mceInsertContent', false,
+                        '<p><img width="100%" src="' + src + '" alt="' + caption +'"'+
+                        '/></p>');
                     $('#articleModal').modal('hide');
                 });
 

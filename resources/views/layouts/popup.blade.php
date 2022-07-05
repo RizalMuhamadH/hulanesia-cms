@@ -27,7 +27,7 @@
     <div id="app">
         <div class="main-wrapper">
 
-            <div class="navbar-bg"></div>
+            {{-- <div class="navbar-bg"></div> --}}
             <!-- Main Content -->
 
             {{-- <div class="main-content"> --}}
@@ -36,6 +36,8 @@
                 </section>
             {{-- </div> --}}
             <!-- End Main Content -->
+            @stack('view')
+            @include('section.modal')
         </div>
     </div>
 

@@ -4,15 +4,15 @@ var editor_config = {
   relative_urls: false,
   height: 500,
   plugins: [
-    "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+    "advlist autolink lists link charmap print preview hr anchor pagebreak",
     "searchreplace wordcount visualblocks visualchars code fullscreen",
     "insertdatetime media nonbreaking save table directionality",
-    "emoticons template paste textpattern article",
+    "emoticons template paste textpattern article imagepicker",
   ],
   toolbar:
-    "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media article",
-  file_picker_types: 'image',
-  image_dimensions: false,
+    "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link imagepicker media article",
+  // file_picker_types: 'image',
+  // image_dimensions: false,
   file_picker_callback: function (cb, value, meta) {
 
 
@@ -72,6 +72,27 @@ tinymce.PluginManager.add('article', function (editor, url) {
     getMetadata: function () {
       return {
         name: "Article"
+      };
+    }
+  };
+});
+
+tinymce.PluginManager.add('imagepicker', function (editor, url) {
+  // Add a button that opens a window
+  editor.addButton('imagepicker', {
+    text: '',
+    icon: "image",
+    onclick: function () {
+      $('#modal-title').html('Photo');
+      $('#modal-iframe').attr('src','/media?layout=popup');
+      $('#articleModal').modal('show');
+    }
+  });
+
+  return {
+    getMetadata: function () {
+      return {
+        name: "imagepicker"
       };
     }
   };

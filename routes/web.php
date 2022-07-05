@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\ManagementRssController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\VideoController;
+use App\Http\Livewire\Datatable\MediaDatatable;
 use App\Http\Livewire\Management\FeatureManagement;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -110,6 +112,11 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::get('posts/{slug}', FeatureManagement::class)->middleware(['role:editor|admin'])->name('post.management');
+
+    Route::get('media', MediaDatatable::class)->middleware(['role:editor|admin'])->name('media.index');
+
+
+    Route::post('media/upload', [MediaController::class, 'store'])->middleware(['role:editor|admin'])->name('media.store');
 
     Route::controller(PhotoController::class)->group(function () {
         Route::get('photos', 'index')->middleware(['can:browse_photos'])->name('photo.index');

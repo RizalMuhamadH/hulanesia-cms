@@ -49,6 +49,7 @@
                 </section>
             </div>
 
+            @stack('view')
             @include('section.modal')
             @include('layouts.footer')
         </div>
