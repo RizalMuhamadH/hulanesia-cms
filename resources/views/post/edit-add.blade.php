@@ -1,8 +1,8 @@
 @extends('layouts.app')
-@push('style')
+{{-- @push('style')
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-timepicker.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/daterangepicker.css') }}">
-@endpush
+@endpush --}}
 @section('body')
     <div class="section-header">
         <h1>{{ $action }} Posts</h1>
@@ -32,9 +32,9 @@
                                     @enderror
                                 </div>
                                 <!-- <div class="form-group">
-                                                                                                                                                                                        <label class="col-form-label">Slug</label>
-                                                                                                                                                                                        <input type="text" class="form-control">
-                                                                                                                                                                                    </div> -->
+                                                                                                                                                                                            <label class="col-form-label">Slug</label>
+                                                                                                                                                                                            <input type="text" class="form-control">
+                                                                                                                                                                                        </div> -->
                                 <div class="form-group">
                                     <label class="col-form-label">Description</label>
                                     <textarea rows="20" maxlength="255" class="description form-control @error('description') is-invalid @enderror"
@@ -242,36 +242,34 @@
 @endsection
 @push('script')
     <script src="{{ asset('assets/js/preview/jquery.uploadPreview.min.js') }}"></script>
-    <script src="{{ asset('assets/js/bootstrap-timepicker.min.js') }}"></script>
-    <script src="{{ asset('assets/js/daterangepicker.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/bootstrap-timepicker.min.js') }}"></script>
+    <script src="{{ asset('assets/js/daterangepicker.js') }}"></script> --}}
     <script src="{{ asset('assets/js/custom_tinymce.js') }}"></script>
 
-    <script>
-        "use strict";
-
-        $('#publish').hide();
-        $("#category").selectric();
-        $('#status').selectric().on('change', function() {
-            if ($(this).val() == 'SCHEDULE') {
-                $('#publish').show();
-            } else {
-                $('#publish').hide();
-            }
-            console.log($(this).val());
-        });
-
-        $.uploadPreview({
-            input_field: "#image-upload", // Default: .image-upload
-            preview_box: "#image-preview", // Default: .image-preview
-            label_field: "#image-label", // Default: .image-label
-            label_default: "Choose File", // Default: Choose File
-            label_selected: "Change File", // Default: Change File
-            no_label: false, // Default: false
-            success_callback: null // Default: null
-        });
-    </script>
-    <script>
+    <script type="module">
         $('document').ready(function() {
+
+            $('#publish').hide();
+            $("#category").selectric();
+            $('#status').selectric().on('change', function() {
+                if ($(this).val() == 'SCHEDULE') {
+                    $('#publish').show();
+                } else {
+                    $('#publish').hide();
+                }
+                console.log($(this).val());
+            });
+
+            $.uploadPreview({
+                input_field: "#image-upload", // Default: .image-upload
+                preview_box: "#image-preview", // Default: .image-preview
+                label_field: "#image-label", // Default: .image-label
+                label_default: "Choose File", // Default: Choose File
+                label_selected: "Change File", // Default: Change File
+                no_label: false, // Default: false
+                success_callback: null // Default: null
+            });
+
 
             $('.btn-popup').click(function() {
                 var url = $(this).data('url');
@@ -350,7 +348,7 @@
                     var caption = $(this).data('caption');
                     var src = $(this).data('src');
                     tinymce.activeEditor.execCommand('mceInsertContent', false,
-                        '<p><img width="100%" src="' + src + '" alt="' + caption +'"'+
+                        '<p><img width="100%" src="' + src + '" alt="' + caption + '"' +
                         '/></p>');
                     $('#articleModal').modal('hide');
                 });
@@ -420,7 +418,7 @@
     </script>
 
     @error('tags')
-        <script>
+        <script type="module">
             $('document').ready(function() {
                 $('.tags .select2-selection.select2-selection--multiple').css('border-color', 'red')
             });

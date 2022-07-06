@@ -74,7 +74,7 @@ class MediaController extends Controller
             'type' => 'image',
         ]);
 
-        return redirect()->route('media.index')->with('message', 'Add Successfully');
+        return redirect()->back()->with('message', 'Add Successfully');
 
 
     }

@@ -15,12 +15,13 @@
     <!-- CSS Libraries -->
 
     <!-- Template CSS -->
-    <link rel="stylesheet" href="{{ mix('assets/css/all.css') }}">
+    @vite(['node_modules/bootstrap-social/bootstrap-social.css', 'resources/css/style.css', 'resources/css/components.css', 'resources/css/app.css'])
+    {{-- <link rel="stylesheet" href="{{ mix('assets/css/all.css') }}"> --}}
     @stack('style')
     @livewireStyles
 
-
-    <script src="{{ asset('js/app.js') }}"></script>
+    {{-- @vite('resources/js/app.js') --}}
+    {{-- <script src="{{ mix('js/app.js') }}"></script> --}}
 </head>
 
 <body>
@@ -52,13 +53,14 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-    <script src="{{ mix('assets/js/stisla.js') }}"></script>
+    {{-- <script src="{{ mix('assets/js/stisla.js') }}"></script> --}}
 
     <!-- JS Libraies -->
 
     <!-- Template JS File -->
-    <script src="{{ mix('assets/js/scripts.js') }}"></script>
-    <script src="{{ mix('assets/js/custom.js') }}"></script>
+    @vite(['resources/js/stisla.js', 'resources/js/scripts.js', 'resources/js/custom.js'])
+    {{-- <script src="{{ mix('assets/js/scripts.js') }}"></script>
+    <script src="{{ mix('assets/js/custom.js') }}"></script> --}}
     @stack('script')
     @livewireScripts
     <!-- Page Specific JS File -->
