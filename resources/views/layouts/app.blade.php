@@ -26,7 +26,8 @@
     <link rel="stylesheet" href="{{ mix('assets/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ mix('assets/css/all.css') }}"> --}}
 
-    @vite(['node_modules/selectric/public/selectric.css', 'node_modules/sweetalert2/dist/sweetalert2.min.css', 'node_modules/izitoast/dist/css/iziToast.min.css', 'node_modules/select2/dist/css/select2.min.css', 'node_modules/bootstrap-daterangepicker/daterangepicker.css', 'resources/css/style.css', 'resources/css/components.css', 'resources/css/app.css'])
+    @vite(['node_modules/selectric/public/selectric.css', 'node_modules/select2/dist/css/select2.min.css', 'node_modules/bootstrap-daterangepicker/daterangepicker.css', 'resources/css/style.css', 'resources/css/components.css', 'resources/css/app.css'])
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css">
     @stack('style')
     @livewireStyles
 
@@ -80,7 +81,9 @@
     <!-- JS Libraies -->
 
     <!-- Template JS File -->
-    @vite(['resources/js/stisla.js', 'resources/js/scripts.js', 'resources/js/custom.js', 'node_modules/sweetalert2/dist/sweetalert2.min.js', 'node_modules/izitoast/dist/js/iziToast.min.js'])
+    @vite(['resources/js/stisla.js', 'resources/js/scripts.js', 'resources/js/custom.js'])
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
     {{-- <script src="{{ mix('assets/js/scripts.js') }}"></script>
     <script src="{{ mix('assets/js/custom.js') }}"></script>
     <script src="{{ mix('assets/js/sweetalert2/dist/sweetalert2.min.js') }}"></script>

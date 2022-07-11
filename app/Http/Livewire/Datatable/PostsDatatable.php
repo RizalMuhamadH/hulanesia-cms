@@ -6,8 +6,11 @@ use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Helpers\Meilisearch;
 use App\Http\Resources\PostResource;
+use App\Notifications\SendPushNotification;
 use App\Repository\Elasticsearch;
+use App\Repository\PushNotification;
 use Livewire\Component;
+use Illuminate\Support\Facades\Notification;
 use Livewire\WithPagination;
 
 class PostsDatatable extends Component
@@ -26,7 +29,7 @@ class PostsDatatable extends Component
         ['query' => ['search' => '']]
     ];
 
-    protected $listeners = ['delete' => 'delete', 'restore' => 'restore'];
+    protected $listeners = ['delete' => 'delete', 'restore' => 'restore', 'notify' => 'notify'];
 
     public function mount($layout, $status, $style)
     {
@@ -63,6 +66,22 @@ class PostsDatatable extends Component
 
         return view('livewire.datatable.posts-datatable', [
             'data' => $this->data
+        ]);
+    }
+
+    public function notify($id)
+    {
+        $post = Post::findOrFail($id);
+        $post->notify(new SendPushNotification());
+        // Notification::send($post, new SendPushNotification(null, 'Berita', $item['title'], env('STORAGE').'/atorage/'.$item['image'], $item['url']));
+        // auth()->user()->notify(new SendPushNotification(null, 'Berita', $item['title'], env('STORAGE').'/atorage/'.$item['image'], $item['url']));
+
+        // $push = new PushNotification();
+        // $push->sendNotification($item['title'], "Berita Terbaru", $item['title'], env('STORAGE').'/atorage/'.$item['image'], $item['url'], "web");
+
+        $this->dispatchBrowserEvent('swal:response', [
+            'title' => 'Notification has been send.',
+            'type'  => 'success'
         ]);
     }
 

@@ -85,6 +85,10 @@
                 <li class="{{ Request::segment(1) == 'management-rss' ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('management-rss.index') }}"><i class="fas fa-rss"></i> <span>Feed</span></a></li>
             @endcan
+            @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('editor'))
+                <li class="{{ Request::segment(1) == 'notifications' ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('notification.index') }}"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
+            @endif
         </ul>
 
         {{-- <div class="mt-4 mb-4 p-3 hide-sidebar-mini">

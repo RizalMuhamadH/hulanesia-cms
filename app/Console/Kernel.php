@@ -30,6 +30,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('telescope:prune')->daily();
+        // $schedule->job(new PopularSchedule)->weekly();
 
         $posts = Post::query()->where('status', 'SCHEDULE')->get();
 

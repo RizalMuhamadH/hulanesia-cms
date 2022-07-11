@@ -8,12 +8,15 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
+
 // use Laravel\Scout\Searchable;
 
 class Post extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use Notifiable;
     // use Searchable;
 
     protected $fillable = [
@@ -44,6 +47,13 @@ class Post extends Model
     {
         return new Attribute(
             get: fn ($value, $attributes) => env('WEBSITE_URL') . '/' . $this->category->name . '/' . $attributes['id'] . '/' . Carbon::parse($attributes['published_at'])->format('dmY') . '/' . $attributes['slug'],
+        );
+    }
+
+    public function imagePath(): Attribute
+    {
+        return new Attribute(
+            get: fn ($value, $attributes) => env('STORAGE') . '/storage/' . $this->image->path,
         );
     }
 
@@ -91,5 +101,10 @@ class Post extends Model
     public function parents()
     {
         return $this->morphedByMany(static::class, 'relatable');
+    }
+
+    public function routeNotificationForOneSignal()
+    {
+        return ['included_segments' => ['Subscribed Users']];
     }
 }

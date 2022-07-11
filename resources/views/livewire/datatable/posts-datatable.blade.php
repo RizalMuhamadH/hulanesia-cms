@@ -5,8 +5,7 @@
             {{-- <h4>Full Width</h4> --}}
             @if ($layout == 'app')
                 @can('add_posts')
-                    <a href="{{ route('post.add') }}" class="btn btn-icon icon-left btn-primary"><i
-                            class="fas fa-plus"></i>
+                    <a href="{{ route('post.add') }}" class="btn btn-icon icon-left btn-primary"><i class="fas fa-plus"></i>
                         Add</a>
                 @endcan
             @endif
@@ -49,7 +48,8 @@
                                         data-name="{{ $item->title }}" data-id="{{ $item->id }}"
                                         data-elm="#select-posts">
                                 @else
-                                    <button type="button" class="btn-choice btn btn-icon icon-left btn-primary mt-3 mr-4"
+                                    <button type="button"
+                                        class="btn-choice btn btn-icon icon-left btn-primary mt-3 mr-4"
                                         data-id="{{ $item->id }}"><i class="fas fa-check"></i>
                                         Select</button>
                                 @endif
@@ -77,24 +77,33 @@
                             {{-- <td>{{ $item->created_at->format('d, M Y H:m') }}</td> --}}
                             @if ($layout == 'app')
                                 <td>
-                                    @if ($status == 'trash')
-                                        @can('forceDelete', $item)
-                                            <button wire:click="forceDestroy({{ $item->id }})"
-                                                class="btn btn-danger">Force Delete</button>
-                                        @endcan
-                                        @can('restore', $item)
-                                            <button wire:click="restore({{ $item->id }})"
-                                                class="btn btn-warning">Restore</button>
-                                        @endcan
-                                    @else
-                                        @can(['edit_posts', 'update'], $item)
-                                            <a href="{{ route('post.edit', $item->id) }}" class="btn btn-info">Edit</a>
-                                        @endcan
-                                        @can(['delete_posts', 'delete'], $item)
-                                            <button wire:click="destroy({{ $item->id }})"
-                                                class="btn btn-danger">Delete</button>
-                                        @endcan
-                                    @endif
+                                    <div class="buttons">
+                                        @if ($item->status->value == 'PUBLISH')
+                                            <button wire:click="notify({{ $item->id }})" class="btn btn-icon btn-success"><i
+                                                    class="far fa-bell"></i></button>
+                                        @endif
+
+                                        @if ($status == 'trash')
+                                            @can('forceDelete', $item)
+                                                <button wire:click="forceDestroy({{ $item->id }})"
+                                                    class="btn btn-danger">Force Delete</button>
+                                            @endcan
+                                            @can('restore', $item)
+                                                <button wire:click="restore({{ $item->id }})"
+                                                    class="btn btn-icon btn-warning"><i class="fas fa-recycle"></i></button>
+                                            @endcan
+                                        @else
+                                            @can(['edit_posts', 'update'], $item)
+                                                <a href="{{ route('post.edit', $item->id) }}"
+                                                    class="btn btn-icon btn-info"><i class="far fa-edit"></i></a>
+                                            @endcan
+                                            @can(['delete_posts', 'delete'], $item)
+                                                <button wire:click="destroy({{ $item->id }})"
+                                                    class="btn btn-icon btn-danger"><i
+                                                        class="fas fa-trash-alt"></i></button>
+                                            @endcan
+                                        @endif
+                                    </div>
 
                                 </td>
                             @endif
@@ -116,7 +125,7 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
         window.addEventListener('swal:confirm', e => {
             Swal.fire({
                 title: e.detail.title,

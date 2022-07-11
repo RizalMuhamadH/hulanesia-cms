@@ -16,6 +16,7 @@ use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\VideoController;
 use App\Http\Livewire\Datatable\MediaDatatable;
+use App\Http\Livewire\Form\NotificationForm;
 use App\Http\Livewire\Management\FeatureManagement;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -115,8 +116,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('media', MediaDatatable::class)->middleware(['role:editor|admin'])->name('media.index');
 
-
     Route::post('media/upload', [MediaController::class, 'store'])->middleware(['role:editor|admin'])->name('media.store');
+
+    Route::get('notifications', NotificationForm::class)->middleware(['role:editor|admin'])->name('notification.index');
 
     Route::controller(PhotoController::class)->group(function () {
         Route::get('photos', 'index')->middleware(['can:browse_photos'])->name('photo.index');

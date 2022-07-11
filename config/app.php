@@ -179,6 +179,8 @@ return [
         App\Providers\FortifyServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
+        NotificationChannels\OneSignal\OneSignalServiceProvider::class,
+        Berkayk\OneSignal\OneSignalServiceProvider::class
     ],
 
     /*
@@ -232,7 +234,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Image' => Intervention\Image\Facades\Image::class,
-        'Feed' => App\Helpers\Feed::class
+        'Feed' => App\Helpers\Feed::class,
+        'OneSignal' => Berkayk\OneSignal\OneSignalFacade::class
     ],
 
 ];
