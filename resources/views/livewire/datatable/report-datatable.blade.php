@@ -39,17 +39,18 @@
                         </div>
                     </div>
                     <div class="float-right">
-                        <form>
+                        <a href="{{ route('export', [$report[$reportSelected], $start, $end]) }}" class="btn btn-primary">Export</a>
+                        {{-- <form>
                             <div class="input-group">
 
-                                {{-- <input wire:model.debounce.500ms="search" type="text" class="form-control"
-                                    placeholder="Search"> --}}
-                                {{-- <input type="text" class="form-control" placeholder="Search">
+                                <input wire:model.debounce.500ms="search" type="text" class="form-control"
+                                    placeholder="Search">
+                                <input type="text" class="form-control" placeholder="Search">
                                 <div class="input-group-append">
                                     <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                                </div> --}}
+                                </div>
                             </div>
-                        </form>
+                        </form> --}}
                     </div>
 
                     <div class="clearfix mb-3"></div>

@@ -4,11 +4,13 @@ namespace App\Http\Livewire\Datatable;
 
 use App\Models\Post;
 use App\Models\User;
+use ArrayObject;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 
 class ReportDatatable extends Component
 {

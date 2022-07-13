@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\ManagementRssController;
 use App\Http\Controllers\MediaController;
@@ -151,6 +152,8 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::post('upload/photo', [UploadController::class, 'upload'])->name('upload.photo');
+
+    Route::get('export/{report}/{start}/{end}', ExportController::class)->name('export');
 });
 
 Route::post('upload/image', [UploadController::class, 'image'])->name('upload.image');
