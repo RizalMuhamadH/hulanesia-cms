@@ -18,25 +18,39 @@
                 <div class="col-12 col-sm-6 col-md-6 col-lg-3">
                     <article class="article article-style-b">
                         <div class="article-header">
-                            <img src="{{ env('STORAGE') . '/storage/' . $item['path'] }}" class="img-fluid"
+                            <img src="{{ env('STORAGE') . '/storage/' . $item['path'] }}" class="article-image"
                                 alt="{{ $item['title'] }}" srcset="">
                             @if ($layout != 'popup')
                                 <div class="article-badge">
-                                    <div wire:click="removeItem({{ $loop->index }})"
+                                    <div wire:click="destroy({{ $item->id }})"
                                         class="article-badge-item bg-danger" style="cursor: pointer"><i
                                             class="fas fa-trash"></i> Delete</div>
                                 </div>
                             @endif
                         </div>
                         <div class="article-details">
-                            <div class="article-title">
-                                <h6 class="text-truncate">{{ $item['caption'] }}</h6>
+                            {{-- <div class="article-title">
                                 <div class="text-truncate">{{ $item['photographer'] }}</div>
                                 <div class="text-truncate">{{ $item['source'] }}</div>
+                            </div> --}}
+                            <p class="text-truncate">{{ $item['caption'] }}</p>
+                            <div class="article-user">
+                                <div class="article-user-details">
+                                    <div class="user-detail-name">
+                                        <a href="#">{{ $item['photographer'] }}</a>
+                                    </div>
+                                    <div class="text-job">{{ $item['source'] }}</div>
+                                </div>
                             </div>
-                            <div class="article-cta">
-                                <button type="button" data-src="{{ env('STORAGE') . '/storage/' . $item['path'] }}" data-caption="{{ $item['caption'] }}" class="btn btn-picker btn-icon btn-success"><i class="fas fa-check"></i></button>
-                            </div>
+                            @if ($layout == 'popup')
+                                <div class="article-cta">
+                                    <button type="button"
+                                        data-src="{{ env('STORAGE') . '/storage/' . $item['path'] }}"
+                                        data-caption="{{ $item['caption'] }}"
+                                        class="btn btn-picker btn-icon btn-success"><i
+                                            class="fas fa-check"></i></button>
+                                </div>
+                            @endif
                         </div>
                     </article>
                 </div>
@@ -94,6 +108,24 @@
             });
         });
 
+        window.addEventListener('swal:confirm', e => {
+            Swal.fire({
+                title: e.detail.title,
+                text: e.detail.text,
+                icon: e.detail.type,
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.Livewire.emit('delete', {
+                        id: e.detail.id
+                    });
+                }
+            });
+        });
+
         window.addEventListener('swal:response', e => {
             Swal.fire({
                 position: 'center',
@@ -104,6 +136,7 @@
             });
         });
     </script>
+
     @push('view')
         <div class="modal fade" tabindex="-1" role="dialog" id="addMedia">
             <div class="modal-dialog modal-xl" role="document">

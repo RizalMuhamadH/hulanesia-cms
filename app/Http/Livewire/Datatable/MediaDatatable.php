@@ -36,4 +36,31 @@ class MediaDatatable extends Component
             'data' => $this->data
         ])->extends('layouts.'.(request()->layout ?? 'app'))->layoutData(['title' => 'Media'])->section('body');
     }
+
+    public function destroy($id)
+    {
+        $this->dispatchBrowserEvent('swal:confirm', [
+            'title' => 'Are you sure?',
+            'type'  => 'warning',
+            'text'  => '',
+            'id'    => $id,
+            'force' => false
+        ]);
+    }
+
+    public function delete($params)
+    {
+        $media = Media::findOrFail($params['id']);
+
+            activity()
+                ->performedOn($media)
+                ->event('delete')
+                ->withProperties(['data' => $media])
+                ->log('delete media');
+
+            $this->dispatchBrowserEvent('swal:response', [
+                'title' => 'Media has been deleted.',
+                'type'  => 'success'
+            ]);
+    }
 }
