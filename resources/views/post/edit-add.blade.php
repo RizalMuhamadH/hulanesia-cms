@@ -170,7 +170,7 @@
                                 @isset($content)
                                     <div class="form-group">
                                         <label class="col-form-label">Preview</label>
-                                        <img src="{{ env('STORAGE') }}/storage/{{ $content->image->path }}"
+                                        <img src="{{ env('STORAGE') . $content->image->path }}"
                                             class="img-fluid" alt="" srcset="">
                                     </div>
                                 @endisset

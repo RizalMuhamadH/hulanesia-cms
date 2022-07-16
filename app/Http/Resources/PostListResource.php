@@ -18,7 +18,7 @@ class PostListResource extends JsonResource
         return [
             'id'                => $this->id,
             'title'             => $this->title,
-            'image'             => '/storage/'.$this->image->thumbnail('medium', 'path'),
+            'image'             => $this->image->thumbnail('medium', 'path'),
             'url'               => '/'.$this->category->slug.'/'.$this->id.'/'.Carbon::parse($this->published_at)->format('dmY').'/'.$this->slug,
             'category'          => $this->category->name,
             'category_url'      => $this->category->slug,

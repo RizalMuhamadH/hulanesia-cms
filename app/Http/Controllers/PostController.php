@@ -387,7 +387,7 @@ class PostController extends Controller
             'property' => 'properties/' . env('ANALYTIC_PROPERTY_ID'),
             'dateRanges' => [
                 new DateRange([
-                    'start_date' => '7daysAgo',
+                    'start_date' => '90daysAgo',
                     'end_date' => 'today',
                 ]),
             ],
@@ -431,7 +431,7 @@ class PostController extends Controller
             $data[] = [
                 'pageTitle' => $row->getDimensionValues()[0]->getValue(),
                 'pagePath' => $row->getDimensionValues()[1]->getValue(),
-                'screenPageViews' => $row->getMetricValue()[0]->getValue(),
+                'screenPageViews' => $row->getMetricValues()[0]->getValue(),
 
             ];
             // [END analyticsdata_json_credentials_run_report_response]

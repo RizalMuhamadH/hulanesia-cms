@@ -114,7 +114,7 @@
                                             @if ($item->author)
                                                 @if ($item->author->image)
                                                     {{-- <figure> --}}
-                                                        <img src="{{ env('STORAGE') }}/storage/{{ $item->author->image->thumbnail('small', 'path') }}"
+                                                        <img src="{{ env('STORAGE').$item->author->image->thumbnail('small', 'path') }}"
                                                             class="avatar mr-2 avatar-sm">
                                                     {{-- </figure> --}}
                                                 @else

@@ -143,7 +143,7 @@ class PhotoController extends Controller
         });
 
         foreach ($photo->images as $image) {
-            if (!$imagesOld->contains(fn($value, $key) => Str::replace(env('STORAGE') . '/storage/', '', $value) == $image->path)) {
+            if (!$imagesOld->contains(fn($value, $key) => Str::replace(env('STORAGE') , '', $value) == $image->path)) {
                 $image->delete();
             }
         }

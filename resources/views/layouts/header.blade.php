@@ -131,7 +131,7 @@
         </div>
       </li> --}}
       <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-        <img alt="image" src="{{ Auth::user()->image ? env('STORAGE').'/storage/'.Auth::user()->image->thumbnail('cropped', 'path') : 'https://ui-avatars.com/api/?name='.Auth::user()->name.'&color=7F9CF5&background=EBF4FF' }}" style="object-fit: cover;" class="rounded-circle img-fluid mr-1">
+        <img alt="image" src="{{ Auth::user()->image ? env('STORAGE').Auth::user()->image->thumbnail('cropped', 'path') : 'https://ui-avatars.com/api/?name='.Auth::user()->name.'&color=7F9CF5&background=EBF4FF' }}" style="object-fit: cover;" class="rounded-circle img-fluid mr-1">
         <div class="d-sm-none d-lg-inline-block">Hi, {{ strtok(Auth::user()->name, " ") }}</div></a>
         <div class="dropdown-menu dropdown-menu-right">
           {{-- <div class="dropdown-title">Logged in 5 min ago</div> --}}

@@ -83,7 +83,7 @@ class FeedController extends Controller
                 'author' => $post['_source']['author']['name'] ?? '',
                 'pubdate' => epoch($post['_source']['publish_at'])->toIso8601String(),
                 'media:thumbnail' => [
-                    'url' => env('STORAGE').'/storage/'.$post['_source']['image']['media']['small']
+                    'url' => env('STORAGE').$post['_source']['image']['media']['small']
                 ]
             ]);
         }

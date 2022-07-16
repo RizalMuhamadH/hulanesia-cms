@@ -68,7 +68,7 @@ class Analytics {
             $data[] = [
                 'pageTitle' => $row->getDimensionValues()[0]->getValue(),
                 'pagePath' => $row->getDimensionValues()[1]->getValue(),
-                'screenPageViews' => $row->getMetricValue()[0]->getValue(),
+                'screenPageViews' => $row->getMetricValues()[0]->getValue(),
             
             ];
             // [END analyticsdata_json_credentials_run_report_response]

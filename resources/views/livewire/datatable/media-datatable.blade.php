@@ -18,7 +18,7 @@
                 <div class="col-12 col-sm-6 col-md-6 col-lg-3">
                     <article class="article article-style-b">
                         <div class="article-header">
-                            <img src="{{ env('STORAGE') . '/storage/' . $item['path'] }}" class="article-image"
+                            <img src="{{ env('STORAGE') . $item['path'] }}" class="article-image"
                                 alt="{{ $item['title'] }}" srcset="">
                             @if ($layout != 'popup')
                                 <div class="article-badge">
@@ -45,7 +45,7 @@
                             @if ($layout == 'popup')
                                 <div class="article-cta">
                                     <button type="button"
-                                        data-src="{{ env('STORAGE') . '/storage/' . $item['path'] }}"
+                                        data-src="{{ env('STORAGE') . $item['path'] }}"
                                         data-caption="{{ $item['caption'] }}"
                                         class="btn btn-picker btn-icon btn-success"><i
                                             class="fas fa-check"></i></button>

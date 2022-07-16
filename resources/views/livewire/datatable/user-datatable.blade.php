@@ -37,7 +37,7 @@
                             <td>
                                 @if ($item->image)
                                     <figure>
-                                        <img src="{{ env('STORAGE') }}/storage/{{ $item->image->thumbnail('small', 'path') }}"
+                                        <img src="{{ env('STORAGE') . $item->image->thumbnail('small', 'path') }}"
                                             class="avatar mr-2 avatar-sm">
                                     </figure>
                                 @else

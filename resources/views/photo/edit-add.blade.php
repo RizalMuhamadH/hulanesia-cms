@@ -96,7 +96,7 @@
     <script>
 
         var photos = {!! json_encode($content->images ?? []) !!};
-        var storage = "{{ env('STORAGE') }}/storage/";
+        var storage = "{{ env('STORAGE') }}";
 
         console.log(photos);
 
