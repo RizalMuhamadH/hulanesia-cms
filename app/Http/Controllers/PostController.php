@@ -78,8 +78,6 @@ class PostController extends Controller
         //     'tags' => 'required',
         // ]);
 
-        // $request->validated();
-
 
         if ($request->status == (PostStatus::SCHEDULE)->value) {
             $published_at = $request->published_at;
@@ -99,7 +97,7 @@ class PostController extends Controller
                 'source' => $request->source,
                 'source_link' => $request->source_link,
                 'category_id' => $request->category_id,
-                'status' => $request->status,
+                'status' => $request->status ?? PostStatus::DRAFT,
                 'meta_description' => $request->meta_description,
                 'meta_keywords' => $request->meta_keywords,
                 'seo_title' => $request->seo_title,
@@ -236,7 +234,7 @@ class PostController extends Controller
                 'source' => $request->source,
                 'source_link' => $request->source_link,
                 'category_id' => $request->category_id,
-                'status' => $request->status,
+                'status' => $request->status ?? PostStatus::DRAFT,
                 'meta_description' => $request->meta_description,
                 'meta_keywords' => $request->meta_keywords,
                 'seo_title' => $request->seo_title,

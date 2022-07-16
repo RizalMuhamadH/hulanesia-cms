@@ -28,6 +28,7 @@ class PostRequest extends FormRequest
 
         $image = 'nullable';
         $related = 'nullable';
+        $status = 'nullable';
 
         if ($this->hasFile('image')) {
             $image = 'mimes:' . config('filesystems.mimes') . '|between:0,' . config('filesystems.max_size') * 1024;
@@ -35,6 +36,10 @@ class PostRequest extends FormRequest
 
         if ($this->has('related')) {
             $related = ['array', 'min:1', 'max:10'];
+        }
+
+        if ($this->has('status')) {
+            $status = ['required', new Enum(PostStatus::class)];
         }
 
         return [
@@ -47,7 +52,7 @@ class PostRequest extends FormRequest
             'tags' => ['required', 'array', 'min:3', 'max:5'],
             'source' => 'nullable',
             'source_link' => 'nullable',
-            'status' => ['required', new Enum(PostStatus::class)],
+            'status' => $status,
             'meta_description' => 'nullable',
             'meta_keywords' => 'nullable',
             'seo_title' => 'nullable',
