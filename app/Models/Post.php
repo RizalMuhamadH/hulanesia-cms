@@ -53,7 +53,7 @@ class Post extends Model
     public function imagePath(): Attribute
     {
         return new Attribute(
-            get: fn ($value, $attributes) => env('STORAGE') . '/storage/' . $this->image->path,
+            get: fn ($value, $attributes) => env('STORAGE') . $this->image->path,
         );
     }
 

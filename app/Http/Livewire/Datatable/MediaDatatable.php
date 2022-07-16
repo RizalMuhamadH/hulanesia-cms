@@ -52,6 +52,8 @@ class MediaDatatable extends Component
     {
         $media = Media::findOrFail($params['id']);
 
+        $media->delete();
+
             activity()
                 ->performedOn($media)
                 ->event('delete')

@@ -8,7 +8,7 @@
             <div class="p-4 m-3">
                {{--  <img src="../assets/img/stisla-fill.svg" alt="logo" width="80"
                     class="shadow-light rounded-circle mb-5 mt-2"> --}}
-                <h4 class="text-dark font-weight-normal">Welcome to <span class="font-weight-bold">Wehealth.id</span></h4>
+                <h4 class="text-dark font-weight-normal">Welcome to <span class="font-weight-bold">{{ env('APP_NAME') }}</span></h4>
                 <p class="text-muted">Before you get started, you must login or register if you don't already have an
                     account.</p>
                 <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate="">
@@ -54,7 +54,7 @@
                 </form>
 
                 <div class="text-center mt-5 text-small">
-                    Copyright &copy; Wehealth.id. Made with 💙 by Stisla
+                    Copyright &copy; {{ env('APP_NAME') }}. Made with 💙 by Stisla
                     <div class="mt-2">
                         <a href="#">Privacy Policy</a>
                         <div class="bullet"></div>
