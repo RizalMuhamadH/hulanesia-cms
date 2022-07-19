@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('head')
+<title>{{ $action }} Management Rss</title>
+@show
 @section('body')
     <div class="section-header">
         <h1>{{ $action }} Management Rss</h1>

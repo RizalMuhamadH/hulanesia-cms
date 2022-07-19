@@ -162,7 +162,7 @@
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label class="col-form-label">Caption</label>
-                                        <input type="text" class="form-control" name="caption" required>
+                                        <input type="text" maxlength="255" class="form-control" name="caption" required>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-form-label">Photographer</label>

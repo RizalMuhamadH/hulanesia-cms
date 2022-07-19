@@ -1,4 +1,7 @@
 @extends('layouts.'.$layout ?? 'app')
+@section('head')
+<title>Posts</title>
+@show
 @section('body')
     <div class="section-header">
         <h1>Posts</h1>

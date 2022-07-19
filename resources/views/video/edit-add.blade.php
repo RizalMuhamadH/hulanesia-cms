@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('head')
+<title>{{ $action }} Videos</title>
+@show
 @push('style')
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-timepicker.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/daterangepicker.css') }}">

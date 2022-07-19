@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('head')
+<title>Profile {{ $user->name }}</title>
+@show
 @push('style')
 @endpush
 @section('body')

@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('head')
+<title>Videos</title>
+@show
 @section('body')
     <div class="section-header">
         <h1>Videos</h1>

@@ -1,4 +1,7 @@
 @extends('layouts.'.$layout)
+@section('head')
+<title>{{ $action }} Tags</title>
+@show
 @section('body')
     <div class="section-header">
         <h1>{{ $action }} Tags</h1>

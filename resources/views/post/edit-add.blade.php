@@ -177,7 +177,15 @@
 
                                 <div class="form-group">
                                     <label class="col-form-label">Caption</label>
-                                    <textarea rows="10" class="form-control" name="caption">{{ $content->image->caption ?? '' }}</textarea>
+                                    <textarea rows="10" maxlength="255" class="caption form-control" name="caption">{{ $content->image->caption ?? '' }}</textarea>
+                                    <div id="info-count-caption" class="valid-feedback">
+                                        <span id="current-caption">0</span><span id="maximum">/ 255</span>
+                                    </div>
+                                    @error('caption')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
 
                                 <div class="tags form-group">
@@ -409,6 +417,47 @@
                     infoCount.addClass('valid-feedback');
                     textarea.removeClass('is-invalid')
                     textarea.addClass('is-valid')
+                }
+
+
+            });
+
+            var countCaption = {{ isset($content->image->caption) ? strlen($content->image->caption) : 0 }},
+                maximumCaption = 255,
+                currentCaption = $('#current-caption').text(count),
+                textareaCaption = $('.caption');
+
+            if (count == 0) {
+                textareaCaption.addClass('is-invalid')
+                $('#info-count-caption').addClass('invalid-feedback')
+            } else {
+                textareaCaption.addClass(
+                    count > (0.9 * maximum) ?
+                    'is-invalid' : 'is-valid')
+            }
+
+            $('.caption').keyup(function() {
+
+                var characterCountCaption = $(this).val().length,
+                    infoCountCaption = $('#info-count-caption');
+
+                currentCaption.text(characterCountCaption);
+
+                if (characterCountCaption > (0.9 * maximumCaption)) {
+                    infoCountCaption.removeClass('valid-feedback')
+                    infoCountCaption.addClass('invalid-feedback')
+                    textareaCaption.removeClass('is-valid')
+                    textareaCaption.addClass('is-invalid')
+                } else if (characterCountCaption == 0) {
+                    infoCountCaption.removeClass('valid-feedback')
+                    infoCountCaption.addClass('invalid-feedback')
+                    textareaCaption.removeClass('is-valid')
+                    textareaCaption.addClass('is-invalid')
+                } else {
+                    infoCountCaption.removeClass('invalid-feedback')
+                    infoCountCaption.addClass('valid-feedback');
+                    textareaCaption.removeClass('is-invalid')
+                    textareaCaption.addClass('is-valid')
                 }
 
 

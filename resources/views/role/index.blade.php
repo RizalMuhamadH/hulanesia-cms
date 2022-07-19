@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('head')
+<title>Tags</title>
+@show
 @push('style')
 @endpush
 @section('body')

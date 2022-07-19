@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('head')
+<title>Categories</title>
+@show
 @section('body')
     <div class="section-header">
         <h1>Categories</h1>

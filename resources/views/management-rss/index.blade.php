@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('head')
+<title>Management Rss</title>
+@show
 @push('style')
 @endpush
 @section('body')
