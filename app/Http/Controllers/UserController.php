@@ -43,6 +43,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'username' => str($request->name)->slug()->studly(),
             'password' => Hash::make($request->password),
         ]);
         $user->assignRole($request->input('roles'));
