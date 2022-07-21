@@ -82,6 +82,8 @@ class CategoryController extends Controller
             'order' => $request->order
         ]);
 
+        $category->fresh();
+
         $params = [
             'index' => 'category',
             'id'    => $category->id,

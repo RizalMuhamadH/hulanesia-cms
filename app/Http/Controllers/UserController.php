@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Fortify\PasswordValidationRules;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Repository\Elasticsearch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -12,6 +14,13 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    private $repository;
+
+    public function __construct(Elasticsearch $repository)
+    {
+        $this->repository = $repository;
+    }
+    
     use PasswordValidationRules;
 
     public function index()
@@ -47,6 +56,13 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
         $user->assignRole($request->input('roles'));
+
+        $params = [
+            'index' => 'user',
+            'id'    => $user->id,
+            'body'  => json_decode((new UserResource($user))->toJson(), true)
+        ];
+        $es = $this->repository->create($params);
 
         activity()
             ->performedOn($user)
@@ -85,6 +101,16 @@ class UserController extends Controller
         // $update = user::where('id', $id)->update([
         //     'name' => $request->name,
         // ]);
+        $user->fresh();
+
+        $params = [
+            'index' => 'user',
+            'id'    => $user->id,
+            'body'  => [
+                'doc' => json_decode((new UserResource($user))->toJson(), true)
+                ]
+        ];
+        $es = $this->repository->update($params);
 
         activity()
             ->performedOn($user)
@@ -101,5 +127,27 @@ class UserController extends Controller
         auth()->user()->impersonate($user);
 
         return redirect()->route('dashboard');
+    }
+
+    public function bulk()
+    {
+        $users = User::query()->get();
+
+        $params = ['body' => []];
+
+        foreach ($users as $user) {
+            $params['body'][] = [
+                'index' => [
+                    '_index' => 'user',
+                    '_id' => $user->id
+                ]
+            ];
+
+            $params['body'][] = json_decode((new UserResource($user))->toJson(), true);
+        }
+
+        $this->repository->bulk($params);
+
+        return redirect()->route('user.index')->with('message', 'Bulk Successfully');
     }
 }

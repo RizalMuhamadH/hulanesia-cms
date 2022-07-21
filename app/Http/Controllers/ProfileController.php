@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Actions\Fortify\PasswordValidationRules;
 use App\Http\Controllers\ContentTypes\ImageHandler;
+use App\Http\Resources\UserResource;
 use App\Models\Image;
 use App\Models\User;
+use App\Repository\Elasticsearch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +16,12 @@ use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
+    private $repository;
+
+    public function __construct(Elasticsearch $repository)
+    {
+        $this->repository = $repository;
+    }
 
     use PasswordValidationRules;
 
@@ -84,9 +92,19 @@ class ProfileController extends Controller
             $user->password = Hash::make($request->password);
         }
         $user->save();
+        $user->fresh();
         // $update = user::where('id', $id)->update([
         //     'name' => $request->name,
         // ]);
+
+        $params = [
+            'index' => 'user',
+            'id'    => $user->id,
+            'body'  => [
+                'doc' => json_decode((new UserResource($user))->toJson(), true)
+                ]
+        ];
+        $es = $this->repository->update($params);
 
         activity()
             ->performedOn(new User())
