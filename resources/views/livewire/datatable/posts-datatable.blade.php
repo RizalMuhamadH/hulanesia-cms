@@ -78,10 +78,12 @@
                             @if ($layout == 'app')
                                 <td>
                                     <div class="buttons">
-                                        @if ($item->status->value == 'PUBLISH')
-                                            <button wire:click="notify({{ $item->id }})" class="btn btn-icon btn-success"><i
-                                                    class="far fa-bell"></i></button>
-                                        @endif
+                                        @can(['edit_posts', 'update'], $item)
+                                            @if ($item->status->value == 'PUBLISH')
+                                                <button wire:click="notify({{ $item->id }})"
+                                                    class="btn btn-icon btn-success"><i class="far fa-bell"></i></button>
+                                            @endif
+                                        @endcan
 
                                         @if ($status == 'trash')
                                             @can('forceDelete', $item)

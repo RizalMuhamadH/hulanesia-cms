@@ -51,6 +51,9 @@ class PostsDatatable extends Component
             if ($layout == 'popup') {
                 $q->where('status', PostStatus::PUBLISH);
             } else {
+                if (auth()->user()->hasRole('writter')) {
+                    $q->where('author_id', auth()->user()->id);
+                }
                 switch (strtoupper($this->status)) {
                     case PostStatus::DRAFT->value:
                         $q->where('status', PostStatus::DRAFT);
