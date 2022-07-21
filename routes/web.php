@@ -94,6 +94,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('users/login-as/{id}', 'loginAs')->middleware(['can:edit_users'])->name('user.login-as');
         Route::post('users/add', 'store')->middleware(['can:add_users'])->name('user.store');
         Route::post('users/update/{id}', 'update')->middleware(['can:edit_users'])->name('user.update');
+        Route::get('users/bulk', 'bulk')->middleware(['can:edit_users'])->name('user.bulk');
     });
 
     Route::controller(ProfileController::class)->group(function () {
