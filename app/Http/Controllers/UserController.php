@@ -101,7 +101,7 @@ class UserController extends Controller
         // $update = user::where('id', $id)->update([
         //     'name' => $request->name,
         // ]);
-        $user->fresh();
+        $user = $user->fresh();
 
         $params = [
             'index' => 'user',

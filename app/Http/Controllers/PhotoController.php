@@ -157,7 +157,7 @@ class PhotoController extends Controller
             $photo->images()->update(['caption' => $request->caption, 'photographer' => $request->photographer, 'source' => $request->source]);
         }
 
-        $photo = Photo::find($photo->id);
+        $photo = $photo->fresh();
 
         // if ($request->hasFile('images')) {
 

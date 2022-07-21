@@ -286,7 +286,7 @@ class PostController extends Controller
                 $post->image()->update(['caption' => $request->caption]);
             }
 
-            $post = Post::find($post->id);
+            $post = $post->fresh();
 
             if ($doc['found'] && $post->status == PostStatus::PUBLISH || $post->status == PostStatus::ARCHIVE) {
                 $params = [

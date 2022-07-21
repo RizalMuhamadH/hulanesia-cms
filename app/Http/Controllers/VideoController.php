@@ -112,6 +112,8 @@ class VideoController extends Controller
             'status' => $request->status
         ]);
 
+        $video = $video->fresh();
+
         $params = [
             'index' => 'video',
             'id'    => $video->id,

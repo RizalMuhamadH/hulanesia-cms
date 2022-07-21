@@ -70,6 +70,8 @@ class TagController extends Controller
             'slug' => Str::slug($request->name, "-")
         ]);
 
+        $tag = $tag->fresh();
+
         $params = [
             'index' => 'tag',
             'id'    => $tag->id,

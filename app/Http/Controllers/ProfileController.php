@@ -85,14 +85,16 @@ class ProfileController extends Controller
             $options = json_decode(json_encode($options));
 
             $path = (new ImageHandler($request, 'users', 'image', $options))->handle();
-            $user->image->delete();
+            if($user->image){
+                $user->image->delete();
+            }
             $user->image()->create(['path' => $path]);
         }
         if ($request->password) {
             $user->password = Hash::make($request->password);
         }
         $user->save();
-        $user->fresh();
+        $user = $user->fresh();
         // $update = user::where('id', $id)->update([
         //     'name' => $request->name,
         // ]);
