@@ -28,12 +28,12 @@
                                 <div class="form-group">
                                     <label class="col-form-label">Title</label>
                                     <input type="text" class="form-control" name="title"
-                                        value="{{ $content->title ?? '' }}" required>
+                                        value="{{ $content->title ?? old('title') }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Description</label>
                                     <textarea class="form-control" name="description"
-                                        rows="10">{{ $content->description ?? '' }}</textarea>
+                                        rows="10">{{ $content->description ?? old('description') }}</textarea>
                                 </div>
 
                             </div>
@@ -43,7 +43,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label">Video ID</label>
                                     <input type="text" class="form-control" name="vid"
-                                        value="{{ $content->vid ?? '' }}">
+                                        value="{{ $content->vid ?? old('vid') }}">
                                 </div>
 
                                 <div class="form-group">
@@ -61,10 +61,11 @@
 
 
 
-                            <div class="form-group row">
+                            <div class="col-md-8">
                                 <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2"></label>
-                                <div class="col-sm-12 col-md-7">
-                                    <button class="btn btn-primary">Publish</button>
+                                <div class="buttons col-sm-12 col-md-7">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <a class="btn btn-danger" href="{{ route('video.index') }}">Canncel</a>
                                 </div>
                             </div>
 

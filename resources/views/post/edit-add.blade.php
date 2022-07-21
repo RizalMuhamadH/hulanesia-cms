@@ -3,6 +3,9 @@
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-timepicker.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/daterangepicker.css') }}">
 @endpush --}}
+@section('head')
+<title>{{ $action }} Posts</title>
+@show
 @section('body')
     <div class="section-header">
         <h1>{{ $action }} Posts</h1>
@@ -22,9 +25,9 @@
 
                             <div class="col-md-8">
                                 <div class="form-group">
-                                    <label class="col-form-label">Title</label>
+                                    <label class="col-form-label">Title*</label>
                                     <input type="text" class="form-control @error('title') is-invalid @enderror"
-                                        name="title" value="{{ $content->title ?? '' }}" required>
+                                        name="title" value="{{ $content->title ?? old('title') }}" required>
                                     @error('title')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -36,9 +39,9 @@
                                                                                                                                                                                             <input type="text" class="form-control">
                                                                                                                                                                                         </div> -->
                                 <div class="form-group">
-                                    <label class="col-form-label">Description</label>
+                                    <label class="col-form-label">Description*</label>
                                     <textarea rows="20" maxlength="255" class="description form-control @error('description') is-invalid @enderror"
-                                        name="description">{{ $content->description ?? '' }}</textarea>
+                                        name="description">{{ $content->description ?? old('description') }}</textarea>
                                     <div id="info-count" class="valid-feedback">
                                         <span id="current">0</span><span id="maximum">/ 255</span>
                                     </div>
@@ -49,7 +52,7 @@
                                     @enderror
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-form-label">Category</label>
+                                    <label class="col-form-label">Category*</label>
                                     <select id="category" class="form-control selectric" name="category_id" required>
                                         @foreach ($categories as $item)
                                             @if (count($item->children) != 0)
@@ -93,19 +96,19 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-form-label">Content</label>
-                                    <textarea id="tinymce" rows="10" class="form-control" name="body">{{ $content->body ?? '' }}</textarea>
+                                    <label class="col-form-label">Content*</label>
+                                    <textarea id="tinymce" rows="10" class="form-control" name="body">{{ $content->body ?? old('body') }}</textarea>
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md-6 col-12">
                                         <label>Source</label>
                                         <input type="text" class="form-control" name="source"
-                                            value="{{ $content->source ?? '' }}">
+                                            value="{{ $content->source ?? old('source') }}">
                                     </div>
                                     <div class="form-group col-md-6 col-12">
                                         <label>Source Link</label>
                                         <input type="text" class="form-control" name="source_link"
-                                            value="{{ $content->source_link ?? '' }}">
+                                            value="{{ $content->source_link ?? old('source') }}">
                                     </div>
                                 </div>
                             </div>
@@ -113,7 +116,7 @@
                             <div class="col-md-4">
                                 @if (Auth::user()->hasRole('editor') || Auth::user()->hasRole('admin'))
                                     <div class="form-group">
-                                        <label class="col-form-label">Author</label>
+                                        <label class="col-form-label">Author*</label>
                                         <select id="author_id" class="form-control select2" name="author_id"
                                             value="{{ $content->author_id ?? '' }}" required>
                                             <option value="">Null</option>
@@ -125,9 +128,9 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-form-label">Status</label>
+                                        <label class="col-form-label">Status*</label>
                                         <select id="status" class="form-control selectric" name="status"
-                                            value="{{ $content->status->value ?? '' }}" required>
+                                            value="{{ $content->status->value ?? old('status') }}" required>
                                             <option value="DRAFT"
                                                 @isset($content) {{ $content->status->value == 'DRAFT' ? 'selected' : '' }} @endisset>
                                                 DRAFT</option>
@@ -155,10 +158,10 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-form-label">Image</label>
+                                    <label class="col-form-label">Image*</label>
                                     <div id="image-preview" class="image-preview @error('image') is-invalid @enderror">
                                         <label for="image-upload" id="image-label">Choose File</label>
-                                        <input type="file" name="image" id="image-upload" />
+                                        <input type="file" name="image" id="image-upload" required="{{ $action == 'Add' ? true : false }}" />
                                     </div>
                                     @error('image')
                                         <div class="invalid-feedback">
@@ -176,8 +179,8 @@
                                 @endisset
 
                                 <div class="form-group">
-                                    <label class="col-form-label">Caption</label>
-                                    <textarea rows="10" maxlength="255" class="caption form-control" name="caption">{{ $content->image->caption ?? '' }}</textarea>
+                                    <label class="col-form-label">Caption*</label>
+                                    <textarea rows="10" maxlength="255" class="caption form-control" name="caption">{{ $content->image->caption ?? old('caption') }}</textarea>
                                     <div id="info-count-caption" class="valid-feedback">
                                         <span id="current-caption">0</span><span id="maximum">/ 255</span>
                                     </div>
@@ -189,7 +192,7 @@
                                 </div>
 
                                 <div class="tags form-group">
-                                    <label class="col-form-label">Tags</label>
+                                    <label class="col-form-label">Tags*(min 3)</label>
                                     <select id="select-tags"
                                         class="form-control select2 @error('tags') is-invalid @enderror"
                                         style="border-color: red" multiple="" name="tags[]" required>
@@ -221,22 +224,23 @@
                                     <label class="col-form-label">Meta
                                         Description</label>
                                     <input type="text" class="form-control" name="meta_description"
-                                        value="{{ $content->meta_description ?? '' }}">
+                                        value="{{ $content->meta_description ?? old('meta_description') }}">
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-form-label">Meta Keywords</label>
                                     <input type="text" class="form-control" name="meta_keywords"
-                                        value="{{ $content->meta_keywords ?? '' }}">
+                                        value="{{ $content->meta_keywords ?? old('meta_keywords') }}">
                                 </div>
                             </div>
 
 
 
-                            <div class="form-group row">
+                            <div class="col-md-8">
                                 <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2"></label>
-                                <div class="col-sm-12 col-md-7">
+                                <div class="buttons col-sm-12 col-md-7">
                                     <button type="submit" class="btn btn-primary">Save</button>
+                                    <a class="btn btn-danger" href="{{ route('post.index') }}">Canncel</a>
                                 </div>
                             </div>
 

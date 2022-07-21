@@ -32,11 +32,11 @@
                                 <div class="form-group">
                                     <label class="col-form-label">Title*</label>
                                     <input type="text" class="form-control" name="title"
-                                        value="{{ $content->title ?? '' }}" required>
+                                        value="{{ $content->title ?? old('title') }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-form-label">Description*</label>
-                                    <textarea id="tinymce" rows="5" class="form-control" name="description">{{ $content->description ?? '' }}</textarea>
+                                    <textarea id="tinymce" rows="5" class="form-control" name="description">{{ $content->description ?? old('description') }}</textarea>
                                 </div>
 
 
@@ -53,13 +53,13 @@
 
                                 <div class="form-group">
                                     <label class="col-form-label">Caption</label>
-                                    <textarea rows="10" class="form-control" name="caption">{{ $content->images[0]->caption ?? '' }}</textarea>
+                                    <textarea rows="10" class="form-control" name="caption">{{ $content->images[0]->caption ?? old('caption') }}</textarea>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-form-label">Photographer</label>
                                     <input type="text" class="form-control" name="photographer"
-                                        value="{{ $content->images[0]->photographer ?? '' }}">
+                                        value="{{ $content->images[0]->photographer ?? old('photographer') }}">
                                 </div>
 
                                 <div class="form-group">
@@ -72,10 +72,11 @@
 
 
 
-                            <div class="form-group row">
+                            <div class="col-md-8">
                                 <label class="col-form-label text-md-right col-12 col-md-3 col-lg-2"></label>
-                                <div class="col-sm-12 col-md-7">
-                                    <button class="btn btn-primary">Save</button>
+                                <div class="buttons col-sm-12 col-md-7">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <a class="btn btn-danger" href="{{ route('photo.index') }}">Canncel</a>
                                 </div>
                             </div>
 
