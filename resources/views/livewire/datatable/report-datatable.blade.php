@@ -15,6 +15,9 @@
                         <li class="nav-item">
                             <a class="nav-link {{ $reportSelected == 1 ? 'active' : '' }}" wire:click="setSelectReport(1)" href="#">Author</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ $reportSelected == 2 ? 'active' : '' }}" wire:click="setSelectReport(2)" href="#">Editor</a>
+                        </li>
                     </ul>
                 </div>
             </div>

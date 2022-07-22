@@ -20,7 +20,7 @@ class ReportDatatable extends Component
     public $search;
     public $start = null;
     public $end = null;
-    public $report = ['Article', 'Author'];
+    public $report = ['Article', 'Author', 'Editor'];
     public $reportSelected = 0;
 
     protected $updatesQueryString = [
@@ -43,7 +43,7 @@ class ReportDatatable extends Component
         if ($this->reportSelected == 0) {
             $data = $this->article();
         } else {
-            $data = $this->author();
+            $data = $this->users();
         }
 
         return view('livewire.datatable.report-datatable', [
@@ -73,12 +73,13 @@ class ReportDatatable extends Component
         return $collection;
     }
 
-    public function author()
+    public function users()
     {
-        $authors = User::query()->with('roles')->withCount(['authorPost' => function ($query) {
+        $role = $this->reportSelected == 1 ? 'writter' : 'editor';
+        $users = User::query()->withWhereHas('roles', fn($q) => $q->where('name', $role))->withCount([$role == 'writter' ? 'authorPost' : 'editorPost' => function ($query) {
             $query->whereBetween('created_at', [$this->start, $this->end]);
         }])->get();
-        return $authors;
+        return $users;
     }
 
     public function getDateForInput($param)

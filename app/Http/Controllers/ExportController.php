@@ -28,8 +28,9 @@ class ExportController extends Controller
                 });
         }
 
-        if ($request->report == 'Author') {
-            User::query()->with('roles')->withCount(['authorPost' => function ($query) use ($request) {
+        if ($request->report == 'Author' || $request->report == 'Editor') {
+            $report = $request->report;
+            User::query()->withWhereHas('roles', fn($q) => $q->where('name', $report == 'Author' ? 'writter' : 'editor'))->withCount([$report == 'Author' ? 'authorPost' : 'editorPost' => function ($query) use ($request) {
                 $query->whereBetween('created_at', [$request->start, $request->end]);
             }])->chunk(100, function ($users) use (&$rows) {
                 foreach ($users as $key => $user) {

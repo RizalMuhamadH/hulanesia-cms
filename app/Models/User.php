@@ -58,6 +58,11 @@ class User extends Authenticatable
         return $this->hasMany(Post::class, 'author_id')->where('status', PostStatus::PUBLISH);
     }
 
+    public function editorPost()
+    {
+        return $this->hasMany(Post::class, 'admin_id')->where('status', PostStatus::PUBLISH);
+    }
+
     public function impersonatable(ImpersonateAuthorization $authorization)
     {
         $authorization->impersonator(fn(User $user) => $user->hasRole('admin'));
