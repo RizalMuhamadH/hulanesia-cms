@@ -159,8 +159,10 @@ class PostsDatatable extends Component
                     'index' => 'article',
                     'id'    => $params['id'],
                 ];
-                $es = new Elasticsearch();
-                $es->delete($data);
+                if($post->status == PostStatus::PUBLISH){
+                    $es = new Elasticsearch();
+                    $es->delete($data);
+                }
 
                 $post->update([
                     'status' => PostStatus::TRASH
