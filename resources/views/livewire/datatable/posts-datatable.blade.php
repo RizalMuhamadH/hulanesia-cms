@@ -87,7 +87,7 @@
 
                                         @if ($status == 'trash')
                                             @can('forceDelete', $item)
-                                                <button wire:click="forceDestroy({{ $item->id }})"
+                                                <button wire:click="forceDelete({{ $item->id }})"
                                                     class="btn btn-danger">Force Delete</button>
                                             @endcan
                                             @can('restore', $item)

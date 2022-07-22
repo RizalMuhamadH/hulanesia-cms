@@ -150,7 +150,7 @@ class PostsDatatable extends Component
         // dd($params['id']);
 
 
-        $post = Post::findOrFail($params['id']);
+        $post = Post::withTrashed()->findOrFail($params['id']);
         if (auth()->user()->can('delete', $post) || auth()->user()->can('forceDelete', $post)) {
             if ($params['force']) {
                 $post->forceDelete();
