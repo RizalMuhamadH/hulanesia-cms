@@ -161,7 +161,7 @@
                                     <label class="col-form-label">Image*</label>
                                     <div id="image-preview" class="image-preview @error('image') is-invalid @enderror">
                                         <label for="image-upload" id="image-label">Choose File</label>
-                                        <input type="file" name="image" id="image-upload" required="{{ $action == 'Add' ? true : false }}" />
+                                        <input type="file" name="image" id="image-upload" @required($action == 'Add' ? true : false) />
                                     </div>
                                     @error('image')
                                         <div class="invalid-feedback">
