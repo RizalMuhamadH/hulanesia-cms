@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Fortify\PasswordValidationRules;
 use App\Http\Controllers\ContentTypes\ImageHandler;
+use App\Http\Requests\ProfileRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Image;
 use App\Models\User;
@@ -32,25 +33,11 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(ProfileRequest $request, $id)
     {
         // dd($request->all());
         if(auth()->user()->id != $id){
             return redirect()->back()->with('error', 'You are not authorized to edit this profile.');
-        }
-
-        if ($request->password) {
-            Validator::make($request->all(), [
-                'name' => ['required', 'string', 'max:255'],
-                // 'email' => [
-                //     'required',
-                //     'string',
-                //     'email',
-                //     'max:255',
-                //     Rule::unique(User::class),
-                // ],
-                'password' => $this->passwordRules(),
-            ])->validate();
         }
 
         $user = User::find($id);

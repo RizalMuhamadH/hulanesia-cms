@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('head')
-<title>Profile {{ $user->name }}</title>
+    <title>Profile {{ $user->name }}</title>
 @show
 @push('style')
 @endpush
@@ -23,76 +23,88 @@
                         </ul>
                     </div>
                 @endif
-              <form method="POST" action="{{ route('profile.update', $user->id) }}" class="needs-validation" enctype="multipart/form-data" novalidate="">
-                @csrf
-                <div class="card-header">
-                  <h4>Edit Profile</h4>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="form-group col-12 text-center">
-                            <figure class="avatar mr-2 avatar-xl">
-                                <img src="{{ $user->image ? env('STORAGE').$user->image->thumbnail('medium', 'path') : 'https://ui-avatars.com/api/?name='.Auth::user()->name.'&color=7F9CF5&background=EBF4FF' }}" alt="...">
-                            </figure>
-                        </div>
-                      </div>
-                    <div class="row">
-                      <div class="form-group col-12">
-                        <label>Name</label>
-                        <input type="text" class="form-control" value="{{ $user->name }}" name="name" required="">
-                        <div class="invalid-feedback">
-                          Please fill in the first name
-                        </div>
-                      </div>
+                <form method="POST" action="{{ route('profile.update', $user->id) }}" class="needs-validation"
+                    enctype="multipart/form-data" novalidate="">
+                    @csrf
+                    <div class="card-header">
+                        <h4>Edit Profile</h4>
                     </div>
-                    <div class="row">
-                        <div class="form-group col-12">
-                          <label>email</label>
-                          <input type="email" class="form-control" value="{{ $user->email }}" name="email" required="" disabled>
-                          <div class="invalid-feedback">
-                            Please fill in the email
-                          </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-12 text-center">
+                                <figure class="avatar mr-2 avatar-xl">
+                                    <img src="{{ $user->image ? env('STORAGE') . $user->image->thumbnail('medium', 'path') : 'https://ui-avatars.com/api/?name=' . Auth::user()->name . '&color=7F9CF5&background=EBF4FF' }}"
+                                        alt="...">
+                                </figure>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-12">
-                            <div class="custom-file">
-                                <input type="file" name="image" class="custom-file-input" id="customFile">
-                                <label class="custom-file-label" for="customFile">Choose file</label>
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <label>Name</label>
+                                <input type="text" class="form-control" value="{{ $user->name }}" name="name"
+                                    required="">
+                                <div class="invalid-feedback">
+                                    Please fill in the first name
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <label>email</label>
+                                <input type="email" class="form-control" value="{{ $user->email }}" name="email"
+                                    required="" disabled>
+                                <div class="invalid-feedback">
+                                    Please fill in the email
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <div class="custom-file">
+                                    <input type="file" name="image"
+                                        class="custom-file-input @error('image') is-invalid @enderror" id="customFile">
+                                    <label class="custom-file-label" for="customFile">Choose file</label>
+                                </div>
+                                @error('image')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6 col-12">
+                                <label>Password</label>
+                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    value="" name="password">
+                                @error('image')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-6 col-12">
+                                <label>Password Confirmation</label>
+                                <input type="password" class="form-control" value="" name="password_confirmation">
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                      <div class="form-group col-md-6 col-12">
-                        <label>Password</label>
-                        <input type="password" class="form-control" value="" name="password">
-                        <div class="invalid-feedback">
-                          Please fill in the password
-                        </div>
-                      </div>
-                      <div class="form-group col-md-6 col-12">
-                        <label>Password Confirmation</label>
-                        <input type="password" class="form-control" value="" name="password_confirmation">
-                      </div>
+                    <div class="card-footer text-right">
+                        <button class="btn btn-primary">Save Changes</button>
                     </div>
-                </div>
-                <div class="card-footer text-right">
-                  <button class="btn btn-primary">Save Changes</button>
-                </div>
-              </form>
+                </form>
             </div>
-          </div>
+        </div>
     </div>
 @endsection
 @push('script')
-@if (session('message'))
-    <script>
-        iziToast.success({
-            title: '',
-            message: "{{ session('message') }}",
-            position: 'topRight' 
-        });
-
-    </script>
-@endif
+    @if (session('message'))
+        <script>
+            iziToast.success({
+                title: '',
+                message: "{{ session('message') }}",
+                position: 'topRight'
+            });
+        </script>
+    @endif
 @endpush
