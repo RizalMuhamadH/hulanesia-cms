@@ -92,7 +92,7 @@ class PostService
                     'id'    => $post->id,
                     'body'  => json_decode((new PostResource($post))->toJson(), true)
                 ];
-                $es = $this->repository->create($params);
+                $es = $this->elasticsearch->create($params);
             }
     
             if ($request->status == (PostStatus::PUBLISH)->value) {
@@ -238,7 +238,7 @@ class PostService
             $params['body'][] = json_decode((new PostResource($post))->toJson(), true);
 
             if (count($params['body']) === 1000) {
-                $responses = $this->repository->bulk($params);
+                $responses = $this->elasticsearch->bulk($params);
                 $params = ['body' => []];
 
                 unset($responses);
@@ -246,7 +246,7 @@ class PostService
         }
 
         if (!empty($params['body'])) {
-            $responses = $this->repository->bulk($params);
+            $responses = $this->elasticsearch->bulk($params);
         }
     }
 }
