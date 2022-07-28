@@ -13,3 +13,27 @@
         <livewire:datatable.posts-datatable :layout="$layout" :style="request()->style == null ? 'checkbox' : 'choice'" :status="request()->post ?? 'all' " />
     </div>
 @endsection
+
+@push('script')
+@if (session('message'))
+    <script>
+        iziToast.success({
+            title: '',
+            message: "{{ session('message') }}",
+            position: 'topRight' 
+        });
+
+    </script>
+@endif
+
+@if (session('error'))
+    <script>
+        iziToast.error({
+            title: 'Error',
+            message: "{{ session('error') }}",
+            position: 'topRight' 
+        });
+
+    </script>
+@endif
+@endpush

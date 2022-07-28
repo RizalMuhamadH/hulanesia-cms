@@ -23,6 +23,16 @@ class PostService
         $this->elasticsearch = $elasticsearch;
     }
 
+    public function add()
+    {
+        return $this->postRepository->add();
+    }
+
+    public function search($keyword, $limit = 10)
+    {
+        return $this->postRepository->search($keyword, $limit);
+    }
+
     public function store($request)
     {
         if ($request->status == (PostStatus::SCHEDULE)->value) {
@@ -76,6 +86,20 @@ class PostService
 
             $post = $this->postRepository->store($request, $published_at, $path);
 
+            if ($request->status == (PostStatus::PUBLISH)->value || $request->status == (PostStatus::ARCHIVE)->value) {
+                $params = [
+                    'index' => 'article',
+                    'id'    => $post->id,
+                    'body'  => json_decode((new PostResource($post))->toJson(), true)
+                ];
+                $es = $this->repository->create($params);
+            }
+    
+            if ($request->status == (PostStatus::PUBLISH)->value) {
+                $push = new PushNotification();
+                $push->sendNotification($post->id, "Berita Terbaru", $post->title, env('STORAGE') . '/' . $post->image->thumbnail('medium', 'path'), env('WEBSITE_URL') . '/' . $post->url, "web");
+            }
+
             activity()
                 ->performedOn($post)
                 ->event('store')
@@ -83,36 +107,22 @@ class PostService
                 ->log('store post');
 
             DB::commit();
+            return $post;
         } catch (Exception $e) {
             DB::rollBack();
+            return false;
         }
+    }
 
-        if (!$post) {
-            return;
-            // die;
-        }
-
-        if ($request->status == (PostStatus::PUBLISH)->value || $request->status == (PostStatus::ARCHIVE)->value) {
-            $params = [
-                'index' => 'article',
-                'id'    => $post->id,
-                'body'  => json_decode((new PostResource($post))->toJson(), true)
-            ];
-            $es = $this->elasticsearch->create($params);
-        }
-
-        if ($request->status == (PostStatus::PUBLISH)->value) {
-            $push = new PushNotification();
-            $push->sendNotification($post->id, "Berita Terbaru", $post->title, env('STORAGE') . '/' . $post->image->thumbnail('medium', 'path'), env('WEBSITE_URL') . '/' . $post->url, "web");
-        }
-
-
-        return $post;
+    public function edit($id)
+    {
+        return $this->postRepository->edit($id);
     }
 
     public function update($request, Post $post)
     {
         $current = $post;
+        $path = null;
 
         try {
             $doc = $this->elasticsearch->get([
@@ -123,6 +133,7 @@ class PostService
         } catch (\Throwable $th) {
             $doc  = json_decode($th->getMessage(), true);
         }
+
 
         if ($post->status == PostStatus::DRAFT && $request->status == (PostStatus::PUBLISH)->value && $post->published_at == null) {
             $published_at = Carbon::now();
@@ -166,9 +177,9 @@ class PostService
                 $path = (new ImageHandler($request, 'posts', 'image', $options))->handle();
             }
 
-            if ($request->image) {
-                $path = $request->image;
-            }
+            // if ($request->image) {
+            //     $path = $request->image;
+            // }
 
             $post = $this->postRepository->update($request, $post, $published_at, $path);
 
@@ -203,8 +214,39 @@ class PostService
                 ->log('update post');
 
             DB::commit();
+
+            return $post;
         } catch (Exception $e) {
             DB::rollBack();
+            return false;
+        }
+    }
+
+    public function bulk()
+    {
+        $posts = $this->postRepository->all();
+
+        $params = ['body' => []];
+        foreach ($posts as $post) {
+            $params['body'][] = [
+                'index' => [
+                    '_index' => 'article',
+                    '_id'    => $post->id
+                ]
+            ];
+
+            $params['body'][] = json_decode((new PostResource($post))->toJson(), true);
+
+            if (count($params['body']) === 1000) {
+                $responses = $this->repository->bulk($params);
+                $params = ['body' => []];
+
+                unset($responses);
+            }
+        }
+
+        if (!empty($params['body'])) {
+            $responses = $this->repository->bulk($params);
         }
     }
 }
