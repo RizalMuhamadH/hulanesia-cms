@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('head')
-<title>{{ $action }} Photos</title>
+    <title>{{ $action }} Photos</title>
 @show
 @push('style')
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-timepicker.min.css') }}">
@@ -22,8 +22,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <form
-                        action="{{ $action == 'Add' ? route('photo.store') : route('photo.update', $content->id ?? '') }}"
+                    <form action="{{ $action == 'Add' ? route('photo.store') : route('photo.update', $content->id ?? '') }}"
                         method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body row">
@@ -98,27 +97,24 @@
     <script src="https://unpkg.com/filepond@4.30.4/dist/filepond.js"></script>
 
     <script>
-
         var photos = {!! json_encode($content->images ?? []) !!};
         var storage = "{{ env('STORAGE') }}";
 
-        console.log(photos);
-
         var files = photos.map(element => {
             return {
-                        source: storage+element.path,
-                        options: {
-                            type: 'local',
-                            file: {
-                                name: element.path.split(/(\\|\/)/g).pop(),
-                                size: 0,
-                                type: 'image/'+element.path.split(".").pop(),
-                            },
-                            metadata: {
-                                poster: storage+element.path,
-                            },
-                        },
-                    };
+                source: storage + element.path,
+                options: {
+                    type: 'local',
+                    file: {
+                        name: element.path.split(/(\\|\/)/g).pop(),
+                        size: 0,
+                        type: 'image/' + element.path.split(".").pop(),
+                    },
+                    metadata: {
+                        poster: storage + element.path,
+                    },
+                },
+            };
         });
 
         $(document).ready(function() {
@@ -149,6 +145,8 @@
                     },
                 },
             });
+
+            
             // pond.on('addfile', function(file) {
             //     console.log('File added', $('.filepond--data input').length);
             //     // inputElement.name = pond.getFiles();
