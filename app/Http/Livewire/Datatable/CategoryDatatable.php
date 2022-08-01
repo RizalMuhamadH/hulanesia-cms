@@ -52,7 +52,8 @@ class CategoryDatatable extends Component
             'index' => 'article',
             'id'    => $id,
         ];
-        $es = Elasticsearch::delete($params);
+        $es = new Elasticsearch();
+        $es->delete($params);
         
         $category = Category::where('id', $id)->delete();
         activity()

@@ -80,7 +80,7 @@ class SettingController extends Controller
             'index' => 'setting',
             'id'    => $setting->id,
             'body'  => [
-                'doc'   => json_decode((new PostResource($setting))->toJson(), true)
+                'doc'   => json_decode((new SettingResource($setting))->toJson(), true)
             ]
         ];
         $es = $this->repository->update($params);
