@@ -49,7 +49,7 @@ class CategoryDatatable extends Component
     {
         
         $params = [
-            'index' => 'article',
+            'index' => 'category',
             'id'    => $id,
         ];
         $es = new Elasticsearch();
