@@ -57,7 +57,7 @@ class CategoryDatatable extends Component
         
         $category = Category::where('id', $id)->delete();
         activity()
-            ->performedOn($category)
+            ->performedOn(new Category())
             ->event('delete')
             ->withProperties(['data' => $category])
             ->log('delete category');
