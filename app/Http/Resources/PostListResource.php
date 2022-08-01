@@ -19,7 +19,7 @@ class PostListResource extends JsonResource
             'id'                => $this->id,
             'title'             => $this->title,
             'image'             => $this->image->thumbnail('medium', 'path'),
-            'url'               => '/'.$this->category->slug.'/'.$this->id.'/'.Carbon::parse($this->published_at)->format('dmY').'/'.$this->slug,
+            'url'               => $this->url,
             'category'          => $this->category->name,
             'category_url'      => $this->category->slug,
             'created_at'        => Carbon::parse($this->created_at)->timestamp * 1000,

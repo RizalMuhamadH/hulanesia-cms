@@ -46,7 +46,7 @@ class Post extends Model
     public function url(): Attribute
     {
         return new Attribute(
-            get: fn ($value, $attributes) => env('WEBSITE_URL') . '/' . $this->category->name . '/' . $attributes['id'] . '/' . Carbon::parse($attributes['published_at'])->format('dmY') . '/' . $attributes['slug'],
+            get: fn ($value, $attributes) => env('WEBSITE_URL') . '/' . $this->category->slug . '/' . $attributes['id'] . '/' . Carbon::parse($attributes['published_at'])->format('dmY') . '/' . $attributes['slug'],
         );
     }
 
